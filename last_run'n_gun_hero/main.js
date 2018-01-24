@@ -32,13 +32,13 @@ Animation.prototype.drawFrame = function (tick, ctx, x, y) {
     yindex = Math.floor(frame / this.sheetWidth);
 
     ctx.drawImage(this.spriteSheet,
-                 xindex * this.frameWidth, yindex * this.frameHeight,  // source from sheet
-                 this.frameWidth, this.frameHeight,
-                 x, y,
-                 this.frameWidth * scaleBy,
-                 this.frameHeight * scaleBy);
-    ctx.strokeStyle = "Green";
-    ctx.strokeRect(x, y, this.frameWidth * scaleBy, this.frameHeight * scaleBy);
+        xindex * this.frameWidth, yindex * this.frameHeight,  // source from sheet
+        this.frameWidth, this.frameHeight,
+        x, y,
+        this.frameWidth * scaleBy,
+        this.frameHeight * scaleBy);
+    // ctx.strokeStyle = "Green";
+    // ctx.strokeRect(x, y, this.frameWidth * scaleBy, this.frameHeight * scaleBy);
 }
 
 Animation.prototype.currentFrame = function () {
@@ -60,15 +60,15 @@ function Background(game, spritesheet) {
 
 Background.prototype.draw = function () {
     this.ctx.drawImage(this.spritesheet,
-                   this.x, this.y);
+        this.x, this.y);
 };
 
 Background.prototype.update = function () {
 };
 
 // inheritance 
-function Hero(game, spritesheet, spritesheet2, spriteSheet3, spriteSheet4,spriteSheet5,spriteSheet6, spriteSheet7, spriteSheet8, spriteSheet9, spriteSheet10
-            , spriteSheet11) {
+function Hero(game, spritesheet, spritesheet2, spriteSheet3, spriteSheet4, spriteSheet5, spriteSheet6, spriteSheet7, spriteSheet8, spriteSheet9, spriteSheet10
+    , spriteSheet11) {
     this.frontRun = new Animation(spritesheet, this.x, this.y, 105, 100, 8, 0.1, 8, true);
     this.backRun = new Animation(spritesheet2, this.x, this.y, 105, 100, 8, 0.1, 8, true);
     this.frontStand = new Animation(spriteSheet3, this.x, this.y, 105, 105, 1, 0.1, 1, true);
@@ -100,7 +100,7 @@ Hero.prototype.update = function () {
         this.standForward = true;
         this.runFlag = true;
     }
-   
+
     if (!this.game.a && !this.game.d) {
         this.runFlag = false;
     }
@@ -109,7 +109,7 @@ Hero.prototype.update = function () {
     if (this.game.space) {
         this.jumping = true;
     }
-    if (this.jumping && this.runFlag ) {
+    if (this.jumping && this.runFlag) {
         if (this.frontJump.isDone() || this.backJump.isDone()) {
             this.frontJump.elapsedTime = 0;
             this.backJump.elapsedTime = 0;
@@ -122,7 +122,7 @@ Hero.prototype.update = function () {
         if (jumpDistance > 0.5)
             jumpDistance = 1 - jumpDistance;
 
-        var height = totalHeight*(-4 * (jumpDistance * jumpDistance - jumpDistance));
+        var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
         this.y = this.ground - height;
         if (this.standForward) this.x += this.game.clockTick * this.speed;
         else this.x -= this.game.clockTick * this.speed;
@@ -140,7 +140,7 @@ Hero.prototype.update = function () {
         if (jumpDistance > 0.5)
             jumpDistance = 1 - jumpDistance;
 
-        var height = totalHeight*(-4 * (jumpDistance * jumpDistance - jumpDistance));
+        var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
         this.y = this.ground - height;
     }
 
@@ -156,15 +156,15 @@ Hero.prototype.update = function () {
     else if ((this.runFlag && !this.standForward && !this.crawlForward)) {
 
         this.x -= this.game.clockTick * this.speed;
-        if (this.x < -200) this.x = 800;    
-    }  
+        if (this.x < -200) this.x = 800;
+    }
 
     Entity.prototype.update.call(this);
 
 }
 
 Hero.prototype.draw = function () {
-    if (this.jumping && this.jumpForward) {    
+    if (this.jumping && this.jumpForward) {
         this.frontJump.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
     }
     else if (this.jumping && !this.jumpForward) {
@@ -176,13 +176,13 @@ Hero.prototype.draw = function () {
     else if (this.crawlForward && !this.standForward) {
         this.backCrawl.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
     }
-    
-    else if (this.runFlag && this.standForwardw ) {
+
+    else if (this.runFlag && this.standForward) {
         this.frontRun.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
-    } 
-    else if (this.runFlag && !this.standForward ) {
+    }
+    else if (this.runFlag && !this.standForward) {
         this.backRun.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
-    } 
+    }
     else if (!this.runFlag && this.standForward) {
 
         this.frontStand.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
@@ -193,6 +193,79 @@ Hero.prototype.draw = function () {
 
     Entity.prototype.draw.call(this);
 }
+
+function EnemySoldier(game, spritesheetL, spritesheetR, xCord, yCord, unitSpeed) {
+    this.animationL = new Animation(spritesheetL, this.x, this.y, 101, 100, 8, 0.1, 8, true);
+    this.animationR = new Animation(spritesheetR, this.x, this.y, 105, 100, 8, 0.1, 8, true);
+    this.speed = unitSpeed;
+    this.ctx = game.ctx;
+    this.forward = true;
+    this.center = xCord;
+    Entity.call(this, game, xCord, yCord);
+}
+
+EnemySoldier.prototype = new Entity();
+EnemySoldier.prototype.constructor = Robot;
+EnemySoldier.prototype.update = function () {
+    console.log(this.x - this.center);
+    if (this.forward && (this.x - this.center < 100)) this.x += this.game.clockTick * this.speed;
+    else if (((this.x - this.center) >= 100) && this.forward) {
+        this.x -= this.game.clockTick * this.speed;
+        this.forward = false;
+    }
+    else if (!this.forward && (this.x - this.center > -100)) this.x -= this.game.clockTick * this.speed;
+    else if (((this.x - this.center) <= -100) && !this.forward) {
+        this.x += this.game.clockTick * this.speed;
+        this.forward = true;
+    }
+
+    Entity.prototype.update.call(this);
+
+
+}
+EnemySoldier.prototype.draw = function () {
+    if (this.forward) this.animationR.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
+    else if (!this.forward) this.animationL.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
+    Entity.prototype.draw.call(this);
+
+}
+
+function Robot(game, spritesheetL, spritesheetR, xCord, yCord, unitSpeed) {
+    this.animationL = new Animation(spritesheetL, this.x, this.y, 51, 50, 3, 0.1, 3, true);
+    this.animationR = new Animation(spritesheetR, this.x, this.y, 51, 50, 3, 0.1, 3, true);
+    this.speed = unitSpeed;
+    this.ctx = game.ctx;
+    this.forward = true;
+    this.center = xCord;
+    Entity.call(this, game, xCord, yCord);
+}
+
+Robot.prototype = new Entity();
+Robot.prototype.constructor = Robot;
+Robot.prototype.update = function () {
+    if (this.forward && (this.x - this.center < 100)) this.x += this.game.clockTick * this.speed;
+    else if (((this.x - this.center) >= 100) && this.forward) {
+        this.x -= this.game.clockTick * this.speed;
+        this.forward = false;
+    }
+    else if (!this.forward && (this.x - this.center > -100)) this.x -= this.game.clockTick * this.speed;
+    else if (((this.x - this.center) <= -100) && !this.forward) {
+        this.x += this.game.clockTick * this.speed;
+        this.forward = true;
+    }
+
+    Entity.prototype.update.call(this);
+
+
+}
+Robot.prototype.draw = function () {
+    if (this.forward) this.animationR.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
+    else if (!this.forward) this.animationL.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
+    Entity.prototype.draw.call(this);
+
+}
+
+
 AM.queueDownload("./img/backCrawl.png");
 AM.queueDownload("./img/runningHero.png");
 AM.queueDownload("./img/backwardHero.png");
@@ -202,6 +275,12 @@ AM.queueDownload("./img/frontJump.png");
 AM.queueDownload("./img/frontStanding.png");
 AM.queueDownload("./img/background.jpg");
 AM.queueDownload("./img/frontCrawl.png");
+AM.queueDownload("./img/red_Robot.png");
+AM.queueDownload("./img/blue_Robot.png");
+AM.queueDownload("./img/orange_Robot.png");
+AM.queueDownload("./img/green_Robot.png");
+AM.queueDownload("./img/enemySoldier_Backward.png");
+AM.queueDownload("./img/enemySoldier_Foward.png");
 
 AM.downloadAll(function () {
     var canvas = document.getElementById("gameWorld");
@@ -213,8 +292,13 @@ AM.downloadAll(function () {
 
     gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/background.jpg")));
     gameEngine.addEntity(new Hero(gameEngine, AM.getAsset("./img/runningHero.png"), AM.getAsset("./img/backwardHero.png"), AM.getAsset("./img/frontStanding.png")
-                        , AM.getAsset("./img/backwardStand.png"), AM.getAsset("./img/frontJump.png"), AM.getAsset("./img/backJump.png")
-                        , AM.getAsset("./img/bullet.png"), AM.getAsset("./img/backCrawl.png"), AM.getAsset("./img/frontCrawl.png")
-                        , AM.getAsset("./img/backCrawl.png")));
+        , AM.getAsset("./img/backwardStand.png"), AM.getAsset("./img/frontJump.png"), AM.getAsset("./img/backJump.png")
+        , AM.getAsset("./img/bullet.png"), AM.getAsset("./img/backCrawl.png"), AM.getAsset("./img/frontCrawl.png")
+        , AM.getAsset("./img/backCrawl.png")));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 300, 450, 60));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 400, 450, 60));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/orange_Robot.png"), AM.getAsset("./img/orange_Robot.png"), 500, 450, 60));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/green_Robot.png"), AM.getAsset("./img/green_Robot.png"), 600, 450, 60));
+    gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png"), AM.getAsset("./img/enemySoldier_Foward.png"), 200, 400, 200));
     console.log("All Done!");
 });
