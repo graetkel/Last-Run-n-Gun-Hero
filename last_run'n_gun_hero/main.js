@@ -265,6 +265,41 @@ Robot.prototype.draw = function () {
 
 }
 
+function FlyingRobot(game, spritesheetL, spritesheetR, xCord, yCord, unitSpeed) {
+    this.animationL = new Animation(spritesheetL, this.x, this.y, 52, 50, 2, 0.1, 2, true);
+    this.animationR = new Animation(spritesheetR, this.x, this.y, 52, 50, 2, 0.1, 2, true);
+    this.speed = unitSpeed;
+    this.ctx = game.ctx;
+    this.forward = true;
+    this.center = xCord;
+    Entity.call(this, game, xCord, yCord);
+}
+
+FlyingRobot.prototype = new Entity();
+FlyingRobot.prototype.constructor = FlyingRobot;
+FlyingRobot.prototype.update = function () {
+    if (this.forward && (this.x - this.center < 100)) this.x += this.game.clockTick * this.speed;
+    else if (((this.x - this.center) >= 100) && this.forward) {
+        this.x -= this.game.clockTick * this.speed;
+        this.forward = false;
+    }
+    else if (!this.forward && (this.x - this.center > -100)) this.x -= this.game.clockTick * this.speed;
+    else if (((this.x - this.center) <= -100) && !this.forward) {
+        this.x += this.game.clockTick * this.speed;
+        this.forward = true;
+    }
+
+    Entity.prototype.update.call(this);
+
+
+}
+FlyingRobot.prototype.draw = function () {
+    if (this.forward) this.animationR.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
+    else if (!this.forward) this.animationL.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
+    Entity.prototype.draw.call(this);
+
+}
+
 
 AM.queueDownload("./img/backCrawl.png");
 AM.queueDownload("./img/runningHero.png");
@@ -281,6 +316,8 @@ AM.queueDownload("./img/orange_Robot.png");
 AM.queueDownload("./img/green_Robot.png");
 AM.queueDownload("./img/enemySoldier_Backward.png");
 AM.queueDownload("./img/enemySoldier_Foward.png");
+AM.queueDownload("./img/flyingRobot_Backward.png");
+AM.queueDownload("./img/flyingRobot_Forward.png");
 
 AM.downloadAll(function () {
     var canvas = document.getElementById("gameWorld");
@@ -300,5 +337,6 @@ AM.downloadAll(function () {
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/orange_Robot.png"), AM.getAsset("./img/orange_Robot.png"), 500, 450, 60));
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/green_Robot.png"), AM.getAsset("./img/green_Robot.png"), 600, 450, 60));
     gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png"), AM.getAsset("./img/enemySoldier_Foward.png"), 200, 400, 200));
+    gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png"), AM.getAsset("./img/flyingRobot_Forward.png"), 400, 350, 60));
     console.log("All Done!");
 });
