@@ -37,8 +37,8 @@ Animation.prototype.drawFrame = function (tick, ctx, x, y) {
         x, y,
         this.frameWidth * scaleBy,
         this.frameHeight * scaleBy);
-    // ctx.strokeStyle = "Green";
-    // ctx.strokeRect(x, y, this.frameWidth * scaleBy, this.frameHeight * scaleBy);
+        //ctx.strokeStyle = "Green";
+        //ctx.strokeRect(x, y, this.frameWidth * scaleBy, this.frameHeight * scaleBy);
 }
 
 Animation.prototype.currentFrame = function () {
@@ -71,10 +71,10 @@ function Hero(game, spritesheet, spritesheet2, spriteSheet3, spriteSheet4, sprit
     , spriteSheet11) {
     this.frontRun = new Animation(spritesheet, this.x, this.y, 105, 100, 8, 0.1, 8, true);
     this.backRun = new Animation(spritesheet2, this.x, this.y, 105, 100, 8, 0.1, 8, true);
-    this.frontStand = new Animation(spriteSheet3, this.x, this.y, 105, 105, 1, 0.1, 1, true);
+    this.frontStand = new Animation(spriteSheet3, this.x, this.y, 105, 103, 1, 0.1, 1, true);
     this.backStand = new Animation(spriteSheet4, this.x, this.y, 105, 105, 1, 0.1, 1, true);
-    this.frontJump = new Animation(spriteSheet5, this.x, this.y, 105, 105, 1, 2, 1, false);
-    this.backJump = new Animation(spriteSheet6, this.x, this.y, 105, 105, 1, 2, 1, false);
+    this.frontJump = new Animation(spriteSheet5, this.x, this.y, 105, 107, 1, 2, 1, false);
+    this.backJump = new Animation(spriteSheet6, this.x, this.y, 105, 103, 1, 2, 1, false);
     this.backCrawl = new Animation(spriteSheet8, this.x, this.y, 141, 100, 1, 0.1, 1, true);
     this.frontCrawl = new Animation(spriteSheet9, this.x, this.y, 141, 100, 1, 0.1, 1, true);
     this.jumping = false;
@@ -195,8 +195,8 @@ Hero.prototype.draw = function () {
 }
 
 function EnemySoldier(game, spritesheetL, spritesheetR, xCord, yCord, unitSpeed) {
-    this.animationL = new Animation(spritesheetL, this.x, this.y, 101, 100, 8, 0.1, 8, true);
-    this.animationR = new Animation(spritesheetR, this.x, this.y, 105, 100, 8, 0.1, 8, true);
+    this.animationL = new Animation(spritesheetL, this.x, this.y, 100, 104, 8, 0.1, 8, true);
+    this.animationR = new Animation(spritesheetR, this.x, this.y, 105, 104, 8, 0.1, 8, true);
     this.speed = unitSpeed;
     this.ctx = game.ctx;
     this.forward = true;
@@ -207,7 +207,6 @@ function EnemySoldier(game, spritesheetL, spritesheetR, xCord, yCord, unitSpeed)
 EnemySoldier.prototype = new Entity();
 EnemySoldier.prototype.constructor = Robot;
 EnemySoldier.prototype.update = function () {
-    console.log(this.x - this.center);
     if (this.forward && (this.x - this.center < 100)) this.x += this.game.clockTick * this.speed;
     else if (((this.x - this.center) >= 100) && this.forward) {
         this.x -= this.game.clockTick * this.speed;
@@ -278,6 +277,7 @@ function FlyingRobot(game, spritesheetL, spritesheetR, xCord, yCord, unitSpeed) 
 FlyingRobot.prototype = new Entity();
 FlyingRobot.prototype.constructor = FlyingRobot;
 FlyingRobot.prototype.update = function () {
+    
     if (this.forward && (this.x - this.center < 100)) this.x += this.game.clockTick * this.speed;
     else if (((this.x - this.center) >= 100) && this.forward) {
         this.x -= this.game.clockTick * this.speed;
@@ -335,8 +335,8 @@ AM.downloadAll(function () {
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 300, 450, 60));
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 400, 450, 60));
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/orange_Robot.png"), AM.getAsset("./img/orange_Robot.png"), 500, 450, 60));
-    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/green_Robot.png"), AM.getAsset("./img/green_Robot.png"), 600, 450, 60));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/green_Robot.png"), AM.getAsset("./img/green_Robot.png"), 100, 450, 60));
     gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png"), AM.getAsset("./img/enemySoldier_Foward.png"), 200, 400, 200));
-    gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png"), AM.getAsset("./img/flyingRobot_Forward.png"), 400, 350, 60));
+    gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png"), AM.getAsset("./img/flyingRobot_Forward.png"), 200, 100, 60));
     console.log("All Done!");
 });
