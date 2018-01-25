@@ -37,6 +37,7 @@ Animation.prototype.drawFrame = function (tick, ctx, x, y) {
         x, y,
         this.frameWidth * scaleBy,
         this.frameHeight * scaleBy);
+        
         //ctx.strokeStyle = "Green";
         //ctx.strokeRect(x, y, this.frameWidth * scaleBy, this.frameHeight * scaleBy);
 }
@@ -314,8 +315,8 @@ function FlyingRobot(game, spritesheetL, spritesheetR, xCord, yCord, unitSpeed) 
 FlyingRobot.prototype = new Entity();
 FlyingRobot.prototype.constructor = FlyingRobot;
 FlyingRobot.prototype.update = function () {
-    
     if (this.forward && (this.x - this.center < 100)) this.x += this.game.clockTick * this.speed;
+     
     else if (((this.x - this.center) >= 100) && this.forward) {
         this.x -= this.game.clockTick * this.speed;
         this.forward = false;
