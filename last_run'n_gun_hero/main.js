@@ -37,7 +37,6 @@ Animation.prototype.drawFrame = function (tick, ctx, x, y) {
         x, y,
         this.frameWidth * scaleBy,
         this.frameHeight * scaleBy);
-        
         //ctx.strokeStyle = "Green";
         //ctx.strokeRect(x, y, this.frameWidth * scaleBy, this.frameHeight * scaleBy);
 }
@@ -50,61 +49,108 @@ Animation.prototype.isDone = function () {
     return (this.elapsedTime >= this.totalTime);
 }
 
-
-
-
-
-
-
 // no inheritance
 function Background(game, spritesheet) {
     this.x = 0;
     this.y = 0;
-    this.speed = -300;
     this.spritesheet = spritesheet;
     this.game = game;
     this.ctx = game.ctx;
 };
 
 Background.prototype.draw = function () {
-    this.ctx.drawImage(this.spritesheet, this.x, this.y);
-    BackgroundX = this.x;
+    this.ctx.drawImage(this.spritesheet,
+        this.x, this.y);
+
+        //-----
+        var grid = [['c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c'],
+     ['x',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','z'],
+     ['x',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','z'],
+     ['x',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','z'],
+     ['x',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','z'],
+     ['x',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','z'],
+     ['x',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','z'],
+     ['x',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','z'],
+     ['x',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','z'],
+     ['x',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','z'],
+     ['x',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','z'],
+     ['x',' ',' ','u','l','i',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','z'],
+     ['x',' ',' ','l','l','l',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','z'],
+     ['x',' ',' ','l','l','l',' ',' ',' ',' ',' ',' ','w','w','w','w','w','w','w',' ',' ',' ',' ',' ','z'],
+     ['x',' ',' ','l','l','l',' ',' ',' ',' ',' ',' ','w',' ',' ',' ',' ',' ','w',' ',' ',' ',' ',' ','z'],
+     ['x',' ',' ','o','l','p',' ',' ',' ',' ',' ',' ','w',' ',' ',' ',' ',' ','w',' ',' ',' ',' ',' ','z'],
+     ['x',' ',' ',' ','t',' ',' ',' ',' ',' ',' ',' ','w',' ',' ',' ',' ',' ','w',' ',' ',' ',' ',' ','z'],
+     ['x',' ',' ',' ','t',' ',' ',' ',' ',' ',' ',' ','d',' ',' ',' ',' ',' ','d',' ',' ',' ',' ',' ','z'],
+     ['x',' ',' ',' ','t',' ',' ',' ',' ',' ',' ',' ','d',' ',' ',' ',' ',' ','d',' ',' ',' ',' ',' ','z'],
+     ['c','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','c'],
+     ['c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c']];
+        //ctx.fillStyle = "SaddleBrown";
+        //ctx.fillRect(startX, StartY, Width, Height)
+        var sqFt = 25;
+        var xAxis, yAxis;
+        //var canvasX = grid[0].length;
+        //var canvasY = grid.length;
+        //console.log("canX : " + grid[0].length + " canY: " + grid.length);
+
+        for (yAxis = 0; yAxis < grid.length; yAxis++) {
+          for (xAxis = 0; xAxis < grid[0].length; xAxis++) {
+            var obstacle = grid[yAxis][xAxis];
+
+            function tilePicker(color) {
+              this.ctx.fillStyle = color;
+              this.ctx.fillRect(sqFt*xAxis,25 + sqFt*yAxis,sqFt,sqFt);
+            };
+            switch(obstacle) {
+              case 'c': // middle ground
+                this.ctx.drawImage(AM.getAsset("./img/ground1.png"), sqFt*xAxis, 25 + sqFt*yAxis, sqFt, sqFt);
+              break;
+              case 'v': // top ground
+                this.ctx.drawImage(AM.getAsset("./img/ground2.png"), sqFt*xAxis, 25 + sqFt*yAxis, sqFt, sqFt);
+              break;
+              case 'z': // left ground
+                this.ctx.drawImage(AM.getAsset("./img/ground3.png"), sqFt*xAxis, 25 + sqFt*yAxis, sqFt, sqFt);
+              break;
+              case 'x': // right ground
+                this.ctx.drawImage(AM.getAsset("./img/ground4.png"), sqFt*xAxis, 25 + sqFt*yAxis, sqFt, sqFt);
+              break;
+              case 't': // tree trunk
+                this.ctx.drawImage(AM.getAsset("./img/treeTrunk.png"), sqFt*xAxis, 25 + sqFt*yAxis, sqFt, sqFt);
+              break;
+              case 'l': // middle leaf
+                this.ctx.drawImage(AM.getAsset("./img/leaf1.png"), sqFt*xAxis, 25 + sqFt*yAxis, sqFt, sqFt);
+              break;
+              case 'u': // NW leaf
+                this.ctx.drawImage(AM.getAsset("./img/leaf2.png"), sqFt*xAxis, 25 + sqFt*yAxis, sqFt, sqFt);
+              break;
+              case 'i': // NE leaf
+                this.ctx.drawImage(AM.getAsset("./img/leaf3.png"), sqFt*xAxis, 25 + sqFt*yAxis, sqFt, sqFt);
+              break;
+              case 'o': // SW leaf
+                this.ctx.drawImage(AM.getAsset("./img/leaf4.png"), sqFt*xAxis, 25 + sqFt*yAxis, sqFt, sqFt);
+              break;
+              case 'p': // SE leaf
+                this.ctx.drawImage(AM.getAsset("./img/leaf5.png"), sqFt*xAxis, 25 + sqFt*yAxis, sqFt, sqFt);
+              break;
+              case 'w': // concrete walls
+                //tilePicker("gray");
+              break;
+              case 'd': // door
+                //tilePicker("SaddleBrown");
+              break;
+            }
+
+            //ctx.fillRect(50*xAxis,50*yAxis,50,50);
+          }
+        }
+        //ctx.fillRect(0,500,800,50);
+
+        Entity.prototype.draw.call(this);
 };
 
 Background.prototype.update = function () {
-    this.x += this.game.clockTick * this.speed;
-    //if (this.x < -1920) this.x = 1916;
-    if (this.x < -2083) this.x = Background1X + 2075;
-
 };
 
-// no inheritance
-function Background1(game, spritesheet) {
-    this.x = 2078;
-    this.y = 0;
-    this.speed = -300;
-    this.spritesheet = spritesheet;
-    this.game = game;
-    this.ctx = game.ctx;
-};
-
-Background1.prototype.draw = function () {
-    this.ctx.drawImage(this.spritesheet, this.x, this.y);
-    Background1X = this.x;
-};
-
-Background1.prototype.update = function () {
-    this.x += this.game.clockTick * this.speed;
-    //if (this.x < -1920) this.x =1916;
-    if (this.x < -2083) this.x = BackgroundX + 2075;
-};
-
-
-
-
-
-
-// inheritance 
+// inheritance
 function Hero(game, spritesheet, spritesheet2, spriteSheet3, spriteSheet4, spriteSheet5, spriteSheet6, spriteSheet7, spriteSheet8, spriteSheet9, spriteSheet10
     , spriteSheet11) {
     this.frontRun = new Animation(spritesheet, this.x, this.y, 105, 100, 8, 0.1, 8, true);
@@ -315,8 +361,8 @@ function FlyingRobot(game, spritesheetL, spritesheetR, xCord, yCord, unitSpeed) 
 FlyingRobot.prototype = new Entity();
 FlyingRobot.prototype.constructor = FlyingRobot;
 FlyingRobot.prototype.update = function () {
+
     if (this.forward && (this.x - this.center < 100)) this.x += this.game.clockTick * this.speed;
-     
     else if (((this.x - this.center) >= 100) && this.forward) {
         this.x -= this.game.clockTick * this.speed;
         this.forward = false;
@@ -338,8 +384,7 @@ FlyingRobot.prototype.draw = function () {
 
 }
 
-AM.queueDownload("./img/newtrees.jpg");
-AM.queueDownload("./img/newtrees1.jpg");
+
 AM.queueDownload("./img/backCrawl.png");
 AM.queueDownload("./img/runningHero.png");
 AM.queueDownload("./img/backwardHero.png");
@@ -347,6 +392,7 @@ AM.queueDownload("./img/backJump.png");
 AM.queueDownload("./img/backwardStand.png");
 AM.queueDownload("./img/frontJump.png");
 AM.queueDownload("./img/frontStanding.png");
+AM.queueDownload("./img/background.jpg");
 AM.queueDownload("./img/frontCrawl.png");
 AM.queueDownload("./img/red_Robot.png");
 AM.queueDownload("./img/blue_Robot.png");
@@ -356,6 +402,18 @@ AM.queueDownload("./img/enemySoldier_Backward.png");
 AM.queueDownload("./img/enemySoldier_Foward.png");
 AM.queueDownload("./img/flyingRobot_Backward.png");
 AM.queueDownload("./img/flyingRobot_Forward.png");
+AM.queueDownload("./img/ForestTiles.png");
+AM.queueDownload("./img/topGroundDark.png");
+AM.queueDownload("./img/treeTrunk.png");
+AM.queueDownload("./img/leaf1.png");
+AM.queueDownload("./img/leaf2.png");
+AM.queueDownload("./img/leaf3.png");
+AM.queueDownload("./img/leaf4.png");
+AM.queueDownload("./img/leaf5.png");
+AM.queueDownload("./img/ground1.png");
+AM.queueDownload("./img/ground2.png");
+AM.queueDownload("./img/ground3.png");
+AM.queueDownload("./img/ground4.png");
 
 AM.downloadAll(function () {
     var canvas = document.getElementById("gameWorld");
@@ -365,8 +423,7 @@ AM.downloadAll(function () {
     gameEngine.init(ctx);
     gameEngine.start();
 
-    gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/newtrees.jpg")));
-    gameEngine.addEntity(new Background1(gameEngine, AM.getAsset("./img/newtrees1.jpg")));
+    gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/background.jpg")));
     gameEngine.addEntity(new Hero(gameEngine, AM.getAsset("./img/runningHero.png"), AM.getAsset("./img/backwardHero.png"), AM.getAsset("./img/frontStanding.png")
         , AM.getAsset("./img/backwardStand.png"), AM.getAsset("./img/frontJump.png"), AM.getAsset("./img/backJump.png")
         , AM.getAsset("./img/bullet.png"), AM.getAsset("./img/backCrawl.png"), AM.getAsset("./img/frontCrawl.png")
