@@ -49,22 +49,59 @@ Animation.prototype.isDone = function () {
     return (this.elapsedTime >= this.totalTime);
 }
 
+
+
+
+
+
+
 // no inheritance
 function Background(game, spritesheet) {
     this.x = 0;
     this.y = 0;
+    this.speed = -300;
     this.spritesheet = spritesheet;
     this.game = game;
     this.ctx = game.ctx;
 };
 
 Background.prototype.draw = function () {
-    this.ctx.drawImage(this.spritesheet,
-        this.x, this.y);
+    this.ctx.drawImage(this.spritesheet, this.x, this.y);
+    BackgroundX = this.x;
 };
 
 Background.prototype.update = function () {
+    this.x += this.game.clockTick * this.speed;
+    //if (this.x < -1920) this.x = 1916;
+    if (this.x < -2083) this.x = Background1X + 2075;
+
 };
+
+// no inheritance
+function Background1(game, spritesheet) {
+    this.x = 2078;
+    this.y = 0;
+    this.speed = -300;
+    this.spritesheet = spritesheet;
+    this.game = game;
+    this.ctx = game.ctx;
+};
+
+Background1.prototype.draw = function () {
+    this.ctx.drawImage(this.spritesheet, this.x, this.y);
+    Background1X = this.x;
+};
+
+Background1.prototype.update = function () {
+    this.x += this.game.clockTick * this.speed;
+    //if (this.x < -1920) this.x =1916;
+    if (this.x < -2083) this.x = BackgroundX + 2075;
+};
+
+
+
+
+
 
 // inheritance 
 function Hero(game, spritesheet, spritesheet2, spriteSheet3, spriteSheet4, spriteSheet5, spriteSheet6, spriteSheet7, spriteSheet8, spriteSheet9, spriteSheet10
@@ -300,7 +337,8 @@ FlyingRobot.prototype.draw = function () {
 
 }
 
-
+AM.queueDownload("./img/newtrees.jpg");
+AM.queueDownload("./img/newtrees1.jpg");
 AM.queueDownload("./img/backCrawl.png");
 AM.queueDownload("./img/runningHero.png");
 AM.queueDownload("./img/backwardHero.png");
@@ -308,7 +346,6 @@ AM.queueDownload("./img/backJump.png");
 AM.queueDownload("./img/backwardStand.png");
 AM.queueDownload("./img/frontJump.png");
 AM.queueDownload("./img/frontStanding.png");
-AM.queueDownload("./img/background.jpg");
 AM.queueDownload("./img/frontCrawl.png");
 AM.queueDownload("./img/red_Robot.png");
 AM.queueDownload("./img/blue_Robot.png");
@@ -327,7 +364,8 @@ AM.downloadAll(function () {
     gameEngine.init(ctx);
     gameEngine.start();
 
-    gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/background.jpg")));
+    gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/newtrees.jpg")));
+    gameEngine.addEntity(new Background1(gameEngine, AM.getAsset("./img/newtrees1.jpg")));
     gameEngine.addEntity(new Hero(gameEngine, AM.getAsset("./img/runningHero.png"), AM.getAsset("./img/backwardHero.png"), AM.getAsset("./img/frontStanding.png")
         , AM.getAsset("./img/backwardStand.png"), AM.getAsset("./img/frontJump.png"), AM.getAsset("./img/backJump.png")
         , AM.getAsset("./img/bullet.png"), AM.getAsset("./img/backCrawl.png"), AM.getAsset("./img/frontCrawl.png")
