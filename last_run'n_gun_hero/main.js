@@ -274,11 +274,11 @@ Hero.prototype.update = function () {
         this.x -= this.game.clockTick * this.speed;
         if (this.x < -200) this.x = 800;
     }
-    that = this
+    that = this;
     if (this.firing) {
         console.log(this.CanShoot);
         if (this.CanShoot) {
-            if(this.standForward) {
+            if (this.standForward) {
                 if (this.crawlForward) this.game.addEntity(new Bullet(this.game, this.x + 140, this.y + 85, this.standForward));
                 else this.game.addEntity(new Bullet(this.game, this.x + 100, this.y + 35, this.standForward));
             }
@@ -288,12 +288,13 @@ Hero.prototype.update = function () {
             }
             this.CanShoot = false;
             setTimeout(function(){
+                console.log("hel");
                 that.CanShoot = true;
-
-            }, 500)
-            
+    
+            }, 500);
             
         }
+        
     
     }
     
@@ -351,7 +352,6 @@ function EnemySoldier(game, spritesheet1, spritesheet2, spritesheet3, spriteshee
 EnemySoldier.prototype = new Entity();
 EnemySoldier.prototype.constructor = Robot;
 EnemySoldier.prototype.update = function () {
-    that = this;
     if ((Math.abs(this.x - this.game.entities[2].x) >= 200 )) this.standing = false;
     if (Math.abs(this.x - this.game.entities[2].x) <= 200 ) {
         this. standing = true;
