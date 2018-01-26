@@ -294,7 +294,7 @@ Hero.prototype.update = function () {
             
             
         }
-        
+    
     }
     
     
