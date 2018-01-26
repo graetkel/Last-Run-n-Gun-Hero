@@ -77,7 +77,6 @@ Background.prototype.draw = function () {
 };
 
 
-
 /**
  * These next 3 functions are the first level background image
  * setup to repeat infinitely.
