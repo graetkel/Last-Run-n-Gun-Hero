@@ -203,7 +203,6 @@ function Hero(game, spritesheet, spritesheet2, spriteSheet3, spriteSheet4, sprit
 Hero.prototype = new Entity();
 Hero.prototype.constructor = Hero;
 Hero.prototype.update = function () {
-    console.log(this.game.shooting);
     if (this.game.a) {
         if (!this.jumping) this.jumpForward = false;
         this.standForward = false;
@@ -277,6 +276,7 @@ Hero.prototype.update = function () {
     }
     that = this
     if (this.firing) {
+        console.log(this.CanShoot);
         if (this.CanShoot) {
             if(this.standForward) {
                 if (this.crawlForward) this.game.addEntity(new Bullet(this.game, this.x + 140, this.y + 85, this.standForward));
@@ -334,12 +334,16 @@ Hero.prototype.draw = function () {
     Entity.prototype.draw.call(this);
 }
 
-function EnemySoldier(game, spritesheetL, spritesheetR, xCord, yCord, unitSpeed) {
-    this.animationL = new Animation(spritesheetL, this.x, this.y, 100, 104, 8, 0.1, 8, true);
-    this.animationR = new Animation(spritesheetR, this.x, this.y, 105, 104, 8, 0.1, 8, true);
+function EnemySoldier(game, spritesheet1, spritesheet2, spritesheet3, spritesheet4, xCord, yCord, unitSpeed) {
+    this.enemyBackRun = new Animation(spritesheet1, this.x, this.y, 100, 104, 8, 0.1, 8, true);
+    this.enemyFrontRun = new Animation(spritesheet2, this.x, this.y, 105, 104, 8, 0.1, 8, true);
+    this.enemyBackStand = new Animation(spritesheet3, this.x, this.y, 100, 104, 1, 0.1, 1, true);
+    this.enemyFrontStand = new Animation(spritesheet4, this.x, this.y, 105, 104, 1, 0.1, 1, true);
     this.speed = unitSpeed;
     this.ctx = game.ctx;
     this.forward = true;
+    this.enemyShoot = true;
+    this.standing = false;
     this.center = xCord;
     Entity.call(this, game, xCord, yCord);
 }
@@ -347,7 +351,15 @@ function EnemySoldier(game, spritesheetL, spritesheetR, xCord, yCord, unitSpeed)
 EnemySoldier.prototype = new Entity();
 EnemySoldier.prototype.constructor = Robot;
 EnemySoldier.prototype.update = function () {
-    if (this.forward && (this.x - this.center < 100)) this.x += this.game.clockTick * this.speed;
+    that = this;
+    if ((Math.abs(this.x - this.game.entities[2].x) >= 200 )) this.standing = false;
+    if (Math.abs(this.x - this.game.entities[2].x) <= 200 ) {
+        this. standing = true;
+        if(this.x - this.game.entities[2].x < 0) this.forward = true;
+        else this.forward = false;
+    }
+    
+    else if (this.forward && (this.x - this.center < 100)) this.x += this.game.clockTick * this.speed;
     else if (((this.x - this.center) >= 100) && this.forward) {
         this.x -= this.game.clockTick * this.speed;
         this.forward = false;
@@ -364,15 +376,21 @@ EnemySoldier.prototype.update = function () {
 }
 
 EnemySoldier.prototype.draw = function () {
-    if (this.forward) this.animationR.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
-    else if (!this.forward) this.animationL.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
+    if (this.forward) {
+        if (this.standing) this.enemyFrontStand.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
+        else this.enemyFrontRun.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
+    }
+    else {
+        if (this.standing) this.enemyBackStand.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
+        else this.enemyBackRun.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
+    }
     Entity.prototype.draw.call(this);
 
 }
 
-function Robot(game, spritesheetL, spritesheetR, xCord, yCord, unitSpeed) {
-    this.animationL = new Animation(spritesheetL, this.x, this.y, 51, 50, 3, 0.1, 3, true);
-    this.animationR = new Animation(spritesheetR, this.x, this.y, 51, 50, 3, 0.1, 3, true);
+function Robot(game, spritesheet1, spritesheet2, xCord, yCord, unitSpeed) {
+    this.robotBackRun = new Animation(spritesheet1, this.x, this.y, 51, 50, 3, 0.1, 3, true);
+    this.robotFrontRun = new Animation(spritesheet2, this.x, this.y, 51, 50, 3, 0.1, 3, true);
     this.speed = unitSpeed;
     this.ctx = game.ctx;
     this.forward = true;
@@ -399,15 +417,15 @@ Robot.prototype.update = function () {
 
 }
 Robot.prototype.draw = function () {
-    if (this.forward) this.animationR.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
-    else if (!this.forward) this.animationL.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
+    if (this.forward) this.robotFrontRun.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
+    else if (!this.forward) this.robotBackRun.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
     Entity.prototype.draw.call(this);
 
 }
 
 function FlyingRobot(game, spritesheetL, spritesheetR, xCord, yCord, unitSpeed) {
-    this.animationL = new Animation(spritesheetL, this.x, this.y, 52, 50, 2, 0.1, 2, true);
-    this.animationR = new Animation(spritesheetR, this.x, this.y, 52, 50, 2, 0.1, 2, true);
+    this.flyingRobotBackRun = new Animation(spritesheetL, this.x, this.y, 52, 50, 2, 0.1, 2, true);
+    this.flyingRobotFrontRun = new Animation(spritesheetR, this.x, this.y, 52, 50, 2, 0.1, 2, true);
     this.speed = unitSpeed;
     this.ctx = game.ctx;
     this.forward = true;
@@ -435,8 +453,8 @@ FlyingRobot.prototype.update = function () {
 
 }
 FlyingRobot.prototype.draw = function () {
-    if (this.forward) this.animationR.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
-    else if (!this.forward) this.animationL.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
+    if (this.forward) this.flyingRobotFrontRun.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
+    else if (!this.forward) this.flyingRobotBackRun.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
     Entity.prototype.draw.call(this);
 
 }
@@ -501,6 +519,8 @@ AM.queueDownload("./img/ground1.png");
 AM.queueDownload("./img/ground2.png");
 AM.queueDownload("./img/ground3.png");
 AM.queueDownload("./img/ground4.png");
+AM.queueDownload("./img/enemySoldier_StandingBackward.png");
+AM.queueDownload("./img/enemySoldier_StandingFoward.png");
 
 AM.downloadAll(function () {
     var canvas = document.getElementById("gameWorld");
@@ -520,7 +540,7 @@ AM.downloadAll(function () {
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 400, 450, 60));
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/orange_Robot.png"), AM.getAsset("./img/orange_Robot.png"), 500, 450, 60));
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/green_Robot.png"), AM.getAsset("./img/green_Robot.png"), 100, 450, 60));
-    gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png"), AM.getAsset("./img/enemySoldier_Foward.png"), 200, 400, 200));
+    gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png"), AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png"), AM.getAsset("./img/enemySoldier_StandingFoward.png"), 200, 400, 200));
     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png"), AM.getAsset("./img/flyingRobot_Forward.png"), 200, 100, 60));
     console.log("All Done!");
 });
