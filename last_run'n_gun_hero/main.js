@@ -57,10 +57,18 @@ Animation.prototype.isDone = function () {
 function Background(game, spritesheet) {
     this.x = 0;
     this.y = 0;
-    this.speed = -300
+    this.speed = -150
     this.spritesheet = spritesheet;
     this.game = game;
     this.ctx = game.ctx;
+};
+
+Background.prototype.update = function () {
+
+    if (this.game.d) {
+        this.x += this.game.clockTick * this.speed;
+    }
+    if (this.x < -2083) this.x = Background1X + 2075;
 };
 
 Background.prototype.draw = function () {
@@ -68,11 +76,7 @@ Background.prototype.draw = function () {
     BackgroundX = this.x;
 };
 
-Background.prototype.update = function () {
-    this.x += this.game.clockTick * this.speed;
-    //if (this.x < -1920) this.x = 1916; 
-    if (this.x < -2083) this.x = Background1X + 2075;
-};
+
 
 /**
  * These next 3 functions are the first level background image
@@ -81,10 +85,18 @@ Background.prototype.update = function () {
 function BackgroundTwo(game, spritesheet) {
     this.x = 2078;
     this.y = 0;
-    this.speed = -300;
+    this.speed = -150;
     this.spritesheet = spritesheet;
     this.game = game;
     this.ctx = game.ctx;
+};
+
+BackgroundTwo.prototype.update = function () {
+
+    if (this.game.d) {
+        this.x += this.game.clockTick * this.speed;
+    }
+    if (this.x < -2083) this.x = BackgroundX + 2075;
 };
 
 BackgroundTwo.prototype.draw = function () {
@@ -92,11 +104,7 @@ BackgroundTwo.prototype.draw = function () {
     Background1X = this.x;
 };
 
-BackgroundTwo.prototype.update = function () {
-    this.x += this.game.clockTick * this.speed;
-    //if (this.x < -1920) this.x =1916; 
-    if (this.x < -2083) this.x = BackgroundX + 2075;
-};
+
 
 
 
@@ -115,24 +123,26 @@ function Hero(game, spritesheet, spritesheet2, spriteSheet3, spriteSheet4, sprit
     this.jumping = false;
     this.speed = 200;
     this.ctx = game.ctx;
-    this.ground = 400;
+    this.ground = 525;
     this.radius = 100;
     this.runFlag = false;
     this.firing = false;
     this.CanShoot = true;
     this.jumpForward = true;
     this.standForward = true;
-    Entity.call(this, game, 0, 400);
+    Entity.call(this, game, 0, 525);
 }
 
 Hero.prototype = new Entity();
 Hero.prototype.constructor = Hero;
 Hero.prototype.update = function () {
+
     if (this.game.a) {
         if (!this.jumping) this.jumpForward = false;
         this.standForward = false;
         this.runFlag = true;
     }
+
     if (this.game.d) {
         if (!this.jumping) this.jumpForward = true;
         this.standForward = true;
@@ -142,13 +152,17 @@ Hero.prototype.update = function () {
     if (!this.game.a && !this.game.d) {
         this.runFlag = false;
     }
+
     if (this.game.shooting) this.firing = true;
     else this.firing = false;
+
     if (this.game.s) this.crawlForward = true;
     else this.crawlForward = false;
+
     if (this.game.space) {
         this.jumping = true;
     }
+
     if (this.jumping && this.runFlag) {
     
         if (this.frontJump.isDone() || this.backJump.isDone()) {
@@ -475,12 +489,12 @@ AM.downloadAll(function () {
         , AM.getAsset("./img/backwardStand.png"), AM.getAsset("./img/frontJump.png"), AM.getAsset("./img/backJump.png")
         , AM.getAsset("./img/bullet.png"), AM.getAsset("./img/backCrawl.png"), AM.getAsset("./img/frontCrawl.png")
         , AM.getAsset("./img/backCrawl.png")));
-    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 400, 450, 60));
-    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 400, 450, 60));
-    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/orange_Robot.png"), AM.getAsset("./img/orange_Robot.png"), 500, 450, 60));
-    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/green_Robot.png"), AM.getAsset("./img/green_Robot.png"), 100, 450, 60));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 400, 575, 60));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 400, 575, 60));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/orange_Robot.png"), AM.getAsset("./img/orange_Robot.png"), 500, 575, 60));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/green_Robot.png"), AM.getAsset("./img/green_Robot.png"), 100, 575, 60));
     gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png"), AM.getAsset("./img/enemySoldier_Foward.png"),
-        AM.getAsset("./img/enemySoldier_StandingBackward.png"), AM.getAsset("./img/enemySoldier_StandingFoward.png"), 200, 400, 200));
+        AM.getAsset("./img/enemySoldier_StandingBackward.png"), AM.getAsset("./img/enemySoldier_StandingFoward.png"), 200, 525, 200));
     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png"), AM.getAsset("./img/flyingRobot_Forward.png"), 200, 100, 60));
     console.log("All Done!");
 });
