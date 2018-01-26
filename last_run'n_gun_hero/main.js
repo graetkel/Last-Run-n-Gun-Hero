@@ -203,7 +203,6 @@ function Hero(game, spritesheet, spritesheet2, spriteSheet3, spriteSheet4, sprit
 Hero.prototype = new Entity();
 Hero.prototype.constructor = Hero;
 Hero.prototype.update = function () {
-    if (this.game.a) {
         if (!this.jumping) this.jumpForward = false;
         this.standForward = false;
         this.runFlag = true;
