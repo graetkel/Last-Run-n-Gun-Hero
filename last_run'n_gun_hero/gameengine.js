@@ -72,6 +72,9 @@ GameEngine.prototype.startInput = function () {
         else if (e.code === "KeyS") {
             that.s = true;
         }
+        else if (e.code === "ArrowRight") {
+            that.shooting = true;
+        }
         e.preventDefault();
         console.log("Key down Event - Char " + e.code + " Code " + e.keyCode);
     }, false);
@@ -87,6 +90,9 @@ GameEngine.prototype.startInput = function () {
         }
         else if (e.code === "KeyS") {
             that.s = false;
+        }
+        else if (e.code === "ArrowRight") {
+            that.shooting = false;
         }
         console.log("Key Up Event - Char " + e.code + " Code " + e.keyCode);
     }, false);
@@ -128,26 +134,8 @@ GameEngine.prototype.loop = function () {
     this.clockTick = this.timer.tick();
     this.update();
     this.draw();
-    
     this.space = null;
-    //this.s = null;
 }
-
-//function Timer() {
-  //  this.gameTime = 0;
- //   this.maxStep = 0.05;
- //   this.wallLastTimestamp = 0;
-//}
-
-//Timer.prototype.tick = function () {
-  //  var wallCurrent = Date.now();
- //   var wallDelta = (wallCurrent - this.wallLastTimestamp) / 1000;
-  //  this.wallLastTimestamp = wallCurrent;
-
-  //  var gameDelta = Math.min(wallDelta, this.maxStep);
-  //  this.gameTime += gameDelta;
-//return gameDelta;
-//}
 
 function Entity(game, x, y) {
     this.game = game;

@@ -193,6 +193,7 @@ function Hero(game, spritesheet, spritesheet2, spriteSheet3, spriteSheet4, sprit
     this.ground = 400;
     this.radius = 100;
     this.runFlag = false;
+    this.firing = false;
     this.standForward = true;
     Entity.call(this, game, 0, 400);
 }
@@ -200,6 +201,7 @@ function Hero(game, spritesheet, spritesheet2, spriteSheet3, spriteSheet4, sprit
 Hero.prototype = new Entity();
 Hero.prototype.constructor = Hero;
 Hero.prototype.update = function () {
+    console.log(this.game.shooting);
     if (this.game.a) {
         if (!this.jumping) this.jumpForward = false;
         this.standForward = false;
@@ -214,12 +216,15 @@ Hero.prototype.update = function () {
     if (!this.game.a && !this.game.d) {
         this.runFlag = false;
     }
+    if (this.game.shooting) this.firing = true;
+    else this.firing = false;
     if (this.game.s) this.crawlForward = true;
     else this.crawlForward = false;
     if (this.game.space) {
         this.jumping = true;
     }
     if (this.jumping && this.runFlag) {
+    
         if (this.frontJump.isDone() || this.backJump.isDone()) {
             this.frontJump.elapsedTime = 0;
             this.backJump.elapsedTime = 0;
@@ -268,6 +273,10 @@ Hero.prototype.update = function () {
         this.x -= this.game.clockTick * this.speed;
         if (this.x < -200) this.x = 800;
     }
+    
+    if (this.firing) this.game.addEntity(new Bullet(this.game, this.x, this.y));
+    
+    
 
     Entity.prototype.update.call(this);
 
@@ -332,6 +341,7 @@ EnemySoldier.prototype.update = function () {
 
 
 }
+
 EnemySoldier.prototype.draw = function () {
     if (this.forward) this.animationR.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
     else if (!this.forward) this.animationL.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
@@ -410,6 +420,35 @@ FlyingRobot.prototype.draw = function () {
 
 }
 
+function Bullet(game, startX, startY) {
+    this.speed = 20;
+    this.ctx = game.ctx;
+    Entity.call(this, game, startX, startY);
+}
+
+Bullet.prototype = new Entity();
+Bullet.prototype.constructor = Bullet;
+Bullet.prototype.update = function () {
+
+    this.x += this.game.clockTick * this.speed;
+
+    Entity.prototype.update.call(this);
+
+
+}
+Bullet.prototype.draw = function () {
+    this.ctx.fillStyle = "White";
+    this.ctx.beginPath();
+    this.ctx.arc(this.x + 100,this.y + 40,4,0,2*Math.PI);
+    this.ctx.closePath();
+    this.ctx.fill();
+
+    Entity.prototype.draw.call(this);
+
+}
+
+
+AM.queueDownload("./img/bullet.jpg");
 AM.queueDownload("./img/newtrees.jpg");
 AM.queueDownload("./img/newtrees1.jpg"); 
 AM.queueDownload("./img/backCrawl.png");
@@ -455,7 +494,7 @@ AM.downloadAll(function () {
         , AM.getAsset("./img/backwardStand.png"), AM.getAsset("./img/frontJump.png"), AM.getAsset("./img/backJump.png")
         , AM.getAsset("./img/bullet.png"), AM.getAsset("./img/backCrawl.png"), AM.getAsset("./img/frontCrawl.png")
         , AM.getAsset("./img/backCrawl.png")));
-    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 300, 450, 60));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 400, 450, 60));
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 400, 450, 60));
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/orange_Robot.png"), AM.getAsset("./img/orange_Robot.png"), 500, 450, 60));
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/green_Robot.png"), AM.getAsset("./img/green_Robot.png"), 100, 450, 60));
