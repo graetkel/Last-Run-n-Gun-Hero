@@ -12,6 +12,7 @@ function Animation(spriteSheet, startX, startY, frameWidth, frameHeight, sheetWi
     this.totalTime = frameDuration * frames;
     this.elapsedTime = 0;
     this.loop = loop;
+    
 
 }
 
@@ -194,6 +195,7 @@ function Hero(game, spritesheet, spritesheet2, spriteSheet3, spriteSheet4, sprit
     this.radius = 100;
     this.runFlag = false;
     this.firing = false;
+    this.CanShoot = true;
     this.standForward = true;
     Entity.call(this, game, 0, 400);
 }
@@ -273,8 +275,27 @@ Hero.prototype.update = function () {
         this.x -= this.game.clockTick * this.speed;
         if (this.x < -200) this.x = 800;
     }
-    
-    if (this.firing) this.game.addEntity(new Bullet(this.game, this.x, this.y));
+    that = this
+    if (this.firing) {
+        if (this.CanShoot) {
+            if(this.standForward) {
+                if (this.crawlForward) this.game.addEntity(new Bullet(this.game, this.x + 140, this.y + 85, this.standForward));
+                else this.game.addEntity(new Bullet(this.game, this.x + 100, this.y + 35, this.standForward));
+            }
+            else {
+               if (this.crawlForward) this.game.addEntity(new Bullet(this.game, this.x - 40, this.y + 85, this.standForward));
+               else this.game.addEntity(new Bullet(this.game, this.x, this.y + 35, this.standForward));
+            }
+            this.CanShoot = false;
+            setTimeout(function(){
+                that.CanShoot = true;
+
+            }, 500)
+            
+            
+        }
+        
+    }
     
     
 
@@ -420,17 +441,18 @@ FlyingRobot.prototype.draw = function () {
 
 }
 
-function Bullet(game, startX, startY) {
-    this.speed = 20;
+function Bullet(game, startX, startY, direction) {
+    this.speed = 300;
     this.ctx = game.ctx;
+    this.forward = direction;
     Entity.call(this, game, startX, startY);
 }
 
 Bullet.prototype = new Entity();
 Bullet.prototype.constructor = Bullet;
 Bullet.prototype.update = function () {
-
-    this.x += this.game.clockTick * this.speed;
+    if (this.forward) this.x += this.game.clockTick * this.speed;
+    else this.x -= this.game.clockTick * this.speed;
 
     Entity.prototype.update.call(this);
 
@@ -439,7 +461,7 @@ Bullet.prototype.update = function () {
 Bullet.prototype.draw = function () {
     this.ctx.fillStyle = "White";
     this.ctx.beginPath();
-    this.ctx.arc(this.x + 100,this.y + 40,4,0,2*Math.PI);
+    this.ctx.arc(this.x ,this.y ,4,0,2*Math.PI);
     this.ctx.closePath();
     this.ctx.fill();
 
