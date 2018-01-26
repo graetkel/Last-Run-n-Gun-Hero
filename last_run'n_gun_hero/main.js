@@ -196,6 +196,7 @@ function Hero(game, spritesheet, spritesheet2, spriteSheet3, spriteSheet4, sprit
     this.runFlag = false;
     this.firing = false;
     this.CanShoot = true;
+    this.jumpForward = true;
     this.standForward = true;
     Entity.call(this, game, 0, 400);
 }
@@ -230,6 +231,7 @@ Hero.prototype.update = function () {
             this.frontJump.elapsedTime = 0;
             this.backJump.elapsedTime = 0;
             this.jumping = false;
+            this.standForward = this.jumpForward;
         }
         var jumpDistance;
         if (this.frontJump.elapsedTime > 0) jumpDistance = this.frontJump.elapsedTime / this.frontJump.totalTime;
@@ -240,14 +242,15 @@ Hero.prototype.update = function () {
 
         var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
         this.y = this.ground - height;
-        if (this.standForward) this.x += this.game.clockTick * this.speed;
-        else this.x -= this.game.clockTick * this.speed;
+        if (this.standForward) this.x += (this.game.clockTick * this.speed) / 2;
+        else this.x -= (this.game.clockTick * this.speed) / 2;
     }
     else if (this.jumping) {
         if (this.frontJump.isDone() || this.backJump.isDone()) {
             this.frontJump.elapsedTime = 0;
             this.backJump.elapsedTime = 0;
             this.jumping = false;
+            this.standForward = this.jumpForward;
         }
         var jumpDistance;
         if (this.frontJump.elapsedTime > 0) jumpDistance = this.frontJump.elapsedTime / this.frontJump.totalTime;
@@ -288,10 +291,10 @@ Hero.prototype.update = function () {
             }
             this.CanShoot = false;
             setTimeout(function(){
-                console.log("hel");
-                that.CanShoot = true;
-    
-            }, 500);
+            console.log("hel");
+            that.CanShoot = true;
+
+        }, 500);
             
         }
         
