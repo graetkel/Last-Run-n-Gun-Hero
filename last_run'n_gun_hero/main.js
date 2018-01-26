@@ -1,4 +1,6 @@
 var AM = new AssetManager();
+var Background1 = 0;
+var Background2 = 0;
 
 function Animation(spriteSheet, startX, startY, frameWidth, frameHeight, sheetWidth, frameDuration, frames, loop) {
     this.spriteSheet = spriteSheet;
@@ -68,12 +70,12 @@ Background.prototype.update = function () {
     if (this.game.d) {
         this.x += this.game.clockTick * this.speed;
     }
-    if (this.x < -2083) this.x = Background1X + 2075;
+    if (this.x < -2083) this.x = Background2 + 2075;
 };
 
 Background.prototype.draw = function () {
     this.ctx.drawImage(this.spritesheet, this.x, this.y);
-    BackgroundX = this.x;
+    Background1 = this.x;
 };
 
 
@@ -95,12 +97,12 @@ BackgroundTwo.prototype.update = function () {
     if (this.game.d) {
         this.x += this.game.clockTick * this.speed;
     }
-    if (this.x < -2083) this.x = BackgroundX + 2075;
+    if (this.x < -2083) this.x = Background1 + 2075;
 };
 
 BackgroundTwo.prototype.draw = function () {
     this.ctx.drawImage(this.spritesheet, this.x, this.y);
-    Background1X = this.x;
+    Background2 = this.x;
 };
 
 
