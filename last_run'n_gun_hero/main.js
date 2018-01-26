@@ -235,7 +235,7 @@ Hero.prototype.update = function () {
             }
             this.CanShoot = false;
             setTimeout(function(){
-            console.log("hel");
+           
             that.CanShoot = true;
 
         }, 500);
