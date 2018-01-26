@@ -2,6 +2,5 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/.vs/ProjectSettings.json
-/.vs/VSWorkspaceState.json
-/.vs/slnx.sqlite
+/.vs
+/last_run'n_gun_hero/.vs

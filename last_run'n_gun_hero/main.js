@@ -1,4 +1,6 @@
 var AM = new AssetManager();
+var Background1 = 0;
+var Background2 = 0;
 
 function Animation(spriteSheet, startX, startY, frameWidth, frameHeight, sheetWidth, frameDuration, frames, loop) {
     this.spriteSheet = spriteSheet;
@@ -50,132 +52,63 @@ Animation.prototype.isDone = function () {
     return (this.elapsedTime >= this.totalTime);
 }
 
-// no inheritance
+/**
+ * These next 3 functions are the first level background image
+ * setup to repeat infinitely.
+ */
 function Background(game, spritesheet) {
     this.x = 0;
     this.y = 0;
-    this.speed = -300
+    this.speed = -150
     this.spritesheet = spritesheet;
     this.game = game;
     this.ctx = game.ctx;
-};
-
-Background.prototype.draw = function () {
-    this.ctx.drawImage(this.spritesheet,
-        this.x, this.y);
-    BackgroundX = this.x;
-
-    //-----
-    var grid = [['c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c'],
-    ['x', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'z'],
-    ['x', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'z'],
-    ['x', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'z'],
-    ['x', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'z'],
-    ['x', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'z'],
-    ['x', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'z'],
-    ['x', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'z'],
-    ['x', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'z'],
-    ['x', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'z'],
-    ['x', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'z'],
-    ['x', ' ', ' ', 'u', 'l', 'i', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'z'],
-    ['x', ' ', ' ', 'l', 'l', 'l', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'z'],
-    ['x', ' ', ' ', 'l', 'l', 'l', ' ', ' ', ' ', ' ', ' ', ' ', 'w', 'w', 'w', 'w', 'w', 'w', 'w', ' ', ' ', ' ', ' ', ' ', 'z'],
-    ['x', ' ', ' ', 'l', 'l', 'l', ' ', ' ', ' ', ' ', ' ', ' ', 'w', ' ', ' ', ' ', ' ', ' ', 'w', ' ', ' ', ' ', ' ', ' ', 'z'],
-    ['x', ' ', ' ', 'o', 'l', 'p', ' ', ' ', ' ', ' ', ' ', ' ', 'w', ' ', ' ', ' ', ' ', ' ', 'w', ' ', ' ', ' ', ' ', ' ', 'z'],
-    ['x', ' ', ' ', ' ', 't', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'w', ' ', ' ', ' ', ' ', ' ', 'w', ' ', ' ', ' ', ' ', ' ', 'z'],
-    ['x', ' ', ' ', ' ', 't', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'd', ' ', ' ', ' ', ' ', ' ', 'd', ' ', ' ', ' ', ' ', ' ', 'z'],
-    ['x', ' ', ' ', ' ', 't', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'd', ' ', ' ', ' ', ' ', ' ', 'd', ' ', ' ', ' ', ' ', ' ', 'z'],
-    ['c', 'v', 'v', 'v', 'v', 'v', 'v', 'v', 'v', 'v', 'v', 'v', 'v', 'v', 'v', 'v', 'v', 'v', 'v', 'v', 'v', 'v', 'v', 'v', 'c'],
-    ['c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c']];
-    //ctx.fillStyle = "SaddleBrown";
-    //ctx.fillRect(startX, StartY, Width, Height)
-    var sqFt = 25;
-    var xAxis, yAxis;
-    //var canvasX = grid[0].length;
-    //var canvasY = grid.length;
-    //console.log("canX : " + grid[0].length + " canY: " + grid.length);
-
-    for (yAxis = 0; yAxis < grid.length; yAxis++) {
-        for (xAxis = 0; xAxis < grid[0].length; xAxis++) {
-            var obstacle = grid[yAxis][xAxis];
-
-            function tilePicker(color) {
-                this.ctx.fillStyle = color;
-                this.ctx.fillRect(sqFt * xAxis, 25 + sqFt * yAxis, sqFt, sqFt);
-            };
-            switch (obstacle) {
-                case 'c': // middle ground
-                    this.ctx.drawImage(AM.getAsset("./img/ground1.png"), sqFt * xAxis, 25 + sqFt * yAxis, sqFt, sqFt);
-                    break;
-                case 'v': // top ground
-                    this.ctx.drawImage(AM.getAsset("./img/ground2.png"), sqFt * xAxis, 25 + sqFt * yAxis, sqFt, sqFt);
-                    break;
-                case 'z': // left ground
-                    this.ctx.drawImage(AM.getAsset("./img/ground3.png"), sqFt * xAxis, 25 + sqFt * yAxis, sqFt, sqFt);
-                    break;
-                case 'x': // right ground
-                    this.ctx.drawImage(AM.getAsset("./img/ground4.png"), sqFt * xAxis, 25 + sqFt * yAxis, sqFt, sqFt);
-                    break;
-                case 't': // tree trunk
-                    this.ctx.drawImage(AM.getAsset("./img/treeTrunk.png"), sqFt * xAxis, 25 + sqFt * yAxis, sqFt, sqFt);
-                    break;
-                case 'l': // middle leaf
-                    this.ctx.drawImage(AM.getAsset("./img/leaf1.png"), sqFt * xAxis, 25 + sqFt * yAxis, sqFt, sqFt);
-                    break;
-                case 'u': // NW leaf
-                    this.ctx.drawImage(AM.getAsset("./img/leaf2.png"), sqFt * xAxis, 25 + sqFt * yAxis, sqFt, sqFt);
-                    break;
-                case 'i': // NE leaf
-                    this.ctx.drawImage(AM.getAsset("./img/leaf3.png"), sqFt * xAxis, 25 + sqFt * yAxis, sqFt, sqFt);
-                    break;
-                case 'o': // SW leaf
-                    this.ctx.drawImage(AM.getAsset("./img/leaf4.png"), sqFt * xAxis, 25 + sqFt * yAxis, sqFt, sqFt);
-                    break;
-                case 'p': // SE leaf
-                    this.ctx.drawImage(AM.getAsset("./img/leaf5.png"), sqFt * xAxis, 25 + sqFt * yAxis, sqFt, sqFt);
-                    break;
-                case 'w': // concrete walls
-                    //tilePicker("gray");
-                    break;
-                case 'd': // door
-                    //tilePicker("SaddleBrown");
-                    break;
-            }
-
-            //ctx.fillRect(50*xAxis,50*yAxis,50,50);
-        }
-    }
-    //ctx.fillRect(0,500,800,50);
-
-    Entity.prototype.draw.call(this);
 };
 
 Background.prototype.update = function () {
-    this.x += this.game.clockTick * this.speed;
-    //if (this.x < -1920) this.x = 1916; 
-    if (this.x < -2083) this.x = Background1X + 2075;
+
+    if (this.game.d) {
+        this.x += this.game.clockTick * this.speed;
+    }
+    if (this.x < -2083) this.x = Background2 + 2075;
 };
 
-// no inheritance 
-function Background1(game, spritesheet) {
+Background.prototype.draw = function () {
+    this.ctx.drawImage(this.spritesheet, this.x, this.y);
+    Background1 = this.x;
+};
+
+
+/**
+ * These next 3 functions are the first level background image
+ * setup to repeat infinitely.
+ */
+function BackgroundTwo(game, spritesheet) {
     this.x = 2078;
     this.y = 0;
-    this.speed = -300;
+    this.speed = -150;
     this.spritesheet = spritesheet;
     this.game = game;
     this.ctx = game.ctx;
 };
 
-Background1.prototype.draw = function () {
-    this.ctx.drawImage(this.spritesheet, this.x, this.y);
-    Background1X = this.x;
+BackgroundTwo.prototype.update = function () {
+
+    if (this.game.d) {
+        this.x += this.game.clockTick * this.speed;
+    }
+    if (this.x < -2083) this.x = Background1 + 2075;
 };
 
-Background1.prototype.update = function () {
-    this.x += this.game.clockTick * this.speed;
-    //if (this.x < -1920) this.x =1916; 
-    if (this.x < -2083) this.x = BackgroundX + 2075;
+BackgroundTwo.prototype.draw = function () {
+    this.ctx.drawImage(this.spritesheet, this.x, this.y);
+    Background2 = this.x;
 };
+
+
+
+
+
 
 // inheritance
 function Hero(game, spritesheet, spritesheet2, spriteSheet3, spriteSheet4, spriteSheet5, spriteSheet6, spriteSheet7, spriteSheet8, spriteSheet9, spriteSheet10
@@ -191,24 +124,26 @@ function Hero(game, spritesheet, spritesheet2, spriteSheet3, spriteSheet4, sprit
     this.jumping = false;
     this.speed = 200;
     this.ctx = game.ctx;
-    this.ground = 400;
+    this.ground = 525;
     this.radius = 100;
     this.runFlag = false;
     this.firing = false;
     this.CanShoot = true;
     this.jumpForward = true;
     this.standForward = true;
-    Entity.call(this, game, 0, 400);
+    Entity.call(this, game, 0, 525);
 }
 
 Hero.prototype = new Entity();
 Hero.prototype.constructor = Hero;
 Hero.prototype.update = function () {
+
     if (this.game.a) {
         if (!this.jumping) this.jumpForward = false;
         this.standForward = false;
         this.runFlag = true;
     }
+
     if (this.game.d) {
         if (!this.jumping) this.jumpForward = true;
         this.standForward = true;
@@ -218,13 +153,23 @@ Hero.prototype.update = function () {
     if (!this.game.a && !this.game.d) {
         this.runFlag = false;
     }
+
     if (this.game.shooting) this.firing = true;
     else this.firing = false;
+
     if (this.game.s) this.crawlForward = true;
     else this.crawlForward = false;
+
     if (this.game.space) {
         this.jumping = true;
     }
+
+
+    //Moved these variables outside of the next If/Else Statement
+    //to simplify and make code easier to read
+    var totalHeight = 200;
+    var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
+
     if (this.jumping && this.runFlag) {
     
         if (this.frontJump.isDone() || this.backJump.isDone()) {
@@ -236,12 +181,12 @@ Hero.prototype.update = function () {
         var jumpDistance;
         if (this.frontJump.elapsedTime > 0) jumpDistance = this.frontJump.elapsedTime / this.frontJump.totalTime;
         else jumpDistance = this.backJump.elapsedTime / this.backJump.totalTime;
-        var totalHeight = 200;
+        
         if (jumpDistance > 0.5)
             jumpDistance = 1 - jumpDistance;
-
-        var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
+        
         this.y = this.ground - height;
+
         if (this.standForward) this.x += (this.game.clockTick * this.speed) / 2;
         else this.x -= (this.game.clockTick * this.speed) / 2;
     }
@@ -255,17 +200,16 @@ Hero.prototype.update = function () {
         var jumpDistance;
         if (this.frontJump.elapsedTime > 0) jumpDistance = this.frontJump.elapsedTime / this.frontJump.totalTime;
         else jumpDistance = this.backJump.elapsedTime / this.backJump.totalTime;
-        var totalHeight = 200;
+        
         if (jumpDistance > 0.5)
             jumpDistance = 1 - jumpDistance;
 
-        var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
         this.y = this.ground - height;
     }
 
-    else if (this.crawlForward) {
+    //else if (this.crawlForward) {
 
-    }
+    //}
 
     else if (this.runFlag && this.standForward && !this.crawlForward) {
         this.x += this.game.clockTick * this.speed;
@@ -504,8 +448,8 @@ Bullet.prototype.draw = function () {
 
 
 AM.queueDownload("./img/bullet.jpg");
-AM.queueDownload("./img/newtrees.jpg");
-AM.queueDownload("./img/newtrees1.jpg"); 
+AM.queueDownload("./img/backgroundtrees.jpg");
+AM.queueDownload("./img/backgroundtrees1.jpg"); 
 AM.queueDownload("./img/backCrawl.png");
 AM.queueDownload("./img/runningHero.png");
 AM.queueDownload("./img/backwardHero.png");
@@ -545,17 +489,18 @@ AM.downloadAll(function () {
     gameEngine.init(ctx);
     gameEngine.start();
 
-    gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/newtrees.jpg")));
-    gameEngine.addEntity(new Background1(gameEngine, AM.getAsset("./img/newtrees1.jpg"))); 
+    gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/backgroundtrees.jpg")));
+    gameEngine.addEntity(new BackgroundTwo(gameEngine, AM.getAsset("./img/backgroundtrees1.jpg"))); 
     gameEngine.addEntity(new Hero(gameEngine, AM.getAsset("./img/runningHero.png"), AM.getAsset("./img/backwardHero.png"), AM.getAsset("./img/frontStanding.png")
         , AM.getAsset("./img/backwardStand.png"), AM.getAsset("./img/frontJump.png"), AM.getAsset("./img/backJump.png")
         , AM.getAsset("./img/bullet.png"), AM.getAsset("./img/backCrawl.png"), AM.getAsset("./img/frontCrawl.png")
         , AM.getAsset("./img/backCrawl.png")));
-    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 400, 450, 60));
-    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 400, 450, 60));
-    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/orange_Robot.png"), AM.getAsset("./img/orange_Robot.png"), 500, 450, 60));
-    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/green_Robot.png"), AM.getAsset("./img/green_Robot.png"), 100, 450, 60));
-    gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png"), AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png"), AM.getAsset("./img/enemySoldier_StandingFoward.png"), 200, 400, 200));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 400, 575, 60));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 400, 575, 60));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/orange_Robot.png"), AM.getAsset("./img/orange_Robot.png"), 500, 575, 60));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/green_Robot.png"), AM.getAsset("./img/green_Robot.png"), 100, 575, 60));
+    gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png"), AM.getAsset("./img/enemySoldier_Foward.png"),
+        AM.getAsset("./img/enemySoldier_StandingBackward.png"), AM.getAsset("./img/enemySoldier_StandingFoward.png"), 200, 525, 200));
     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png"), AM.getAsset("./img/flyingRobot_Forward.png"), 200, 100, 60));
     console.log("All Done!");
 });
