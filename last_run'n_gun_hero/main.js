@@ -355,11 +355,23 @@ function EnemySoldier(game, spritesheet1, spritesheet2, spritesheet3, spriteshee
 EnemySoldier.prototype = new Entity();
 EnemySoldier.prototype.constructor = Robot;
 EnemySoldier.prototype.update = function () {
+    enemyThat = this;
     if ((Math.abs(this.x - this.game.entities[2].x) >= 200 )) this.standing = false;
     if (Math.abs(this.x - this.game.entities[2].x) <= 200 ) {
-        this. standing = true;
+        this.standing = true;
         if(this.x - this.game.entities[2].x < 0) this.forward = true;
         else this.forward = false;
+        if (this.enemyShoot) {
+            if (this.forward) this.game.addEntity(new Bullet(this.game, this.x + 100, this.y + 35, this.forward));
+            else this.game.addEntity(new Bullet(this.game, this.x, this.y + 35, this.forward));
+            
+            this.enemyShoot = false;
+            setTimeout(function(){
+            enemyThat.enemyShoot = true;
+
+        }, 500);
+            
+        }
     }
     
     else if (this.forward && (this.x - this.center < 100)) this.x += this.game.clockTick * this.speed;
