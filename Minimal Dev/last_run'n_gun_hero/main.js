@@ -489,8 +489,8 @@ EnemySoldier.prototype = new Entity();
 EnemySoldier.prototype.constructor = Robot;
 EnemySoldier.prototype.update = function () {
     var enemyThat = this;
-    if ((Math.abs(this.x - this.game.entities[3].x) >= 200 )) this.standing = false;
-    if (Math.abs(this.x - this.game.entities[3].x) <= 200 ) {
+    if ((Math.abs(this.x - this.game.entities[3].x) >= 400 )) this.standing = false;
+    if (Math.abs(this.x - this.game.entities[3].x) <= 400 ) {
         this.standing = true;
         if(this.x - this.game.entities[3].x < 0) this.forward = true;
         else this.forward = false;
