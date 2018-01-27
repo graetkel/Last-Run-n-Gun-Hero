@@ -449,7 +449,6 @@ Bullet.prototype.draw = function () {
 }
 
 
-AM.queueDownload("./img/bullet.jpg");
 AM.queueDownload("./img/backgroundtrees.jpg");
 AM.queueDownload("./img/backgroundtrees1.jpg"); 
 AM.queueDownload("./img/backCrawl.png");
@@ -497,7 +496,7 @@ AM.downloadAll(function () {
         , AM.getAsset("./img/backwardStand.png"), AM.getAsset("./img/frontJump.png"), AM.getAsset("./img/backJump.png")
         , AM.getAsset("./img/bullet.png"), AM.getAsset("./img/backCrawl.png"), AM.getAsset("./img/frontCrawl.png")
         , AM.getAsset("./img/backCrawl.png")));
-    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 400, 575, 60));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 300, 575, 60));
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 400, 575, 60));
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/orange_Robot.png"), AM.getAsset("./img/orange_Robot.png"), 500, 575, 60));
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/green_Robot.png"), AM.getAsset("./img/green_Robot.png"), 100, 575, 60));
