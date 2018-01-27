@@ -656,7 +656,7 @@ BulletFlash.prototype.draw = function () {
 
 }
 
-AM.queueDownload("./img/bulletFlash.jpg");
+//AM.queueDownload("./img/bulletFlash.jpg");
 AM.queueDownload("./img/backgroundtrees.jpg");
 AM.queueDownload("./img/backgroundtrees1.jpg");
 AM.queueDownload("./img/backCrawl.png");
