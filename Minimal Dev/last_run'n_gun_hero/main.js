@@ -63,7 +63,7 @@ Animation.prototype.isDone = function () {
  * setup to repeat infinitely.
  */
 function Background(game, spritesheet) {
-    this.x = 0;
+    this.x = -1000;
     this.y = 0;
     this.speed = -150
     this.spritesheet = spritesheet;
@@ -93,7 +93,7 @@ Background.prototype.draw = function () {
  * setup to repeat infinitely.
  */
 function BackgroundTwo(game, spritesheet) {
-    this.x = 2078;
+    this.x = 1078;
     this.y = 0;
     this.speed = -150;
     this.spritesheet = spritesheet;
