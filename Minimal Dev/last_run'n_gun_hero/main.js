@@ -364,7 +364,7 @@ Hero.prototype.update = function () {
         this.y = this.ground - height;
 
         if (this.standForward) this.x += (this.game.clockTick * this.speed) / 2;
-        else this.x -= (this.game.clockTick * this.speed) / 2;
+        else if(this.x >= 40) this.x -= (this.game.clockTick * this.speed) / 2;
     }
     else if (this.jumping) {
         if (this.frontJump.isDone() || this.backJump.isDone()) {
@@ -390,15 +390,14 @@ Hero.prototype.update = function () {
 
     else if (this.runFlag && this.standForward && !this.crawlForward) {
         this.x += this.game.clockTick * this.speed;
-        if (this.x > 3200) this.x = -230;
     }
 
     else if ((this.runFlag && !this.standForward && !this.crawlForward)) {
 
-        this.x -= this.game.clockTick * this.speed;
-        if (this.x < -230) this.x = 3200;
+        if(this.x >= 40) this.x -= this.game.clockTick * this.speed;
     }
     that = this;
+
     if (this.firing) {
     
         if (this.CanShoot) {
