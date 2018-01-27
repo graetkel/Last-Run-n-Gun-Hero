@@ -494,7 +494,7 @@ EnemySoldier.prototype.update = function () {
         this.standing = true;
         if(this.x - this.game.entities[3].x < 0) this.forward = true;
         else this.forward = false;
-        console.log(this.enemyShoot);
+      
         if (this.enemyShoot) {
             if (this.forward) this.game.addEntity(new Bullet(this.game, this.x + 100, this.y + 35, this.forward));
             else this.game.addEntity(new Bullet(this.game, this.x, this.y + 35, this.forward));
