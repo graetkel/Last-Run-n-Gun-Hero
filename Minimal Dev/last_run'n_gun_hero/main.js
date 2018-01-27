@@ -274,12 +274,12 @@ Camera.prototype.update = function() {
 
   //this.game.ctx.canvas.width = 3200;
   cameraMid = this.game.ctx.canvas.width / 2;
-  if (this.game.entities[3].x < cameraMid) {
+  if (this.game.entities[2].x < cameraMid) {
     cameraX = 0;
-  } else if (this.game.entities[3].x > 3200 - cameraMid) {
+  } else if (this.game.entities[2].x > 3200 - cameraMid) {
     cameraX = 3200 - this.game.ctx.canvas.width;
   } else {
-    cameraX = this.game.entities[3].x - cameraMid;
+    cameraX = this.game.entities[2].x - cameraMid;
   }
 
 }
