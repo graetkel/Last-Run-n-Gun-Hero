@@ -488,12 +488,13 @@ function EnemySoldier(game, spritesheet1, spritesheet2, spritesheet3, spriteshee
 EnemySoldier.prototype = new Entity();
 EnemySoldier.prototype.constructor = Robot;
 EnemySoldier.prototype.update = function () {
-    enemyThat = this;
-    if ((Math.abs(this.x - this.game.entities[2].x) >= 200 )) this.standing = false;
-    if (Math.abs(this.x - this.game.entities[2].x) <= 200 ) {
+    var enemyThat = this;
+    if ((Math.abs(this.x - this.game.entities[3].x) >= 200 )) this.standing = false;
+    if (Math.abs(this.x - this.game.entities[3].x) <= 200 ) {
         this.standing = true;
-        if(this.x - this.game.entities[2].x < 0) this.forward = true;
+        if(this.x - this.game.entities[3].x < 0) this.forward = true;
         else this.forward = false;
+        console.log(this.enemyShoot);
         if (this.enemyShoot) {
             if (this.forward) this.game.addEntity(new Bullet(this.game, this.x + 100, this.y + 35, this.forward));
             else this.game.addEntity(new Bullet(this.game, this.x, this.y + 35, this.forward));
@@ -525,11 +526,11 @@ EnemySoldier.prototype.update = function () {
 
 EnemySoldier.prototype.draw = function () {
     if (this.forward) {
-        if (this.standing) this.enemyFrontStand.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
+        if (this.standing) this.enemyFrontStand.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
         else this.enemyFrontRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
     }
     else {
-        if (this.standing) this.enemyBackStand.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
+        if (this.standing) this.enemyBackStand.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
         else this.enemyBackRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
     }
     Entity.prototype.draw.call(this);
