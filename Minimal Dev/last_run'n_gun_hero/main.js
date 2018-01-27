@@ -1,6 +1,5 @@
 var AM = new AssetManager();
-var Background1 = 0;
-var Background2 = 0;
+
 
 //In order to get the camera feature to work make sure every
 //x position value is its position - cameraX
@@ -58,12 +57,15 @@ Animation.prototype.isDone = function () {
     return (this.elapsedTime >= this.totalTime);
 }
 
+
+
+
 /**
  * These next 3 functions are the first level background image
  * setup to repeat infinitely.
  */
 function Background(game, spritesheet) {
-    this.x = -1000;
+    this.x = 0;
     this.y = 0;
     this.speed = -150
     this.spritesheet = spritesheet;
@@ -79,47 +81,50 @@ Background.prototype.update = function () {
     if (this.game.a) {
         this.x -= this.game.clockTick * this.speed * 0.75;
     }
-    if (this.x < -2083) this.x = Background2 + 2075;
+
+    if (this.x < -2081) this.x = 0;
+    if (this.x > 2081) this.x = 0;
 };
 
 Background.prototype.draw = function () {
     this.ctx.drawImage(this.spritesheet, this.x, this.y);
-    Background1 = this.x;
+    this.ctx.drawImage(this.spritesheet, this.x + 2077, this.y);
+    this.ctx.drawImage(this.spritesheet, this.x - 2077, this.y);
 };
 
 
-/**
- * These next 3 functions are the first level background image
- * setup to repeat infinitely.
- */
-function BackgroundTwo(game, spritesheet) {
-    this.x = 1078;
-    this.y = 0;
-    this.speed = -150;
-    this.spritesheet = spritesheet;
-    this.game = game;
-    this.ctx = game.ctx;
-};
+///**
+// * These next 3 functions are the first level background image
+// * setup to repeat infinitely.
+// */
+//function BackgroundTwo(game, spritesheet) {
+//    this.x = 1078;
+//    this.y = 0;
+//    this.speed = -150;
+//    this.spritesheet = spritesheet;
+//    this.game = game;
+//    this.ctx = game.ctx;
+//};
 
-BackgroundTwo.prototype.update = function () {
+//BackgroundTwo.prototype.update = function () {
 
-    var mod = 0.75;
+//    var mod = 0.75;
 
 
 
-    if (this.game.d) {
-        this.x += this.game.clockTick * this.speed * mod;
-    }
-    if (this.game.a) {
-        this.x -= this.game.clockTick * this.speed * mod;
-    }
-    if (this.x < -2083) this.x = Background1 + 2075;
-};
+//    if (this.game.d) {
+//        this.x += this.game.clockTick * this.speed * mod;
+//    }
+//    if (this.game.a) {
+//        this.x -= this.game.clockTick * this.speed * mod;
+//    }
+//    if (this.x < -2083) this.x = Background1 + 2075;
+//};
 
-BackgroundTwo.prototype.draw = function () {
-    this.ctx.drawImage(this.spritesheet, this.x, this.y);
-    Background2 = this.x;
-};
+//BackgroundTwo.prototype.draw = function () {
+//    this.ctx.drawImage(this.spritesheet, this.x, this.y);
+//    Background2 = this.x;
+//};
 
 
 var map = {
@@ -658,7 +663,7 @@ BulletFlash.prototype.draw = function () {
 
 //AM.queueDownload("./img/bulletFlash.jpg");
 AM.queueDownload("./img/backgroundtrees.jpg");
-AM.queueDownload("./img/backgroundtrees1.jpg");
+//AM.queueDownload("./img/backgroundtrees1.jpg");
 AM.queueDownload("./img/backCrawl.png");
 AM.queueDownload("./img/runningHero.png");
 AM.queueDownload("./img/backwardHero.png");
@@ -699,7 +704,7 @@ AM.downloadAll(function () {
     gameEngine.start();
 
     gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/backgroundtrees.jpg")));
-    gameEngine.addEntity(new BackgroundTwo(gameEngine, AM.getAsset("./img/backgroundtrees1.jpg")));
+    //gameEngine.addEntity(new BackgroundTwo(gameEngine, AM.getAsset("./img/backgroundtrees1.jpg")));
     gameEngine.addEntity(new Platform(gameEngine));
     gameEngine.addEntity(new Hero(gameEngine, AM.getAsset("./img/runningHero.png"), AM.getAsset("./img/backwardHero.png"), AM.getAsset("./img/frontStanding.png")
         , AM.getAsset("./img/backwardStand.png"), AM.getAsset("./img/frontJump.png"), AM.getAsset("./img/backJump.png")
