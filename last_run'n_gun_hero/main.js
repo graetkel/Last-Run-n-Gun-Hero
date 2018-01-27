@@ -168,10 +168,11 @@ Hero.prototype.update = function () {
     //Moved these variables outside of the next If/Else Statement
     //to simplify and make code easier to read
     var totalHeight = 200;
-    var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
+    //var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
 
     if (this.jumping && this.runFlag) {
-    
+        var totalHeight = 200;
+          
         if (this.frontJump.isDone() || this.backJump.isDone()) {
             this.frontJump.elapsedTime = 0;
             this.backJump.elapsedTime = 0;
@@ -184,13 +185,16 @@ Hero.prototype.update = function () {
         
         if (jumpDistance > 0.5)
             jumpDistance = 1 - jumpDistance;
-        
+
+        var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
         this.y = this.ground - height;
 
         if (this.standForward) this.x += (this.game.clockTick * this.speed) / 2;
         else this.x -= (this.game.clockTick * this.speed) / 2;
     }
+
     else if (this.jumping) {
+
         if (this.frontJump.isDone() || this.backJump.isDone()) {
             this.frontJump.elapsedTime = 0;
             this.backJump.elapsedTime = 0;
@@ -204,6 +208,7 @@ Hero.prototype.update = function () {
         if (jumpDistance > 0.5)
             jumpDistance = 1 - jumpDistance;
 
+        var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
         this.y = this.ground - height;
     }
 
