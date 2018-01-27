@@ -266,7 +266,7 @@ Camera.prototype.update = function() {
   //   this.yOffset = this.game.entities[1].y;
   // }
 
-  console.log(this.game);
+
   //this.game.ctx.canvas.width = 3200;
   cameraMid = this.game.ctx.canvas.width / 2;
   if (this.game.entities[3].x < cameraMid) {
@@ -400,7 +400,7 @@ Hero.prototype.update = function () {
     }
     that = this;
     if (this.firing) {
-        console.log(this.CanShoot);
+    
         if (this.CanShoot) {
             if (this.standForward) {
                 if (this.crawlForward) {
@@ -441,7 +441,7 @@ Hero.prototype.update = function () {
 }
 
 Hero.prototype.draw = function () {
-    console.log(this.x);
+  
     if (this.jumping && this.jumpForward) {
         this.frontJump.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
     }
