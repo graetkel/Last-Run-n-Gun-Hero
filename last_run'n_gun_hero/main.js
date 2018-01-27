@@ -209,23 +209,20 @@ Hero.prototype.update = function () {
         this.y = this.ground - height;
     }
 
-    //else if (this.crawlForward) {
+    else if (this.crawlForward) {
 
-    //}
+    }
 
     else if (this.runFlag && this.standForward && !this.crawlForward) {
         this.x += this.game.clockTick * this.speed;
-        if (this.x > 800) this.x = -230;
     }
 
     else if ((this.runFlag && !this.standForward && !this.crawlForward)) {
 
         this.x -= this.game.clockTick * this.speed;
-        if (this.x < -200) this.x = 800;
     }
     that = this;
     if (this.firing) {
-        console.log(this.CanShoot);
         if (this.CanShoot) {
             if (this.standForward) {
                 if (this.crawlForward) {
