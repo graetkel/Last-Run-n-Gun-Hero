@@ -228,12 +228,24 @@ Hero.prototype.update = function () {
         console.log(this.CanShoot);
         if (this.CanShoot) {
             if (this.standForward) {
-                if (this.crawlForward) this.game.addEntity(new Bullet(this.game, this.x + 140, this.y + 85, this.standForward));
-                else this.game.addEntity(new Bullet(this.game, this.x + 100, this.y + 35, this.standForward));
+                if (this.crawlForward) {
+                    this.game.addEntity(new Bullet(this.game, this.x + 140, this.y + 85, this.standForward));
+                   // this.game.addEntity(new BulletFlash(this.game, AM.getAsset("./img/BulletFlash.png"), this.x + 140, this.y + 85, this.standForward));
+                }
+                else {
+                    this.game.addEntity(new Bullet(this.game, this.x + 100, this.y + 35, this.standForward));
+                    //this.game.addEntity(new BulletFlash(this.game, AM.getAsset("./img/BulletFlash.png"), this.x + 100, this.y + 35, this.standForward));
+                }
             }
             else {
-               if (this.crawlForward) this.game.addEntity(new Bullet(this.game, this.x - 40, this.y + 85, this.standForward));
-               else this.game.addEntity(new Bullet(this.game, this.x, this.y + 35, this.standForward));
+               if (this.crawlForward) {
+                   this.game.addEntity(new Bullet(this.game, this.x - 40, this.y + 85, this.standForward));
+                  // this.game.addEntity(new BulletFlash(this.game, AM.getAsset("./img/BulletFlash.png"), this.x - 40, this.y + 85, this.standForward));
+               }
+               else {
+                   this.game.addEntity(new Bullet(this.game, this.x, this.y + 35, this.standForward));
+                  // this.game.addEntity(new BulletFlash(this.game, AM.getAsset("./img/BulletFlash.png"), this.x, this.y + 35, this.standForward));
+               }
             }
             this.CanShoot = false;
             setTimeout(function(){
@@ -447,8 +459,28 @@ Bullet.prototype.draw = function () {
     Entity.prototype.draw.call(this);
 
 }
+function BulletFlash(game, spriteSheet, startX, startY, direction) {
+    this.bulletFlash = new Animation(spriteSheet, this.x, this.y, 15, 14, 1, 0.1, 1, true);
+    this.ctx = game.ctx;
+    this.forward = direction;
+    Entity.call(this, game, startX, startY);
+}
 
+BulletFlash.prototype = new Entity();
+BulletFlash.prototype.constructor = BulletFlash;
+BulletFlash.prototype.update = function () {
+    Entity.prototype.update.call(this);
 
+}
+BulletFlash.prototype.draw = function () {
+    
+    this.bulletFlash.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
+
+    Entity.prototype.draw.call(this);
+
+}
+
+AM.queueDownload("./img/bulletFlash.jpg");
 AM.queueDownload("./img/backgroundtrees.jpg");
 AM.queueDownload("./img/backgroundtrees1.jpg"); 
 AM.queueDownload("./img/backCrawl.png");
