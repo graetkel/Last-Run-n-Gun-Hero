@@ -481,7 +481,7 @@ Hero.prototype.draw = function () {
     Entity.prototype.draw.call(this);
 }
 
-function EnemySoldier(game, spritesheet1, spritesheet2, spritesheet3, spritesheet4, xCord, yCord, unitSpeed) {
+function EnemySoldier(game, spritesheet1, spritesheet2, spritesheet3, spritesheet4, xCord, yCord, unitSpeed, centerWidth, sight) {
     this.enemyBackRun = new Animation(spritesheet1, this.x, this.y, 101, 100, 8, 0.1, 8, true);
     this.enemyFrontRun = new Animation(spritesheet2, this.x, this.y, 103, 100, 8, 0.1, 8, true);
     this.enemyBackStand = new Animation(spritesheet3, this.x, this.y, 98, 100, 1, 0.1, 1, true);
@@ -492,6 +492,8 @@ function EnemySoldier(game, spritesheet1, spritesheet2, spritesheet3, spriteshee
     this.enemyShoot = true;
     this.standing = false;
     this.center = xCord;
+    this.sight = sight;
+    this.centerWidth = centerWidth;
     Entity.call(this, game, xCord, yCord);
 }
 
@@ -499,8 +501,8 @@ EnemySoldier.prototype = new Entity();
 EnemySoldier.prototype.constructor = Robot;
 EnemySoldier.prototype.update = function () {
     var enemyThat = this;
-    if ((Math.abs(this.x - this.game.entities[3].x) >= 400 )) this.standing = false;
-    if (Math.abs(this.x - this.game.entities[3].x) <= 400 ) {
+    if ((Math.abs(this.x - this.game.entities[3].x) >= this.sight )) this.standing = false;
+    if (Math.abs(this.x - this.game.entities[3].x) <= this.sight ) {
         this.standing = true;
         if(this.x - this.game.entities[3].x < 0) this.forward = true;
         else this.forward = false;
@@ -518,13 +520,13 @@ EnemySoldier.prototype.update = function () {
         }
     }
 
-    else if (this.forward && (this.x - this.center < 100)) this.x += this.game.clockTick * this.speed;
-    else if (((this.x - this.center) >= 100) && this.forward) {
+    else if (this.forward && (this.x - this.center < this.centerWidth)) this.x += this.game.clockTick * this.speed;
+    else if (((this.x - this.center) >= this.centerWidth) && this.forward) {
         this.x -= this.game.clockTick * this.speed;
         this.forward = false;
     }
-    else if (!this.forward && (this.x - this.center > -100)) this.x -= this.game.clockTick * this.speed;
-    else if (((this.x - this.center) <= -100) && !this.forward) {
+    else if (!this.forward && (this.x - this.center > -this.centerWidth)) this.x -= this.game.clockTick * this.speed;
+    else if (((this.x - this.center) <= -this.centerWidth) && !this.forward) {
         this.x += this.game.clockTick * this.speed;
         this.forward = true;
     }
@@ -547,12 +549,13 @@ EnemySoldier.prototype.draw = function () {
 
 }
 
-function Robot(game, spritesheet1, spritesheet2, xCord, yCord, unitSpeed) {
+function Robot(game, spritesheet1, spritesheet2, xCord, yCord, unitSpeed, centerWidth) {
     this.robotBackRun = new Animation(spritesheet1, this.x, this.y, 51, 48, 3, 0.1, 3, true);
     this.robotFrontRun = new Animation(spritesheet2, this.x, this.y, 51, 48, 3, 0.1, 3, true);
     this.speed = unitSpeed;
     this.ctx = game.ctx;
     this.forward = true;
+    this.centerWidth = centerWidth;
     this.center = xCord;
     Entity.call(this, game, xCord, yCord);
 }
@@ -560,13 +563,13 @@ function Robot(game, spritesheet1, spritesheet2, xCord, yCord, unitSpeed) {
 Robot.prototype = new Entity();
 Robot.prototype.constructor = Robot;
 Robot.prototype.update = function () {
-    if (this.forward && (this.x - this.center < 100)) this.x += this.game.clockTick * this.speed;
-    else if (((this.x - this.center) >= 100) && this.forward) {
+    if (this.forward && (this.x - this.center < this.centerWidth)) this.x += this.game.clockTick * this.speed;
+    else if (((this.x - this.center) >= this.centerWidth) && this.forward) {
         this.x -= this.game.clockTick * this.speed;
         this.forward = false;
     }
-    else if (!this.forward && (this.x - this.center > -100)) this.x -= this.game.clockTick * this.speed;
-    else if (((this.x - this.center) <= -100) && !this.forward) {
+    else if (!this.forward && (this.x - this.center > -this.centerWidth)) this.x -= this.game.clockTick * this.speed;
+    else if (((this.x - this.center) <= -this.centerWidth) && !this.forward) {
         this.x += this.game.clockTick * this.speed;
         this.forward = true;
     }
@@ -582,13 +585,14 @@ Robot.prototype.draw = function () {
 
 }
 
-function FlyingRobot(game, spritesheetL, spritesheetR, xCord, yCord, unitSpeed) {
+function FlyingRobot(game, spritesheetL, spritesheetR, xCord, yCord, unitSpeed, centerWidth) {
     this.flyingRobotBackRun = new Animation(spritesheetL, this.x, this.y, 52, 50, 2, 0.1, 2, true);
     this.flyingRobotFrontRun = new Animation(spritesheetR, this.x, this.y, 52, 50, 2, 0.1, 2, true);
     this.speed = unitSpeed;
     this.ctx = game.ctx;
     this.forward = true;
     this.center = xCord;
+    this.centerWidth = centerWidth;
     Entity.call(this, game, xCord, yCord);
 }
 
@@ -596,13 +600,13 @@ FlyingRobot.prototype = new Entity();
 FlyingRobot.prototype.constructor = FlyingRobot;
 FlyingRobot.prototype.update = function () {
 
-    if (this.forward && (this.x - this.center < 100)) this.x += this.game.clockTick * this.speed;
-    else if (((this.x - this.center) >= 100) && this.forward) {
+    if (this.forward && (this.x - this.center < this.centerWidth)) this.x += this.game.clockTick * this.speed;
+    else if (((this.x - this.center) >= this.centerWidth) && this.forward) {
         this.x -= this.game.clockTick * this.speed;
         this.forward = false;
     }
-    else if (!this.forward && (this.x - this.center > -100)) this.x -= this.game.clockTick * this.speed;
-    else if (((this.x - this.center) <= -100) && !this.forward) {
+    else if (!this.forward && (this.x - this.center > -this.centerWidth)) this.x -= this.game.clockTick * this.speed;
+    else if (((this.x - this.center) <= -this.centerWidth) && !this.forward) {
         this.x += this.game.clockTick * this.speed;
         this.forward = true;
     }
@@ -716,22 +720,22 @@ AM.downloadAll(function () {
         , AM.getAsset("./img/bullet.png"), AM.getAsset("./img/backCrawl.png"), AM.getAsset("./img/frontCrawl.png")
         , AM.getAsset("./img/backCrawl.png")));
 	gameEngine.addEntity(new Camera(gameEngine));
-    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 300, 575, 60));
-    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 1200, 575, 60));
-    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/orange_Robot.png"), AM.getAsset("./img/orange_Robot.png"), 1800, 575, 60));
-    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/green_Robot.png"), AM.getAsset("./img/green_Robot.png"), 2400, 575, 60));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 300, 575, 60, 50));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 1200, 575, 60, 80));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/orange_Robot.png"), AM.getAsset("./img/orange_Robot.png"), 1800, 575, 60, 100));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/green_Robot.png"), AM.getAsset("./img/green_Robot.png"), 2400, 575, 400, 500));
     gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png"), AM.getAsset("./img/enemySoldier_Foward.png"),
-        AM.getAsset("./img/enemySoldier_StandingBackward.png"), AM.getAsset("./img/enemySoldier_StandingFoward.png"), 800, 525, 200));
-    gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png"), AM.getAsset("./img/flyingRobot_Forward.png"), 1300, 100, 60));
+        AM.getAsset("./img/enemySoldier_StandingBackward.png"), AM.getAsset("./img/enemySoldier_StandingFoward.png"), 800, 525, 100, 50, 300));
+    gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png"), AM.getAsset("./img/flyingRobot_Forward.png"), 1300, 100, 50, 300));
     gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png"), AM.getAsset("./img/enemySoldier_Foward.png"),
-        AM.getAsset("./img/enemySoldier_StandingBackward.png"), AM.getAsset("./img/enemySoldier_StandingFoward.png"), 1600, 330, 200));
+        AM.getAsset("./img/enemySoldier_StandingBackward.png"), AM.getAsset("./img/enemySoldier_StandingFoward.png"), 1600, 330, 200, 100, 400));
     gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png"), AM.getAsset("./img/enemySoldier_Foward.png"),
-        AM.getAsset("./img/enemySoldier_StandingBackward.png"), AM.getAsset("./img/enemySoldier_StandingFoward.png"), 2100, 525, 200));
+        AM.getAsset("./img/enemySoldier_StandingBackward.png"), AM.getAsset("./img/enemySoldier_StandingFoward.png"), 2100, 525, 150, 70, 200));
     gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png"), AM.getAsset("./img/enemySoldier_Foward.png"),
-        AM.getAsset("./img/enemySoldier_StandingBackward.png"), AM.getAsset("./img/enemySoldier_StandingFoward.png"), 2850, 525, 200));
-    gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png"), AM.getAsset("./img/flyingRobot_Forward.png"), 400, 100, 60));
-    gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png"), AM.getAsset("./img/flyingRobot_Forward.png"), 1000, 300, 60));
-    gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png"), AM.getAsset("./img/flyingRobot_Forward.png"), 1700, 100, 60));
-    gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png"), AM.getAsset("./img/flyingRobot_Forward.png"), 2300, 200, 60));
+        AM.getAsset("./img/enemySoldier_StandingBackward.png"), AM.getAsset("./img/enemySoldier_StandingFoward.png"), 2850, 525, 180, 80, 400));
+    gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png"), AM.getAsset("./img/flyingRobot_Forward.png"), 400, 100, 200, 300));
+    gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png"), AM.getAsset("./img/flyingRobot_Forward.png"), 1000, 300, 100, 400));
+    gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png"), AM.getAsset("./img/flyingRobot_Forward.png"), 1700, 100, 500, 600));
+    gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png"), AM.getAsset("./img/flyingRobot_Forward.png"), 2300, 200, 100, 100));
         console.log("All Done!");
 });
