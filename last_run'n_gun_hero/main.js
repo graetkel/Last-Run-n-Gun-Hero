@@ -288,8 +288,8 @@ Camera.prototype.draw = function() {
 // inheritance
 function Hero(game, spritesheet, spritesheet2, spriteSheet3, spriteSheet4, spriteSheet5, spriteSheet6, spriteSheet7, spriteSheet8, spriteSheet9, spriteSheet10
     , spriteSheet11) {
-    this.frontRun = new Animation(spritesheet, this.x, this.y, 104, 101, 8, 0.1, 8, true);
-    this.backRun = new Animation(spritesheet2, this.x, this.y, 104, 102, 8, 0.1, 8, true);
+    this.frontRun = new Animation(spritesheet, this.x, this.y, 105, 101, 8, 0.1, 8, true);
+    this.backRun = new Animation(spritesheet2, this.x, this.y, 105, 102, 8, 0.1, 8, true);
     this.frontStand = new Animation(spriteSheet3, this.x, this.y, 98, 100, 1, 0.1, 1, true);
     this.backStand = new Animation(spriteSheet4, this.x, this.y, 98, 100, 1, 0.1, 1, true);
     this.frontJump = new Animation(spriteSheet5, this.x, this.y, 105, 107, 1, 2, 1, false);
@@ -472,8 +472,8 @@ Hero.prototype.draw = function () {
 }
 
 function EnemySoldier(game, spritesheet1, spritesheet2, spritesheet3, spritesheet4, xCord, yCord, unitSpeed) {
-    this.enemyBackRun = new Animation(spritesheet1, this.x, this.y, 101, 100, 8, 0.1, 8, true);
-    this.enemyFrontRun = new Animation(spritesheet2, this.x, this.y, 103, 100, 8, 0.1, 8, true);
+    this.enemyBackRun = new Animation(spritesheet1, this.x, this.y, 102, 100, 8, 0.1, 8, true);
+    this.enemyFrontRun = new Animation(spritesheet2, this.x, this.y, 104, 100, 8, 0.1, 8, true);
     this.enemyBackStand = new Animation(spritesheet3, this.x, this.y, 98, 100, 1, 0.1, 1, true);
     this.enemyFrontStand = new Animation(spritesheet4, this.x, this.y, 98, 100, 1, 0.1, 1, true);
     this.speed = unitSpeed;
@@ -538,8 +538,8 @@ EnemySoldier.prototype.draw = function () {
 }
 
 function Robot(game, spritesheet1, spritesheet2, xCord, yCord, unitSpeed) {
-    this.robotBackRun = new Animation(spritesheet1, this.x, this.y, 51, 48, 3, 0.1, 3, true);
-    this.robotFrontRun = new Animation(spritesheet2, this.x, this.y, 51, 48, 3, 0.1, 3, true);
+    this.robotBackRun = new Animation(spritesheet1, this.x, this.y, 51, 49, 3, 0.1, 3, true);
+    this.robotFrontRun = new Animation(spritesheet2, this.x, this.y, 51, 49, 3, 0.1, 3, true);
     this.speed = unitSpeed;
     this.ctx = game.ctx;
     this.forward = true;
