@@ -20,8 +20,7 @@ function Animation(spriteSheet, startX, startY, frameWidth, frameHeight, sheetWi
     this.totalTime = frameDuration * frames;
     this.elapsedTime = 0;
     this.loop = loop;
-
-
+    this.isDead = false;
 }
 
 Animation.prototype.drawFrame = function (tick, ctx, x, y) {
@@ -46,8 +45,6 @@ Animation.prototype.drawFrame = function (tick, ctx, x, y) {
         x, y,
         this.frameWidth * scaleBy,
         this.frameHeight * scaleBy);
-        //ctx.strokeStyle = "Green";
-        //ctx.strokeRect(x, y, this.frameWidth * scaleBy, this.frameHeight * scaleBy);
 }
 
 Animation.prototype.currentFrame = function () {
@@ -287,7 +284,7 @@ Camera.prototype.draw = function() {
 
 // inheritance
 function Hero(game, spritesheet, spritesheet2, spriteSheet3, spriteSheet4, spriteSheet5, spriteSheet6, spriteSheet7, spriteSheet8, spriteSheet9, spriteSheet10
-    , spriteSheet11) {
+    , spriteSheet11, width) {
     this.frontRun = new Animation(spritesheet, this.x, this.y, 105, 101, 8, 0.1, 8, true);
     this.backRun = new Animation(spritesheet2, this.x, this.y, 105, 102, 8, 0.1, 8, true);
     this.frontStand = new Animation(spriteSheet3, this.x, this.y, 98, 100, 1, 0.1, 1, true);
@@ -301,18 +298,40 @@ function Hero(game, spritesheet, spritesheet2, spriteSheet3, spriteSheet4, sprit
     this.ctx = game.ctx;
     this.ground = 525;
     this.radius = 100;
+    this.width = 90;
+    this.height = 102;
     this.runFlag = false;
     this.firing = false;
     this.CanShoot = true;
     this.jumpForward = true;
     this.standForward = true;
+    this.w = width;
     Entity.call(this, game, 100, 525);
 }
 
 Hero.prototype = new Entity();
 Hero.prototype.constructor = Hero;
-Hero.prototype.update = function () {
+Hero.prototype.collide = function (other) {
+    var rect1 = {x: this.x, y: this.y, width: this.width, height: this.height} 
+    var rect2 = {x: other.x, y: other.y, width: other.width, height: other.height}
+    if (rect1.x < rect2.x + rect2.width 
+    && rect1.x + rect1.width > rect2.x 
+    && rect1.y < rect2.y + rect2.height 
+    && rect1.height + rect1.y > rect2.y) { 
+        return true;
+    } 
 
+};
+Hero.prototype.update = function () {
+    this.isCollide = false;
+    this.collideForward = false;
+    for (var i = 0; i < this.game.entities.length; i++) {
+        var ent = this.game.entities[i];
+        if (ent !== this && this.collide(ent)) {
+            this.isCollide = true;
+            if (this.x < ent.x) this.collideForward = true;
+        }
+    }
     if (this.game.a) {
         if (!this.jumping) this.jumpForward = false;
         this.standForward = false;
@@ -363,8 +382,8 @@ Hero.prototype.update = function () {
 
         this.y = this.ground - height;
 
-        if (this.standForward) this.x += (this.game.clockTick * this.speed) / 2;
-        else if(this.x >= 40) this.x -= (this.game.clockTick * this.speed) / 2;
+        if (this.standForward && !this.isCollide) this.x += (this.game.clockTick * this.speed) / 2;
+        else if(this.x >= 40 && !this.isCollide) this.x -= (this.game.clockTick * this.speed) / 2;
     }
     else if (this.jumping) {
         if (this.frontJump.isDone() || this.backJump.isDone()) {
@@ -389,12 +408,21 @@ Hero.prototype.update = function () {
     //}
 
     else if (this.runFlag && this.standForward && !this.crawlForward) {
-        this.x += this.game.clockTick * this.speed;
+        if (!this.isCollide) this.x += this.game.clockTick * this.speed;
+        else {
+            if(!this.collideForward) this.x += this.game.clockTick * this.speed;
+        }
     }
 
     else if ((this.runFlag && !this.standForward && !this.crawlForward)) {
-
-        if(this.x >= 40) this.x -= this.game.clockTick * this.speed;
+        if (!this.isCollide) {
+            if(this.x >= 40) this.x -= this.game.clockTick * this.speed;
+        }
+        else {
+            if (this.collideForward) {
+                if(this.x >= 40) this.x -= this.game.clockTick * this.speed;
+            }
+        }
     }
     that = this;
 
@@ -402,7 +430,15 @@ Hero.prototype.update = function () {
     
         if (this.CanShoot) {
             if (this.standForward) {
-                if (this.crawlForward) {
+                if (this.jumping) {
+                    if (this.jumpForward) {
+                        this.game.addEntity(new Bullet(this.game, this.x + 100, this.y + 35, this.jumpForward));
+                    }
+                    else {
+                        this.game.addEntity(new Bullet(this.game, this.x , this.y + 35, this.jumpForward));
+                    }
+                }
+                else if (this.crawlForward) {
                     this.game.addEntity(new Bullet(this.game, this.x + 140, this.y + 85, this.standForward));
                    // this.game.addEntity(new BulletFlash(this.game, AM.getAsset("./img/BulletFlash.png"), this.x + 140, this.y + 85, this.standForward));
                 }
@@ -412,14 +448,22 @@ Hero.prototype.update = function () {
                 }
             }
             else {
-               if (this.crawlForward) {
-                   this.game.addEntity(new Bullet(this.game, this.x - 40, this.y + 85, this.standForward));
+                if (this.jumping) {
+                    if (this.jumpForward ) {
+                        this.game.addEntity(new Bullet(this.game, this.x + 100, this.y + 35, this.jumpForward));
+                    }
+                    else {
+                        this.game.addEntity(new Bullet(this.game, this.x, this.y + 35, this.jumpForward));
+                    }
+                }
+                else if (this.crawlForward) {
+                   this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 85, this.standForward));
                   // this.game.addEntity(new BulletFlash(this.game, AM.getAsset("./img/BulletFlash.png"), this.x - 40, this.y + 85, this.standForward));
-               }
-               else {
+                }
+                else {
                    this.game.addEntity(new Bullet(this.game, this.x, this.y + 35, this.standForward));
                   // this.game.addEntity(new BulletFlash(this.game, AM.getAsset("./img/BulletFlash.png"), this.x, this.y + 35, this.standForward));
-               }
+                }
             }
             this.CanShoot = false;
             setTimeout(function(){
@@ -479,6 +523,8 @@ function EnemySoldier(game, spritesheet1, spritesheet2, spritesheet3, spriteshee
     this.speed = unitSpeed;
     this.ctx = game.ctx;
     this.forward = true;
+    this.width = 95;
+    this.height = 100;
     this.enemyShoot = true;
     this.standing = false;
     this.center = xCord;
@@ -486,9 +532,29 @@ function EnemySoldier(game, spritesheet1, spritesheet2, spritesheet3, spriteshee
 }
 
 EnemySoldier.prototype = new Entity();
-EnemySoldier.prototype.constructor = Robot;
+EnemySoldier.prototype.constructor = EnemySoldier;
+EnemySoldier.prototype.collide = function (other) {
+    var rect1 = {x: this.x, y: this.y, width: this.width, height: this.height} 
+    var rect2 = {x: other.x, y: other.y, width: other.width, height: other.height}
+    if (rect1.x < rect2.x + rect2.width 
+    && rect1.x + rect1.width > rect2.x 
+    && rect1.y < rect2.y + rect2.height 
+    && rect1.height + rect1.y > rect2.y) { 
+        return true;
+    } 
+
+};
 EnemySoldier.prototype.update = function () {
     var enemyThat = this;
+    this.isCollide = false;
+    this.collideForward = false;
+    for (var i = 0; i < this.game.entities.length; i++) {
+        var ent = this.game.entities[i];
+        if (ent !== this && this.collide(ent)) {
+            this.isCollide = true;
+            if (this.x < ent.x) this.collideForward = true;
+        }
+    }
     if ((Math.abs(this.x - this.game.entities[3].x) >= 400 )) this.standing = false;
     if (Math.abs(this.x - this.game.entities[3].x) <= 400 ) {
         this.standing = true;
@@ -508,14 +574,29 @@ EnemySoldier.prototype.update = function () {
         }
     }
 
-    else if (this.forward && (this.x - this.center < 100)) this.x += this.game.clockTick * this.speed;
+    else if (this.forward && (this.x - this.center < 100)) 
+    if (!this.isCollide) this.x += this.game.clockTick * this.speed;
+        else {
+            if(!this.collideForward) this.x += this.game.clockTick * this.speed;
+        }
     else if (((this.x - this.center) >= 100) && this.forward) {
-        this.x -= this.game.clockTick * this.speed;
+        if (!this.isCollide) this.x -= this.game.clockTick * this.speed;
+        else {
+            if(this.collideForward) this.x -= this.game.clockTick * this.speed;
+        }
         this.forward = false;
     }
-    else if (!this.forward && (this.x - this.center > -100)) this.x -= this.game.clockTick * this.speed;
+    else if (!this.forward && (this.x - this.center > -100)) {
+        if (!this.isCollide) this.x -= this.game.clockTick * this.speed;
+            else {
+                if(!this.collideForward) this.x -= this.game.clockTick * this.speed;
+            }
+        }
     else if (((this.x - this.center) <= -100) && !this.forward) {
-        this.x += this.game.clockTick * this.speed;
+        if (!this.isCollide) this.x += this.game.clockTick * this.speed;
+        else {
+            if(!this.collideForward) this.x += this.game.clockTick * this.speed;
+        }
         this.forward = true;
     }
 
@@ -542,6 +623,8 @@ function Robot(game, spritesheet1, spritesheet2, xCord, yCord, unitSpeed) {
     this.robotFrontRun = new Animation(spritesheet2, this.x, this.y, 51, 49, 3, 0.1, 3, true);
     this.speed = unitSpeed;
     this.ctx = game.ctx;
+    this.width = 40;
+    this.height = 49;
     this.forward = true;
     this.center = xCord;
     Entity.call(this, game, xCord, yCord);
@@ -549,15 +632,66 @@ function Robot(game, spritesheet1, spritesheet2, xCord, yCord, unitSpeed) {
 
 Robot.prototype = new Entity();
 Robot.prototype.constructor = Robot;
+Robot.prototype.collide = function (other) {
+    var rect1 = {x: this.x, y: this.y, width: this.width, height: this.height} 
+    var rect2 = {x: other.x, y: other.y, width: other.width, height: other.height}
+    if (rect1.x < rect2.x + rect2.width 
+    && rect1.x + rect1.width > rect2.x 
+    && rect1.y < rect2.y + rect2.height 
+    && rect1.height + rect1.y > rect2.y) { 
+        return true;
+    } 
+
+};
 Robot.prototype.update = function () {
-    if (this.forward && (this.x - this.center < 100)) this.x += this.game.clockTick * this.speed;
+    this.isCollide = false;
+    this.collideForward = false;
+    for (var i = 0; i < this.game.entities.length; i++) {
+        var ent = this.game.entities[i];
+        if (ent !== this && this.collide(ent)) {
+            this.isCollide = true;
+            if (this.x < ent.x) this.collideForward = true;
+        }
+    }
+    if (this.forward && (this.x - this.center < 100)) 
+        if (!this.isCollide) {
+            this.x += this.game.clockTick * this.speed;
+        }
+        else {
+            if (!this.collideForward){
+                this.x += this.game.clockTick * this.speed;
+            }
+        }
     else if (((this.x - this.center) >= 100) && this.forward) {
-        this.x -= this.game.clockTick * this.speed;
+        if (!this.isCollide) {
+            this.x -= this.game.clockTick * this.speed;
+        }
+        else {
+            if (this.collideForward){
+                this.x -= this.game.clockTick * this.speed;
+            }
+        }
         this.forward = false;
     }
-    else if (!this.forward && (this.x - this.center > -100)) this.x -= this.game.clockTick * this.speed;
-    else if (((this.x - this.center) <= -100) && !this.forward) {
-        this.x += this.game.clockTick * this.speed;
+    else if (!this.forward && (this.x - this.center > -100)) {
+        if (!this.isCollide) {
+            this.x -= this.game.clockTick * this.speed;
+        }
+        else {
+            if (this.collideForward){
+                this.x -= this.game.clockTick * this.speed;
+            }
+        }
+    }
+    else if (((this.x - this.center) <= -100) && !this.forward && !this.isCollide) {
+        if (!this.isCollide) {
+            this.x += this.game.clockTick * this.speed;
+        }
+        else {
+            if (!this.collideForward){
+                this.x += this.game.clockTick * this.speed;
+            }
+        }
         this.forward = true;
     }
 
@@ -584,6 +718,17 @@ function FlyingRobot(game, spritesheetL, spritesheetR, xCord, yCord, unitSpeed) 
 
 FlyingRobot.prototype = new Entity();
 FlyingRobot.prototype.constructor = FlyingRobot;
+Robot.prototype.collide = function (other) {
+    var rect1 = {x: this.x, y: this.y, width: this.width, height: this.height} 
+    var rect2 = {x: other.x, y: other.y, width: other.width, height: other.height}
+    if (rect1.x < rect2.x + rect2.width 
+    && rect1.x + rect1.width > rect2.x 
+    && rect1.y < rect2.y + rect2.height 
+    && rect1.height + rect1.y > rect2.y) { 
+        return true;
+    } 
+
+};
 FlyingRobot.prototype.update = function () {
 
     if (this.forward && (this.x - this.center < 100)) this.x += this.game.clockTick * this.speed;
@@ -611,19 +756,39 @@ FlyingRobot.prototype.draw = function () {
 function Bullet(game, startX, startY, direction) {
     this.speed = 300;
     this.ctx = game.ctx;
+    //this.width = 2;
+    //this.height = 2;
     this.forward = direction;
     Entity.call(this, game, startX, startY);
 }
 
 Bullet.prototype = new Entity();
 Bullet.prototype.constructor = Bullet;
+Bullet.prototype.collide = function (other) {
+    var rect1 = {x: this.x, y: this.y, width: this.width, height: this.height} 
+    var rect2 = {x: other.x, y: other.y, width: other.width, height: other.height}
+    if (rect1.x < rect2.x + rect2.width 
+    && rect1.x + rect1.width > rect2.x 
+    && rect1.y < rect2.y + rect2.height 
+    && rect1.height + rect1.y > rect2.y) { 
+        other.isDead = true;
+    } 
+
+};
 Bullet.prototype.update = function () {
+    this.isCollide = false;
+    this.collideForward = false;
+    for (var i = 0; i < this.game.entities.length; i++) {
+        var ent = this.game.entities[i];
+        if (ent !== this && this.collide(ent)) {
+            this.isCollide = true;
+            if (this.x < ent.x) this.collideForward = true;
+        }
+    }
     if (this.forward) this.x += this.game.clockTick * this.speed;
     else this.x -= this.game.clockTick * this.speed;
 
     Entity.prototype.update.call(this);
-
-
 }
 Bullet.prototype.draw = function () {
     this.ctx.fillStyle = "White";
@@ -693,18 +858,18 @@ AM.queueDownload("./img/enemySoldier_StandingFoward.png");
 AM.downloadAll(function () {
     var canvas = document.getElementById("gameWorld");
     var ctx = canvas.getContext("2d");
-
     var gameEngine = new GameEngine();
+    
     gameEngine.init(ctx);
     gameEngine.start();
-
+    
     gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/backgroundtrees.jpg")));
     gameEngine.addEntity(new BackgroundTwo(gameEngine, AM.getAsset("./img/backgroundtrees1.jpg")));
     gameEngine.addEntity(new Platform(gameEngine));
     gameEngine.addEntity(new Hero(gameEngine, AM.getAsset("./img/runningHero.png"), AM.getAsset("./img/backwardHero.png"), AM.getAsset("./img/frontStanding.png")
-        , AM.getAsset("./img/backwardStand.png"), AM.getAsset("./img/frontJump.png"), AM.getAsset("./img/backJump.png")
-        , AM.getAsset("./img/bullet.png"), AM.getAsset("./img/backCrawl.png"), AM.getAsset("./img/frontCrawl.png")
-        , AM.getAsset("./img/backCrawl.png")));
+    , AM.getAsset("./img/backwardStand.png"), AM.getAsset("./img/frontJump.png"), AM.getAsset("./img/backJump.png")
+    , AM.getAsset("./img/bullet.png"), AM.getAsset("./img/backCrawl.png"), AM.getAsset("./img/frontCrawl.png")
+    , AM.getAsset("./img/backCrawl.png"),100));
     gameEngine.addEntity(new Camera(gameEngine));
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 300, 575, 60));
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 1200, 575, 60));
