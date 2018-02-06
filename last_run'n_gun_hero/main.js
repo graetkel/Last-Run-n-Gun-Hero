@@ -1,7 +1,7 @@
 var AM = new AssetManager();
 var Background1 = 0;
 var Background2 = 0;
-
+var gameEngine = new GameEngine();
 //In order to get the camera feature to work make sure every
 //x position value is its position - cameraX
 
@@ -283,21 +283,21 @@ Camera.prototype.draw = function() {
 
 
 // inheritance
-function Hero(game, spritesheet, spritesheet2, spriteSheet3, spriteSheet4, spriteSheet5, spriteSheet6, spriteSheet7, spriteSheet8, spriteSheet9, spriteSheet10
-    , spriteSheet11, width) {
-    this.frontRun = new Animation(spritesheet, this.x, this.y, 105, 101, 8, 0.1, 8, true);
-    this.backRun = new Animation(spritesheet2, this.x, this.y, 105, 102, 8, 0.1, 8, true);
-    this.frontStand = new Animation(spriteSheet3, this.x, this.y, 98, 100, 1, 0.1, 1, true);
-    this.backStand = new Animation(spriteSheet4, this.x, this.y, 98, 100, 1, 0.1, 1, true);
-    this.frontJump = new Animation(spriteSheet5, this.x, this.y, 105, 107, 1, 2, 1, false);
-    this.backJump = new Animation(spriteSheet6, this.x, this.y, 105, 103, 1, 2, 1, false);
-    this.backCrawl = new Animation(spriteSheet8, this.x, this.y, 138, 100, 1, 0.1, 1, true);
-    this.frontCrawl = new Animation(spriteSheet9, this.x, this.y, 141, 100, 1, 0.1, 1, true);
+function Hero(game, frontRunSprite, backRunSprite, frontStandSprite, backStandSprite, frontJumpSprite, backJumpSprite, backCrawlSprite, frontCrawlSprite
+    ) {
+    this.frontRun = new Animation(frontRunSprite, this.x, this.y, 105, 101, 8, 0.1, 8, true);
+    this.backRun = new Animation(backRunSprite, this.x, this.y, 105, 102, 8, 0.1, 8, true);
+    this.frontStand = new Animation(frontStandSprite, this.x, this.y, 98, 100, 1, 0.1, 1, true);
+    this.backStand = new Animation(backStandSprite, this.x, this.y, 98, 100, 1, 0.1, 1, true);
+    this.frontJump = new Animation(frontJumpSprite, this.x, this.y, 105, 107, 1, 2, 1, false);
+    this.backJump = new Animation(backJumpSprite, this.x, this.y, 105, 103, 1, 2, 1, false);
+    this.backCrawl = new Animation(backCrawlSprite, this.x, this.y, 138, 100, 1, 0.1, 1, true);
+    this.frontCrawl = new Animation(frontCrawlSprite, this.x, this.y, 141, 100, 1, 0.1, 1, true);
     this.jumping = false;
     this.speed = 200;
+    this.hero = true;
     this.ctx = game.ctx;
     this.ground = 525;
-    this.radius = 100;
     this.width = 90;
     this.height = 102;
     this.runFlag = false;
@@ -305,12 +305,12 @@ function Hero(game, spritesheet, spritesheet2, spriteSheet3, spriteSheet4, sprit
     this.CanShoot = true;
     this.jumpForward = true;
     this.standForward = true;
-    this.w = width;
     Entity.call(this, game, 100, 525);
 }
 
 Hero.prototype = new Entity();
 Hero.prototype.constructor = Hero;
+
 Hero.prototype.collide = function (other) {
     var rect1 = {x: this.x, y: this.y, width: this.width, height: this.height} 
     var rect2 = {x: other.x, y: other.y, width: other.width, height: other.height}
@@ -318,10 +318,20 @@ Hero.prototype.collide = function (other) {
     && rect1.x + rect1.width > rect2.x 
     && rect1.y < rect2.y + rect2.height 
     && rect1.height + rect1.y > rect2.y) { 
-        return true;
-    } 
+        if (!other.isBullet){
+            if (other.enemy) {
 
+                gameEngine.removeEntity(this)
+                if (other.x > this.x) {
+                    this.x -= 30;
+                }
+                else this.x += 30;
+            }
+            return true;
+        }
+    } 
 };
+
 Hero.prototype.update = function () {
     this.isCollide = false;
     this.collideForward = false;
@@ -358,9 +368,6 @@ Hero.prototype.update = function () {
         this.jumping = true;
     }
 
-
-    //Moved these variables outside of the next If/Else Statement
-    //to simplify and make code easier to read
     var totalHeight = 200;
     var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
 
@@ -403,9 +410,9 @@ Hero.prototype.update = function () {
         this.y = this.ground - height;
     }
 
-    //else if (this.crawlForward) {
+    else if (this.crawlForward) {
 
-    //}
+    }
 
     else if (this.runFlag && this.standForward && !this.crawlForward) {
         if (!this.isCollide) this.x += this.game.clockTick * this.speed;
@@ -432,10 +439,10 @@ Hero.prototype.update = function () {
             if (this.standForward) {
                 if (this.jumping) {
                     if (this.jumpForward) {
-                        this.game.addEntity(new Bullet(this.game, this.x + 100, this.y + 35, this.jumpForward));
+                        this.game.addEntity(new Bullet(this.game, this.x + 110, this.y + 35, this.jumpForward));
                     }
                     else {
-                        this.game.addEntity(new Bullet(this.game, this.x , this.y + 35, this.jumpForward));
+                        this.game.addEntity(new Bullet(this.game, this.x - 10 , this.y + 35, this.jumpForward));
                     }
                 }
                 else if (this.crawlForward) {
@@ -443,17 +450,17 @@ Hero.prototype.update = function () {
                    // this.game.addEntity(new BulletFlash(this.game, AM.getAsset("./img/BulletFlash.png"), this.x + 140, this.y + 85, this.standForward));
                 }
                 else {
-                    this.game.addEntity(new Bullet(this.game, this.x + 100, this.y + 35, this.standForward));
+                    this.game.addEntity(new Bullet(this.game, this.x + 110, this.y + 35, this.standForward));
                     //this.game.addEntity(new BulletFlash(this.game, AM.getAsset("./img/BulletFlash.png"), this.x + 100, this.y + 35, this.standForward));
                 }
             }
             else {
                 if (this.jumping) {
                     if (this.jumpForward ) {
-                        this.game.addEntity(new Bullet(this.game, this.x + 100, this.y + 35, this.jumpForward));
+                        this.game.addEntity(new Bullet(this.game, this.x + 110, this.y + 35, this.jumpForward));
                     }
                     else {
-                        this.game.addEntity(new Bullet(this.game, this.x, this.y + 35, this.jumpForward));
+                        this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 35, this.jumpForward));
                     }
                 }
                 else if (this.crawlForward) {
@@ -461,26 +468,17 @@ Hero.prototype.update = function () {
                   // this.game.addEntity(new BulletFlash(this.game, AM.getAsset("./img/BulletFlash.png"), this.x - 40, this.y + 85, this.standForward));
                 }
                 else {
-                   this.game.addEntity(new Bullet(this.game, this.x, this.y + 35, this.standForward));
+                   this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 35, this.standForward));
                   // this.game.addEntity(new BulletFlash(this.game, AM.getAsset("./img/BulletFlash.png"), this.x, this.y + 35, this.standForward));
                 }
             }
             this.CanShoot = false;
             setTimeout(function(){
-
             that.CanShoot = true;
-
         }, 500);
-
         }
-
-
     }
-
-
-
     Entity.prototype.update.call(this);
-
 }
 
 Hero.prototype.draw = function () {
@@ -511,15 +509,14 @@ Hero.prototype.draw = function () {
     else if (!this.runFlag && !this.standForward) {
         this.backStand.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
     }
-
     Entity.prototype.draw.call(this);
 }
 
-function EnemySoldier(game, spritesheet1, spritesheet2, spritesheet3, spritesheet4, xCord, yCord, unitSpeed) {
-    this.enemyBackRun = new Animation(spritesheet1, this.x, this.y, 102, 100, 8, 0.1, 8, true);
-    this.enemyFrontRun = new Animation(spritesheet2, this.x, this.y, 104, 100, 8, 0.1, 8, true);
-    this.enemyBackStand = new Animation(spritesheet3, this.x, this.y, 98, 100, 1, 0.1, 1, true);
-    this.enemyFrontStand = new Animation(spritesheet4, this.x, this.y, 98, 100, 1, 0.1, 1, true);
+function EnemySoldier(game, backRunSprite, frontRunSprite, backStandSprite, frontStandSprite, xCord, yCord, unitSpeed) {
+    this.enemyBackRun = new Animation(backRunSprite, this.x, this.y, 102, 100, 8, 0.1, 8, true);
+    this.enemyFrontRun = new Animation(frontRunSprite, this.x, this.y, 104, 100, 8, 0.1, 8, true);
+    this.enemyBackStand = new Animation(backStandSprite, this.x, this.y, 98, 100, 1, 0.1, 1, true);
+    this.enemyFrontStand = new Animation(frontStandSprite, this.x, this.y, 98, 100, 1, 0.1, 1, true);
     this.speed = unitSpeed;
     this.ctx = game.ctx;
     this.forward = true;
@@ -533,6 +530,7 @@ function EnemySoldier(game, spritesheet1, spritesheet2, spritesheet3, spriteshee
 
 EnemySoldier.prototype = new Entity();
 EnemySoldier.prototype.constructor = EnemySoldier;
+
 EnemySoldier.prototype.collide = function (other) {
     var rect1 = {x: this.x, y: this.y, width: this.width, height: this.height} 
     var rect2 = {x: other.x, y: other.y, width: other.width, height: other.height}
@@ -540,14 +538,18 @@ EnemySoldier.prototype.collide = function (other) {
     && rect1.x + rect1.width > rect2.x 
     && rect1.y < rect2.y + rect2.height 
     && rect1.height + rect1.y > rect2.y) { 
+        if (other.isBullet) {
+            this.isDead = true;
+        }
         return true;
     } 
-
 };
+
 EnemySoldier.prototype.update = function () {
     var enemyThat = this;
     this.isCollide = false;
     this.collideForward = false;
+    if (this.isDead) gameEngine.removeEntity(this);
     for (var i = 0; i < this.game.entities.length; i++) {
         var ent = this.game.entities[i];
         if (ent !== this && this.collide(ent)) {
@@ -559,21 +561,17 @@ EnemySoldier.prototype.update = function () {
     if (Math.abs(this.x - this.game.entities[3].x) <= 400 ) {
         this.standing = true;
         if(this.x - this.game.entities[3].x < 0) this.forward = true;
-        else this.forward = false;
-      
+        else this.forward = false;   
         if (this.enemyShoot) {
-            if (this.forward) this.game.addEntity(new Bullet(this.game, this.x + 100, this.y + 35, this.forward));
-            else this.game.addEntity(new Bullet(this.game, this.x, this.y + 35, this.forward));
+            if (this.forward) this.game.addEntity(new Bullet(this.game, this.x + 110, this.y + 35, this.forward));
+            else this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 35, this.forward));
 
             this.enemyShoot = false;
             setTimeout(function(){
             enemyThat.enemyShoot = true;
-
         }, 500);
-
         }
     }
-
     else if (this.forward && (this.x - this.center < 100)) 
     if (!this.isCollide) this.x += this.game.clockTick * this.speed;
         else {
@@ -599,10 +597,7 @@ EnemySoldier.prototype.update = function () {
         }
         this.forward = true;
     }
-
     Entity.prototype.update.call(this);
-
-
 }
 
 EnemySoldier.prototype.draw = function () {
@@ -615,15 +610,15 @@ EnemySoldier.prototype.draw = function () {
         else this.enemyBackRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
     }
     Entity.prototype.draw.call(this);
-
 }
 
-function Robot(game, spritesheet1, spritesheet2, xCord, yCord, unitSpeed) {
-    this.robotBackRun = new Animation(spritesheet1, this.x, this.y, 51, 49, 3, 0.1, 3, true);
-    this.robotFrontRun = new Animation(spritesheet2, this.x, this.y, 51, 49, 3, 0.1, 3, true);
+function Robot(game, backRunSprite, frontRunSprite, xCord, yCord, unitSpeed) {
+    this.robotBackRun = new Animation(backRunSprite, this.x, this.y, 51, 49, 3, 0.1, 3, true);
+    this.robotFrontRun = new Animation(frontRunSprite, this.x, this.y, 51, 49, 3, 0.1, 3, true);
     this.speed = unitSpeed;
     this.ctx = game.ctx;
     this.width = 40;
+    this.enemy = true;
     this.height = 49;
     this.forward = true;
     this.center = xCord;
@@ -632,6 +627,7 @@ function Robot(game, spritesheet1, spritesheet2, xCord, yCord, unitSpeed) {
 
 Robot.prototype = new Entity();
 Robot.prototype.constructor = Robot;
+
 Robot.prototype.collide = function (other) {
     var rect1 = {x: this.x, y: this.y, width: this.width, height: this.height} 
     var rect2 = {x: other.x, y: other.y, width: other.width, height: other.height}
@@ -641,11 +637,12 @@ Robot.prototype.collide = function (other) {
     && rect1.height + rect1.y > rect2.y) { 
         return true;
     } 
-
 };
+
 Robot.prototype.update = function () {
     this.isCollide = false;
     this.collideForward = false;
+    if (this.isDead) gameEngine.removeEntity(this);
     for (var i = 0; i < this.game.entities.length; i++) {
         var ent = this.game.entities[i];
         if (ent !== this && this.collide(ent)) {
@@ -694,21 +691,18 @@ Robot.prototype.update = function () {
         }
         this.forward = true;
     }
-
     Entity.prototype.update.call(this);
-
-
 }
+
 Robot.prototype.draw = function () {
     if (this.forward) this.robotFrontRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
     else if (!this.forward) this.robotBackRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
     Entity.prototype.draw.call(this);
-
 }
 
-function FlyingRobot(game, spritesheetL, spritesheetR, xCord, yCord, unitSpeed) {
-    this.flyingRobotBackRun = new Animation(spritesheetL, this.x, this.y, 52, 50, 2, 0.1, 2, true);
-    this.flyingRobotFrontRun = new Animation(spritesheetR, this.x, this.y, 52, 50, 2, 0.1, 2, true);
+function FlyingRobot(game, backRunSprite, frontRunSprite, xCord, yCord, unitSpeed) {
+    this.flyingRobotBackRun = new Animation(backRunSprite, this.x, this.y, 52, 50, 2, 0.1, 2, true);
+    this.flyingRobotFrontRun = new Animation(frontRunSprite, this.x, this.y, 52, 50, 2, 0.1, 2, true);
     this.speed = unitSpeed;
     this.ctx = game.ctx;
     this.forward = true;
@@ -718,6 +712,7 @@ function FlyingRobot(game, spritesheetL, spritesheetR, xCord, yCord, unitSpeed) 
 
 FlyingRobot.prototype = new Entity();
 FlyingRobot.prototype.constructor = FlyingRobot;
+
 Robot.prototype.collide = function (other) {
     var rect1 = {x: this.x, y: this.y, width: this.width, height: this.height} 
     var rect2 = {x: other.x, y: other.y, width: other.width, height: other.height}
@@ -727,10 +722,9 @@ Robot.prototype.collide = function (other) {
     && rect1.height + rect1.y > rect2.y) { 
         return true;
     } 
-
 };
-FlyingRobot.prototype.update = function () {
 
+FlyingRobot.prototype.update = function () {
     if (this.forward && (this.x - this.center < 100)) this.x += this.game.clockTick * this.speed;
     else if (((this.x - this.center) >= 100) && this.forward) {
         this.x -= this.game.clockTick * this.speed;
@@ -741,11 +735,9 @@ FlyingRobot.prototype.update = function () {
         this.x += this.game.clockTick * this.speed;
         this.forward = true;
     }
-
     Entity.prototype.update.call(this);
-
-
 }
+
 FlyingRobot.prototype.draw = function () {
     if (this.forward) this.flyingRobotFrontRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
     else if (!this.forward) this.flyingRobotBackRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
@@ -754,16 +746,19 @@ FlyingRobot.prototype.draw = function () {
 }
 
 function Bullet(game, startX, startY, direction) {
+    this.isBullet = true;
     this.speed = 300;
     this.ctx = game.ctx;
-    //this.width = 2;
-    //this.height = 2;
+    this.width = 2;
+    this.height = 2;
+    this.startX = startX;
     this.forward = direction;
     Entity.call(this, game, startX, startY);
 }
 
 Bullet.prototype = new Entity();
 Bullet.prototype.constructor = Bullet;
+
 Bullet.prototype.collide = function (other) {
     var rect1 = {x: this.x, y: this.y, width: this.width, height: this.height} 
     var rect2 = {x: other.x, y: other.y, width: other.width, height: other.height}
@@ -771,10 +766,11 @@ Bullet.prototype.collide = function (other) {
     && rect1.x + rect1.width > rect2.x 
     && rect1.y < rect2.y + rect2.height 
     && rect1.height + rect1.y > rect2.y) { 
-        other.isDead = true;
+        other.isDead = true;  
+        gameEngine.removeEntity(this);      
     } 
-
 };
+
 Bullet.prototype.update = function () {
     this.isCollide = false;
     this.collideForward = false;
@@ -785,21 +781,29 @@ Bullet.prototype.update = function () {
             if (this.x < ent.x) this.collideForward = true;
         }
     }
-    if (this.forward) this.x += this.game.clockTick * this.speed;
-    else this.x -= this.game.clockTick * this.speed;
-
+    if (this.isCollide) {
+        this.isDead;
+    }
+    if (this.forward) {
+        if (this.x >= this.startX + 500) gameEngine.removeEntity(this); 
+        else this.x += this.game.clockTick * this.speed;
+    }
+    else {
+        if (this.x <= this.startX - 500) gameEngine.removeEntity(this); 
+        else this.x -= this.game.clockTick * this.speed;
+    }
     Entity.prototype.update.call(this);
 }
+
 Bullet.prototype.draw = function () {
     this.ctx.fillStyle = "White";
     this.ctx.beginPath();
     this.ctx.arc(this.x - cameraX,this.y ,4,0,2*Math.PI); //this might be wrong
     this.ctx.closePath();
     this.ctx.fill();
-
     Entity.prototype.draw.call(this);
-
 }
+
 function BulletFlash(game, spriteSheet, startX, startY, direction) {
     this.bulletFlash = new Animation(spriteSheet, this.x, this.y, 15, 14, 1, 0.1, 1, true);
     this.ctx = game.ctx;
@@ -809,16 +813,14 @@ function BulletFlash(game, spriteSheet, startX, startY, direction) {
 
 BulletFlash.prototype = new Entity();
 BulletFlash.prototype.constructor = BulletFlash;
+
 BulletFlash.prototype.update = function () {
     Entity.prototype.update.call(this);
-
 }
+
 BulletFlash.prototype.draw = function () {
-
     this.bulletFlash.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
-
     Entity.prototype.draw.call(this);
-
 }
 
 //AM.queueDownload("./img/bulletFlash.jpg");
@@ -855,10 +857,11 @@ AM.queueDownload("./img/ground4.png");
 AM.queueDownload("./img/enemySoldier_StandingBackward.png");
 AM.queueDownload("./img/enemySoldier_StandingFoward.png");
 
+
 AM.downloadAll(function () {
     var canvas = document.getElementById("gameWorld");
     var ctx = canvas.getContext("2d");
-    var gameEngine = new GameEngine();
+    //var gameEngine = new GameEngine();
     
     gameEngine.init(ctx);
     gameEngine.start();
@@ -866,10 +869,10 @@ AM.downloadAll(function () {
     gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/backgroundtrees.jpg")));
     gameEngine.addEntity(new BackgroundTwo(gameEngine, AM.getAsset("./img/backgroundtrees1.jpg")));
     gameEngine.addEntity(new Platform(gameEngine));
-    gameEngine.addEntity(new Hero(gameEngine, AM.getAsset("./img/runningHero.png"), AM.getAsset("./img/backwardHero.png"), AM.getAsset("./img/frontStanding.png")
-    , AM.getAsset("./img/backwardStand.png"), AM.getAsset("./img/frontJump.png"), AM.getAsset("./img/backJump.png")
-    , AM.getAsset("./img/bullet.png"), AM.getAsset("./img/backCrawl.png"), AM.getAsset("./img/frontCrawl.png")
-    , AM.getAsset("./img/backCrawl.png"),100));
+    gameEngine.addEntity(new Hero(gameEngine, AM.getAsset("./img/runningHero.png"), AM.getAsset("./img/backwardHero.png")
+    , AM.getAsset("./img/frontStanding.png"), AM.getAsset("./img/backwardStand.png"), AM.getAsset("./img/frontJump.png")
+    , AM.getAsset("./img/backJump.png"), AM.getAsset("./img/backCrawl.png"), AM.getAsset("./img/frontCrawl.png")
+    ));
     gameEngine.addEntity(new Camera(gameEngine));
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 300, 575, 60));
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 1200, 575, 60));

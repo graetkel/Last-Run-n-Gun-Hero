@@ -102,6 +102,15 @@ GameEngine.prototype.addEntity = function (entity) {
     console.log('added entity');
     this.entities.push(entity);
 }
+
+GameEngine.prototype.removeEntity = function (entity) {
+    console.log('removed entity');
+    console.log(entity);
+    entity.removeFromWorld = true;
+    //i = this.entities.indexOf(entity);
+    //this.entities.splice(i, 1);
+}
+
 GameEngine.prototype.getEntity = function () {
     console.log('got entity');
     return this.entities;
