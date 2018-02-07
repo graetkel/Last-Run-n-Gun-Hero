@@ -21,8 +21,10 @@ function Animation(spriteSheet, startX, startY, frameWidth, frameHeight, sheetWi
     this.isDead = false;
 }
 
-Animation.prototype.drawFrame = function (tick, ctx, x, y) {
-    var scaleBy = scaleBy || 1;
+//Added the 'scale' parameter and also set it so scaleBy is set to it
+//if the caller adds the scale size to the end of the function call.
+Animation.prototype.drawFrame = function (tick, ctx, x, y, scale) {
+    var scaleBy = scale || 1;
     this.elapsedTime += tick;
     if (this.loop) {
         if (this.isDone()) {
@@ -95,11 +97,11 @@ Background.prototype.draw = function () {
 function FirePowerUp(game, spritesheet) {
     this.animation = new Animation(spritesheet, this.x, this.y, 214, 207, 2, 0.10, 6, true);
     this.isFirePowerUp = true;
-    this.height = 207;
-    this.width = 214;
+    this.height = 60;
+    this.width = 64;
     this.speed = 0;
     this.ctx = game.ctx;  
-    PowerUp.call(this, game, 300, 420);
+    PowerUp.call(this, game, 300, 563);
 }
 
 FirePowerUp.prototype = new PowerUp();
@@ -114,7 +116,7 @@ FirePowerUp.prototype.update = function () {
 }
 
 FirePowerUp.prototype.draw = function () {
-    this.animation.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+    this.animation.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y, .3);
 }
 
 FirePowerUp.prototype.collide = function (other) {
