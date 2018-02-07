@@ -342,11 +342,6 @@ Hero.prototype.collide = function (other) {
                 }
                 else this.x += 30;
             }
-            else if (other.isFirePowerUp){
-                //TODO
-                //do something to start hero fire powerup
-                
-            }
             return true;
         }
     } 
@@ -990,7 +985,7 @@ AM.downloadAll(function () {
     gameEngine.addEntity(new Platform(gameEngine));
     gameEngine.addEntity(new Hero(gameEngine, heroSprite));
     gameEngine.addEntity(new Camera(gameEngine));
-    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 300, 575, 60));
+    //gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 300, 575, 60));
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 1200, 575, 60));
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/orange_Robot.png"), AM.getAsset("./img/orange_Robot.png"), 1800, 575, 60));
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/green_Robot.png"), AM.getAsset("./img/green_Robot.png"), 2400, 575, 60));

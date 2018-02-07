@@ -111,10 +111,9 @@ GameEngine.prototype.startInput = function () {
     }, false);
 }
 
-
-//////////////////////////////////////////////////
-///// added PowerUp as similar Entity object /////
-//////////////////////////////////////////////////
+   ////////////////////////////////////////////
+   // added PowerUp as similar Entity object //
+   ////////////////////////////////////////////
 /**
  * Adds a powerup to the world.
  * copycat of the previous addEntity function.
@@ -142,6 +141,7 @@ GameEngine.prototype.getPowerUp = function () {
     console.log('got PowerUp');
     return this.powerUps;
 }
+
 
 
 
@@ -174,9 +174,7 @@ GameEngine.prototype.draw = function () {
         this.entities[i].draw(this.ctx);
     }
 
-    //
     //added this for loop in for powerups
-    //
     for (var i = 0; i < this.powerUps.length; i++) {
         this.powerUps[i].draw(this.ctx);
     }
@@ -189,8 +187,10 @@ GameEngine.prototype.draw = function () {
  */
 GameEngine.prototype.update = function () {
     var entitiesCount = this.entities.length;
+    //added this var for powerups
     var powerUpCount = this.powerUps.length
 
+    //added this loop for powerups
     for (var i = 0; i < powerUpCount; i++) {
         var powerup = this.powerUps[i];
 
@@ -199,6 +199,7 @@ GameEngine.prototype.update = function () {
         }
     }
 
+    //added this loop for powerups
     for (var i = this.powerUps.length - 1; i >= 0; --i) {
         if (this.powerUps[i].removeFromWorld) {
             this.powerUps.splice(i, 1);
@@ -228,8 +229,12 @@ GameEngine.prototype.loop = function () {
     this.space = null;
 }
 
+    /////////////////////////////
+    //Adding the PowerUp Object//
+    /////////////////////////////
 /**
  * adding powerUp object
+ * Copycat from Entity Object
  */
 function PowerUp(game, x, y) {
     this.game = game;
@@ -240,12 +245,14 @@ function PowerUp(game, x, y) {
 
 /**
  * adding powerUp object
+ * Copycat from Entity Object
  */
 PowerUp.prototype.update = function () {
 }
 
 /**
  * adding powerUp object
+ * Copycat from Entity Object
  */
 PowerUp.prototype.draw = function (ctx) {
     if (this.game.showOutlines && this.radius) {
