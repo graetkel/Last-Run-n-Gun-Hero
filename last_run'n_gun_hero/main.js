@@ -772,6 +772,7 @@ Bullet.prototype.collide = function (other) {
         if (other.isBullet) {
         }   
         else {
+
             other.health -= 1;  
             gameEngine.removeEntity(this);
         }   
