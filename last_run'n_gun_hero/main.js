@@ -346,12 +346,12 @@ Hero.prototype.update = function () {
             if (this.x < ent.x) this.collideForward = true;
         }
     }
-    if (this.game.aimUp) {
+    if (this.game.aimUp && !this.jumping) {
         if (this.firingStance < 3) {
             this.firingStance += 1;
         }
     }
-    if (this.game.aimDown) {
+    if (this.game.aimDown && !this.jumping) {
         if (this.firingStance > 1) {
             this.firingStance -= 1;
         }
@@ -380,6 +380,7 @@ Hero.prototype.update = function () {
 
     if (this.game.space) {
         this.jumping = true;
+        this.firingStance = 2;
     }
 
     var totalHeight = 200;
@@ -491,7 +492,7 @@ Hero.prototype.update = function () {
                 }
                 else {
                     if (this.firingStance === 2) {
-                        this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 35, this.standForward,this.firingStance, true));
+                        this.game.addEntity(new Bullet(this.game, this.x - 15, this.y + 35, this.standForward,this.firingStance, true));
                     } 
                     else if (this.firingStance === 3) {
                         this.game.addEntity(new Bullet(this.game, this.x , this.y - 10, this.standForward,this.firingStance, true));
