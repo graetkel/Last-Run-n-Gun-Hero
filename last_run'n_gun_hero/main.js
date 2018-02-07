@@ -63,17 +63,17 @@ Animation.prototype.isDone = function () {
 function Background(game, spritesheet) {
     this.x = 0;
     this.y = 0;
-    this.speed = -75
+    this.speed = -50
     this.spritesheet = spritesheet;
     this.game = game;
     this.ctx = game.ctx;
 };
 
 Background.prototype.update = function () {
-    if (this.game.d && cameraX != 0 && this.game.s === false) {
+    if (this.game.d && cameraX != 0 && !this.game.s) {
         this.x += this.game.clockTick * this.speed;
     }
-    if (this.game.a && cameraX != 0 && this.game.s === false) {
+    if (this.game.a &&cameraX != 0 && !this.game.s) {
         this.x -= this.game.clockTick * this.speed;
     }
 
