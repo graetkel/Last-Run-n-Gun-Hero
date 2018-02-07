@@ -1,6 +1,4 @@
 var AM = new AssetManager();
-var Background1 = 0;
-var Background2 = 0;
 var gameEngine = new GameEngine();
 //In order to get the camera feature to work make sure every
 //x position value is its position - cameraX
@@ -23,8 +21,10 @@ function Animation(spriteSheet, startX, startY, frameWidth, frameHeight, sheetWi
     this.isDead = false;
 }
 
-Animation.prototype.drawFrame = function (tick, ctx, x, y) {
-    var scaleBy = scaleBy || 1;
+//Added the 'scale' parameter and also set it so scaleBy is set to it
+//if the caller adds the scale size to the end of the function call.
+Animation.prototype.drawFrame = function (tick, ctx, x, y, scale) {
+    var scaleBy = scale || 1;
     this.elapsedTime += tick;
     if (this.loop) {
         if (this.isDone()) {
@@ -55,68 +55,81 @@ Animation.prototype.isDone = function () {
     return (this.elapsedTime >= this.totalTime);
 }
 
+
+
+
 /**
- * These next 3 functions are the first level background image
+ * The next 3 functions are the first level background image
  * setup to repeat infinitely.
  */
 function Background(game, spritesheet) {
-    this.x = -1000;
+    this.x = 0;
     this.y = 0;
-    this.speed = -150
+    this.speed = -50
     this.spritesheet = spritesheet;
     this.game = game;
     this.ctx = game.ctx;
 };
 
 Background.prototype.update = function () {
+    if (this.game.d && cameraX != 0 && !this.game.s) {
+        this.x += this.game.clockTick * this.speed;
+    }
+    if (this.game.a &&cameraX != 0 && !this.game.s) {
+        this.x -= this.game.clockTick * this.speed;
+    }
 
-    if (this.game.d) {
-        this.x += this.game.clockTick * this.speed * 0.75;
-    }
-    if (this.game.a) {
-        this.x -= this.game.clockTick * this.speed * 0.75;
-    }
-    if (this.x < -2083) this.x = Background2 + 2075;
+    if (this.x < -2081) this.x = 0;
+    if (this.x > 2081) this.x = 0;
 };
 
 Background.prototype.draw = function () {
     this.ctx.drawImage(this.spritesheet, this.x, this.y);
-    Background1 = this.x;
+    this.ctx.drawImage(this.spritesheet, this.x + 2077, this.y);
+    this.ctx.drawImage(this.spritesheet, this.x - 2077, this.y);
 };
 
 
 /**
- * These next 3 functions are the first level background image
- * setup to repeat infinitely.
+ * These are the functions which create the fire powerup
+ * Still a work in progress
  */
-function BackgroundTwo(game, spritesheet) {
-    this.x = 1078;
-    this.y = 0;
-    this.speed = -150;
-    this.spritesheet = spritesheet;
-    this.game = game;
-    this.ctx = game.ctx;
-};
+function FirePowerUp(game, spritesheet) {
+    this.animation = new Animation(spritesheet, this.x, this.y, 214, 207, 2, 0.10, 6, true);
+    this.isFirePowerUp = true;
+    this.height = 60;
+    this.width = 64;
+    this.speed = 0;
+    this.ctx = game.ctx;  
+    PowerUp.call(this, game, 300, 563);
+}
 
-BackgroundTwo.prototype.update = function () {
+FirePowerUp.prototype = new PowerUp();
+FirePowerUp.prototype.constructor = FirePowerUp;
 
-    var mod = 0.75;
+FirePowerUp.prototype.update = function () {
+    var mainguy = this.game.entities[2];
 
-
-
-    if (this.game.d) {
-        this.x += this.game.clockTick * this.speed * mod;
+    if (this.collide(mainguy)) {
+        gameEngine.removePowerUp(this);
     }
-    if (this.game.a) {
-        this.x -= this.game.clockTick * this.speed * mod;
-    }
-    if (this.x < -2083) this.x = Background1 + 2075;
+}
+
+FirePowerUp.prototype.draw = function () {
+    this.animation.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y, .3);
+}
+
+FirePowerUp.prototype.collide = function (other) {
+    var rect1 = {x: this.x, y: this.y, width: this.width, height: this.height} 
+    var rect2 = {x: other.x, y: other.y, width: other.width, height: other.height}
+    if (rect1.x < rect2.x + rect2.width 
+    && rect1.x + rect1.width > rect2.x 
+    && rect1.y < rect2.y + rect2.height 
+    && rect1.height + rect1.y > rect2.y) { 
+        return true;
+    } 
 };
 
-BackgroundTwo.prototype.draw = function () {
-    this.ctx.drawImage(this.spritesheet, this.x, this.y);
-    Background2 = this.x;
-};
 
 
 var map = {
@@ -266,12 +279,12 @@ Camera.prototype.update = function() {
 
   //this.game.ctx.canvas.width = 3200;
   cameraMid = this.game.ctx.canvas.width / 2;
-  if (this.game.entities[3].x < cameraMid) {
+  if (this.game.entities[2].x < cameraMid) {
     cameraX = 0;
-  } else if (this.game.entities[3].x > 3200 - cameraMid) {
+  } else if (this.game.entities[2].x > 3200 - cameraMid) {
     cameraX = 3200 - this.game.ctx.canvas.width;
   } else {
-    cameraX = this.game.entities[3].x - cameraMid;
+    cameraX = this.game.entities[2].x - cameraMid;
   }
 
 }
@@ -325,7 +338,7 @@ Hero.prototype.collide = function (other) {
     && rect1.height + rect1.y > rect2.y) { 
         if (!other.isBullet){
             if (other.enemy) {
-                gameEngine.removeEntity(this)
+                //gameEngine.removeEntity(this)
                 if (other.x > this.x) {
                     this.x -= 30;
                 }
@@ -620,10 +633,10 @@ EnemySoldier.prototype.update = function () {
             if (this.x < ent.x) this.collideForward = true;
         }
     }
-    if ((Math.abs(this.x - this.game.entities[3].x) >= 400 )) this.standing = false;
-    if (Math.abs(this.x - this.game.entities[3].x) <= 400 ) {
+    if ((Math.abs(this.x - this.game.entities[2].x) >= 400 )) this.standing = false;
+    if (Math.abs(this.x - this.game.entities[2].x) <= 400 ) {
         this.standing = true;
-        if(this.x - this.game.entities[3].x < 0) this.forward = true;
+        if(this.x - this.game.entities[2].x < 0) this.forward = true;
         else this.forward = false;   
         if (this.enemyShoot) {
             if (this.forward) this.game.addEntity(new Bullet(this.game, this.x + 110, this.y + 35, this.forward,this.firingStance));
@@ -925,7 +938,6 @@ AM.queueDownload("./img/frontDown45RunHero.png");
 AM.queueDownload("./img/frontUp45Hero.png");
 AM.queueDownload("./img/frontUp45RunHero.png");
 AM.queueDownload("./img/backgroundtrees.jpg");
-AM.queueDownload("./img/backgroundtrees1.jpg");
 AM.queueDownload("./img/backCrawl.png");
 AM.queueDownload("./img/runningHero.png");
 AM.queueDownload("./img/backwardHero.png");
@@ -956,6 +968,7 @@ AM.queueDownload("./img/ground3.png");
 AM.queueDownload("./img/ground4.png");
 AM.queueDownload("./img/enemySoldier_StandingBackward.png");
 AM.queueDownload("./img/enemySoldier_StandingFoward.png");
+AM.queueDownload("./img/firepowerup.png");
 
 
 AM.downloadAll(function () {
@@ -972,11 +985,10 @@ AM.downloadAll(function () {
     , AM.getAsset("./img/frontDown45RunHero.png"), AM.getAsset("./img/backUp45Hero.png"), AM.getAsset("./img/backUp45RunHero.png")
     , AM.getAsset("./img/backDown45Hero.png"), AM.getAsset("./img/backDown45RunHero.png")];
     gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/backgroundtrees.jpg")));
-    gameEngine.addEntity(new BackgroundTwo(gameEngine, AM.getAsset("./img/backgroundtrees1.jpg")));
     gameEngine.addEntity(new Platform(gameEngine));
     gameEngine.addEntity(new Hero(gameEngine, heroSprite));
     gameEngine.addEntity(new Camera(gameEngine));
-    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 300, 575, 60));
+    //gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 300, 575, 60));
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 1200, 575, 60));
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/orange_Robot.png"), AM.getAsset("./img/orange_Robot.png"), 1800, 575, 60));
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/green_Robot.png"), AM.getAsset("./img/green_Robot.png"), 2400, 575, 60));
@@ -993,5 +1005,6 @@ AM.downloadAll(function () {
     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png"), AM.getAsset("./img/flyingRobot_Forward.png"), 1000, 300, 60));
     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png"), AM.getAsset("./img/flyingRobot_Forward.png"), 1700, 100, 60));
     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png"), AM.getAsset("./img/flyingRobot_Forward.png"), 2300, 200, 60));
+    gameEngine.addPowerUp(new FirePowerUp(gameEngine, AM.getAsset("./img/firepowerup.png")));
         console.log("All Done!");
 });
