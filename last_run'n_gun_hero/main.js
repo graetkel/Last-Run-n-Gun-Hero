@@ -1,6 +1,4 @@
 var AM = new AssetManager();
-var Background1 = 0;
-var Background2 = 0;
 var gameEngine = new GameEngine();
 //In order to get the camera feature to work make sure every
 //x position value is its position - cameraX
@@ -55,12 +53,15 @@ Animation.prototype.isDone = function () {
     return (this.elapsedTime >= this.totalTime);
 }
 
+
+
+
 /**
  * These next 3 functions are the first level background image
  * setup to repeat infinitely.
  */
 function Background(game, spritesheet) {
-    this.x = -1000;
+    this.x = 0;
     this.y = 0;
     this.speed = -150
     this.spritesheet = spritesheet;
@@ -69,54 +70,25 @@ function Background(game, spritesheet) {
 };
 
 Background.prototype.update = function () {
-
     if (this.game.d) {
-        this.x += this.game.clockTick * this.speed * 0.75;
+        this.x += this.game.clockTick * this.speed;
     }
     if (this.game.a) {
-        this.x -= this.game.clockTick * this.speed * 0.75;
+        this.x -= this.game.clockTick * this.speed;
     }
-    if (this.x < -2083) this.x = Background2 + 2075;
+
+    if (this.x < -2081) this.x = 0;
+    if (this.x > 2081) this.x = 0;
 };
 
 Background.prototype.draw = function () {
     this.ctx.drawImage(this.spritesheet, this.x, this.y);
-    Background1 = this.x;
+    this.ctx.drawImage(this.spritesheet, this.x + 2077, this.y);
+    this.ctx.drawImage(this.spritesheet, this.x - 2077, this.y);
 };
 
 
-/**
- * These next 3 functions are the first level background image
- * setup to repeat infinitely.
- */
-function BackgroundTwo(game, spritesheet) {
-    this.x = 1078;
-    this.y = 0;
-    this.speed = -150;
-    this.spritesheet = spritesheet;
-    this.game = game;
-    this.ctx = game.ctx;
-};
 
-BackgroundTwo.prototype.update = function () {
-
-    var mod = 0.75;
-
-
-
-    if (this.game.d) {
-        this.x += this.game.clockTick * this.speed * mod;
-    }
-    if (this.game.a) {
-        this.x -= this.game.clockTick * this.speed * mod;
-    }
-    if (this.x < -2083) this.x = Background1 + 2075;
-};
-
-BackgroundTwo.prototype.draw = function () {
-    this.ctx.drawImage(this.spritesheet, this.x, this.y);
-    Background2 = this.x;
-};
 
 
 var map = {
@@ -266,12 +238,12 @@ Camera.prototype.update = function() {
 
   //this.game.ctx.canvas.width = 3200;
   cameraMid = this.game.ctx.canvas.width / 2;
-  if (this.game.entities[3].x < cameraMid) {
+  if (this.game.entities[2].x < cameraMid) {
     cameraX = 0;
-  } else if (this.game.entities[3].x > 3200 - cameraMid) {
+  } else if (this.game.entities[2].x > 3200 - cameraMid) {
     cameraX = 3200 - this.game.ctx.canvas.width;
   } else {
-    cameraX = this.game.entities[3].x - cameraMid;
+    cameraX = this.game.entities[2].x - cameraMid;
   }
 
 }
@@ -619,10 +591,10 @@ EnemySoldier.prototype.update = function () {
             if (this.x < ent.x) this.collideForward = true;
         }
     }
-    if ((Math.abs(this.x - this.game.entities[3].x) >= 400 )) this.standing = false;
-    if (Math.abs(this.x - this.game.entities[3].x) <= 400 ) {
+    if ((Math.abs(this.x - this.game.entities[2].x) >= 400 )) this.standing = false;
+    if (Math.abs(this.x - this.game.entities[2].x) <= 400 ) {
         this.standing = true;
-        if(this.x - this.game.entities[3].x < 0) this.forward = true;
+        if(this.x - this.game.entities[2].x < 0) this.forward = true;
         else this.forward = false;   
         if (this.enemyShoot) {
             if (this.forward) this.game.addEntity(new Bullet(this.game, this.x + 110, this.y + 35, this.forward,this.firingStance));
@@ -924,7 +896,6 @@ AM.queueDownload("./img/frontDown45RunHero.png");
 AM.queueDownload("./img/frontUp45Hero.png");
 AM.queueDownload("./img/frontUp45RunHero.png");
 AM.queueDownload("./img/backgroundtrees.jpg");
-AM.queueDownload("./img/backgroundtrees1.jpg");
 AM.queueDownload("./img/backCrawl.png");
 AM.queueDownload("./img/runningHero.png");
 AM.queueDownload("./img/backwardHero.png");
@@ -971,7 +942,6 @@ AM.downloadAll(function () {
     , AM.getAsset("./img/frontDown45RunHero.png"), AM.getAsset("./img/backUp45Hero.png"), AM.getAsset("./img/backUp45RunHero.png")
     , AM.getAsset("./img/backDown45Hero.png"), AM.getAsset("./img/backDown45RunHero.png")];
     gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/backgroundtrees.jpg")));
-    gameEngine.addEntity(new BackgroundTwo(gameEngine, AM.getAsset("./img/backgroundtrees1.jpg")));
     gameEngine.addEntity(new Platform(gameEngine));
     gameEngine.addEntity(new Hero(gameEngine, heroSprite));
     gameEngine.addEntity(new Camera(gameEngine));
