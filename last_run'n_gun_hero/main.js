@@ -279,20 +279,24 @@ Camera.prototype.update = function() {
 Camera.prototype.draw = function() {
 }
 
-
-
-
 // inheritance
-function Hero(game, frontRunSprite, backRunSprite, frontStandSprite, backStandSprite, frontJumpSprite, backJumpSprite, backCrawlSprite, frontCrawlSprite
-    ) {
-    this.frontRun = new Animation(frontRunSprite, this.x, this.y, 105, 101, 8, 0.1, 8, true);
-    this.backRun = new Animation(backRunSprite, this.x, this.y, 105, 102, 8, 0.1, 8, true);
-    this.frontStand = new Animation(frontStandSprite, this.x, this.y, 98, 100, 1, 0.1, 1, true);
-    this.backStand = new Animation(backStandSprite, this.x, this.y, 98, 100, 1, 0.1, 1, true);
-    this.frontJump = new Animation(frontJumpSprite, this.x, this.y, 105, 107, 1, 2, 1, false);
-    this.backJump = new Animation(backJumpSprite, this.x, this.y, 105, 103, 1, 2, 1, false);
-    this.backCrawl = new Animation(backCrawlSprite, this.x, this.y, 138, 100, 1, 0.1, 1, true);
-    this.frontCrawl = new Animation(frontCrawlSprite, this.x, this.y, 141, 100, 1, 0.1, 1, true);
+function Hero(game, heroSprites) {
+    this.frontRun = new Animation(heroSprites[0], this.x, this.y, 105, 101, 8, 0.1, 8, true);
+    this.backRun = new Animation(heroSprites[1], this.x, this.y, 105, 102, 8, 0.1, 8, true);
+    this.frontStand = new Animation(heroSprites[2], this.x, this.y, 98, 100, 1, 0.1, 1, true);
+    this.backStand = new Animation(heroSprites[3], this.x, this.y, 98, 100, 1, 0.1, 1, true);
+    this.frontJump = new Animation(heroSprites[4], this.x, this.y, 105, 107, 1, 2, 1, false);
+    this.backJump = new Animation(heroSprites[5], this.x, this.y, 105, 103, 1, 2, 1, false);
+    this.backCrawl = new Animation(heroSprites[6], this.x, this.y, 138, 100, 1, 0.1, 1, true);
+    this.frontCrawl = new Animation(heroSprites[7], this.x, this.y, 141, 100, 1, 0.1, 1, true);
+    this.front45Up = new Animation(heroSprites[8], this.x, this.y, 99, 101, 1, 0.1, 1, true);
+    this.front45UpRun = new Animation(heroSprites[9], this.x, this.y, 91, 101, 8, 0.1, 8, true);
+    this.front45Down = new Animation(heroSprites[10], this.x, this.y, 99, 102, 1, 0.1, 1, true);
+    this.front45DownRun = new Animation(heroSprites[11], this.x, this.y, 92, 101, 8, 0.1, 8, true);
+    this.back45Up = new Animation(heroSprites[12], this.x, this.y, 99, 101, 1, 0.1, 1, true);
+    this.back45UpRun = new Animation(heroSprites[13], this.x, this.y, 90, 100, 8, 0.1, 8, true);
+    this.back45Down = new Animation(heroSprites[14], this.x, this.y, 88, 102, 1, 0.1, 1, true);
+    this.back45DownRun = new Animation(heroSprites[15], this.x, this.y, 91, 101, 8, 0.1, 8, true);
     this.jumping = false;
     this.speed = 200;
     this.hero = true;
@@ -831,7 +835,15 @@ BulletFlash.prototype.draw = function () {
     Entity.prototype.draw.call(this);
 }
 
-//AM.queueDownload("./img/bulletFlash.jpg");
+//AM.queueDownload("./img/bulletFlash.png");
+AM.queueDownload("./img/backDown45Hero.png");
+AM.queueDownload("./img/backDown45RunHero.png");
+AM.queueDownload("./img/backUp45Hero.png");
+AM.queueDownload("./img/backUp45RunHero.png");
+AM.queueDownload("./img/frontDown45Hero.png");
+AM.queueDownload("./img/frontDown45RunHero.png");
+AM.queueDownload("./img/frontUp45Hero.png");
+AM.queueDownload("./img/frontUp45RunHero.png");
 AM.queueDownload("./img/backgroundtrees.jpg");
 AM.queueDownload("./img/backgroundtrees1.jpg");
 AM.queueDownload("./img/backCrawl.png");
@@ -873,14 +885,16 @@ AM.downloadAll(function () {
     
     gameEngine.init(ctx);
     gameEngine.start();
-    
+    var heroSprite = [AM.getAsset("./img/runningHero.png"), AM.getAsset("./img/backwardHero.png")
+    , AM.getAsset("./img/frontStanding.png"), AM.getAsset("./img/backwardStand.png"), AM.getAsset("./img/frontJump.png")
+    , AM.getAsset("./img/backJump.png"), AM.getAsset("./img/backCrawl.png"), AM.getAsset("./img/frontCrawl.png")
+    , AM.getAsset("./img/frontUp45Hero.png"), AM.getAsset("./img/frontUp45RunHero.png"), AM.getAsset("./img/frontDown45Hero.png")
+    , AM.getAsset("./img/frontDown45RunHero.png"), AM.getAsset("./img/backUp45Hero.png"), AM.getAsset("./img/backUp45RunHero.png")
+    , AM.getAsset("./img/backDown45Hero.png"), AM.getAsset("./img/backDown45RunHero.png")];
     gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/backgroundtrees.jpg")));
     gameEngine.addEntity(new BackgroundTwo(gameEngine, AM.getAsset("./img/backgroundtrees1.jpg")));
     gameEngine.addEntity(new Platform(gameEngine));
-    gameEngine.addEntity(new Hero(gameEngine, AM.getAsset("./img/runningHero.png"), AM.getAsset("./img/backwardHero.png")
-    , AM.getAsset("./img/frontStanding.png"), AM.getAsset("./img/backwardStand.png"), AM.getAsset("./img/frontJump.png")
-    , AM.getAsset("./img/backJump.png"), AM.getAsset("./img/backCrawl.png"), AM.getAsset("./img/frontCrawl.png")
-    ));
+    gameEngine.addEntity(new Hero(gameEngine, heroSprite));
     gameEngine.addEntity(new Camera(gameEngine));
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 300, 575, 60));
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 1200, 575, 60));
