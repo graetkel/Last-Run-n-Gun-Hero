@@ -63,17 +63,17 @@ Animation.prototype.isDone = function () {
 function Background(game, spritesheet) {
     this.x = 0;
     this.y = 0;
-    this.speed = -150
+    this.speed = -75
     this.spritesheet = spritesheet;
     this.game = game;
     this.ctx = game.ctx;
 };
 
 Background.prototype.update = function () {
-    if (this.game.d) {
+    if (this.game.d && cameraX != 0 && this.game.s === false) {
         this.x += this.game.clockTick * this.speed;
     }
-    if (this.game.a) {
+    if (this.game.a && cameraX != 0 && this.game.s === false) {
         this.x -= this.game.clockTick * this.speed;
     }
 
@@ -297,7 +297,7 @@ Hero.prototype.collide = function (other) {
     && rect1.height + rect1.y > rect2.y) { 
         if (!other.isBullet){
             if (other.enemy) {
-                gameEngine.removeEntity(this)
+                //gameEngine.removeEntity(this)
                 if (other.x > this.x) {
                     this.x -= 30;
                 }
