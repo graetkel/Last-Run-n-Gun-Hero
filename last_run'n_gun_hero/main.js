@@ -57,7 +57,7 @@ Animation.prototype.isDone = function () {
 
 
 /**
- * These next 3 functions are the first level background image
+ * The next 3 functions are the first level background image
  * setup to repeat infinitely.
  */
 function Background(game, spritesheet) {
@@ -88,6 +88,45 @@ Background.prototype.draw = function () {
 };
 
 
+/**
+ * These are the functions which create the fire powerup
+ * Still a work in progress
+ */
+function FirePowerUp(game, spritesheet) {
+    this.animation = new Animation(spritesheet, this.x, this.y, 214, 207, 2, 0.10, 6, true);
+    this.isFirePowerUp = true;
+    this.height = 207;
+    this.width = 214;
+    this.speed = 0;
+    this.ctx = game.ctx;  
+    PowerUp.call(this, game, 300, 420);
+}
+
+FirePowerUp.prototype = new PowerUp();
+FirePowerUp.prototype.constructor = FirePowerUp;
+
+FirePowerUp.prototype.update = function () {
+    var mainguy = this.game.entities[2];
+
+    if (this.collide(mainguy)) {
+        gameEngine.removePowerUp(this);
+    }
+}
+
+FirePowerUp.prototype.draw = function () {
+    this.animation.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+}
+
+FirePowerUp.prototype.collide = function (other) {
+    var rect1 = {x: this.x, y: this.y, width: this.width, height: this.height} 
+    var rect2 = {x: other.x, y: other.y, width: other.width, height: other.height}
+    if (rect1.x < rect2.x + rect2.width 
+    && rect1.x + rect1.width > rect2.x 
+    && rect1.y < rect2.y + rect2.height 
+    && rect1.height + rect1.y > rect2.y) { 
+        return true;
+    } 
+};
 
 
 
@@ -302,6 +341,11 @@ Hero.prototype.collide = function (other) {
                     this.x -= 30;
                 }
                 else this.x += 30;
+            }
+            else if (other.isFirePowerUp){
+                //TODO
+                //do something to start hero fire powerup
+                
             }
             return true;
         }
@@ -926,6 +970,7 @@ AM.queueDownload("./img/ground3.png");
 AM.queueDownload("./img/ground4.png");
 AM.queueDownload("./img/enemySoldier_StandingBackward.png");
 AM.queueDownload("./img/enemySoldier_StandingFoward.png");
+AM.queueDownload("./img/firepowerup.png");
 
 
 AM.downloadAll(function () {
@@ -962,5 +1007,6 @@ AM.downloadAll(function () {
     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png"), AM.getAsset("./img/flyingRobot_Forward.png"), 1000, 300, 60));
     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png"), AM.getAsset("./img/flyingRobot_Forward.png"), 1700, 100, 60));
     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png"), AM.getAsset("./img/flyingRobot_Forward.png"), 2300, 200, 60));
+    gameEngine.addPowerUp(new FirePowerUp(gameEngine, AM.getAsset("./img/firepowerup.png")));
         console.log("All Done!");
 });

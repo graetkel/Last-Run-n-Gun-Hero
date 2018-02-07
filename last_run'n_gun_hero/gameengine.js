@@ -27,6 +27,7 @@ Timer.prototype.tick = function () {
 
 function GameEngine() {
     this.entities = [];
+    this.powerUps = [];
     this.showOutlines = false;
     this.ctx = null;
     this.click = null;
@@ -110,6 +111,40 @@ GameEngine.prototype.startInput = function () {
     }, false);
 }
 
+
+//////////////////////////////////////////////////
+///// added PowerUp as similar Entity object /////
+//////////////////////////////////////////////////
+/**
+ * Adds a powerup to the world.
+ * copycat of the previous addEntity function.
+*/
+GameEngine.prototype.addPowerUp = function (powerUp) {
+    console.log('added powerUp');
+    this.powerUps.push(powerUp);
+}
+
+/**
+ * removes a powerup from the world.
+ * copycat of the previous removeEntity function.
+ */
+GameEngine.prototype.removePowerUp = function (powerUp) {
+    console.log('removed powerUp');
+    console.log(powerUp);
+    powerUp.removeFromWorld = true;
+}
+
+/**
+ * gets the selected powerup.
+ * copycat from the previous getEntity function.
+ */
+GameEngine.prototype.getPowerUp = function () {
+    console.log('got PowerUp');
+    return this.powerUps;
+}
+
+
+
 GameEngine.prototype.addEntity = function (entity) {
     console.log('added entity');
     this.entities.push(entity);
@@ -128,17 +163,48 @@ GameEngine.prototype.getEntity = function () {
     return this.entities;
 }
 
+/**
+ * Modified this function to include the drawing of the 
+ * Powerups.
+ */
 GameEngine.prototype.draw = function () {
     this.ctx.clearRect(0, 0, this.surfaceWidth, this.surfaceHeight);
     this.ctx.save();
     for (var i = 0; i < this.entities.length; i++) {
         this.entities[i].draw(this.ctx);
     }
+
+    //
+    //added this for loop in for powerups
+    //
+    for (var i = 0; i < this.powerUps.length; i++) {
+        this.powerUps[i].draw(this.ctx);
+    }
     this.ctx.restore();
 }
 
+/**
+ * Modifed this function to include the updating
+ * of the powerups as well.
+ */
 GameEngine.prototype.update = function () {
     var entitiesCount = this.entities.length;
+    var powerUpCount = this.powerUps.length
+
+    for (var i = 0; i < powerUpCount; i++) {
+        var powerup = this.powerUps[i];
+
+        if (!powerup.removeFromWorld) {
+            powerup.update();
+        }
+    }
+
+    for (var i = this.powerUps.length - 1; i >= 0; --i) {
+        if (this.powerUps[i].removeFromWorld) {
+            this.powerUps.splice(i, 1);
+        }
+    }
+
 
     for (var i = 0; i < entitiesCount; i++) {
         var entity = this.entities[i];
@@ -160,6 +226,35 @@ GameEngine.prototype.loop = function () {
     this.update();
     this.draw();
     this.space = null;
+}
+
+/**
+ * adding powerUp object
+ */
+function PowerUp(game, x, y) {
+    this.game = game;
+    this.x = x;
+    this.y = y;
+    this.removeFromWorld = false;
+}
+
+/**
+ * adding powerUp object
+ */
+PowerUp.prototype.update = function () {
+}
+
+/**
+ * adding powerUp object
+ */
+PowerUp.prototype.draw = function (ctx) {
+    if (this.game.showOutlines && this.radius) {
+        this.game.ctx.beginPath();
+        this.game.ctx.strokeStyle = "green";
+        this.game.ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+        this.game.ctx.stroke();
+        this.game.ctx.closePath();
+    }
 }
 
 function Entity(game, x, y) {
