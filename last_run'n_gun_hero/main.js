@@ -320,7 +320,6 @@ Hero.prototype.collide = function (other) {
     && rect1.height + rect1.y > rect2.y) { 
         if (!other.isBullet){
             if (other.enemy) {
-
                 gameEngine.removeEntity(this)
                 if (other.x > this.x) {
                     this.x -= 30;
@@ -518,6 +517,7 @@ function EnemySoldier(game, backRunSprite, frontRunSprite, backStandSprite, fron
     this.enemyBackStand = new Animation(backStandSprite, this.x, this.y, 98, 100, 1, 0.1, 1, true);
     this.enemyFrontStand = new Animation(frontStandSprite, this.x, this.y, 98, 100, 1, 0.1, 1, true);
     this.speed = unitSpeed;
+    this.health = 3;
     this.ctx = game.ctx;
     this.forward = true;
     this.width = 95;
@@ -539,7 +539,7 @@ EnemySoldier.prototype.collide = function (other) {
     && rect1.y < rect2.y + rect2.height 
     && rect1.height + rect1.y > rect2.y) { 
         if (other.isBullet) {
-            this.isDead = true;
+           // this.isDead = true;
         }
         return true;
     } 
@@ -549,6 +549,7 @@ EnemySoldier.prototype.update = function () {
     var enemyThat = this;
     this.isCollide = false;
     this.collideForward = false;
+    if (this.health === 0) this.isDead = true;
     if (this.isDead) gameEngine.removeEntity(this);
     for (var i = 0; i < this.game.entities.length; i++) {
         var ent = this.game.entities[i];
@@ -616,6 +617,7 @@ function Robot(game, backRunSprite, frontRunSprite, xCord, yCord, unitSpeed) {
     this.robotBackRun = new Animation(backRunSprite, this.x, this.y, 51, 49, 3, 0.1, 3, true);
     this.robotFrontRun = new Animation(frontRunSprite, this.x, this.y, 51, 49, 3, 0.1, 3, true);
     this.speed = unitSpeed;
+    this.health = 1;
     this.ctx = game.ctx;
     this.width = 40;
     this.enemy = true;
@@ -642,6 +644,7 @@ Robot.prototype.collide = function (other) {
 Robot.prototype.update = function () {
     this.isCollide = false;
     this.collideForward = false;
+    if (this.health === 0) this.isDead = true;
     if (this.isDead) gameEngine.removeEntity(this);
     for (var i = 0; i < this.game.entities.length; i++) {
         var ent = this.game.entities[i];
@@ -765,9 +768,13 @@ Bullet.prototype.collide = function (other) {
     if (rect1.x < rect2.x + rect2.width 
     && rect1.x + rect1.width > rect2.x 
     && rect1.y < rect2.y + rect2.height 
-    && rect1.height + rect1.y > rect2.y) { 
-        other.isDead = true;  
-        gameEngine.removeEntity(this);      
+    && rect1.height + rect1.y > rect2.y) {
+        if (other.isBullet) {
+        }   
+        else {
+            other.health -= 1;  
+            gameEngine.removeEntity(this);
+        }   
     } 
 };
 
