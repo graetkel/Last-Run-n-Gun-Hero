@@ -298,8 +298,8 @@ function Hero(game, heroSprites) {
     this.backRun = new Animation(heroSprites[1], this.x, this.y, 105, 102, 8, 0.1, 8, true);
     this.frontStand = new Animation(heroSprites[2], this.x, this.y, 98, 100, 1, 0.1, 1, true);
     this.backStand = new Animation(heroSprites[3], this.x, this.y, 98, 100, 1, 0.1, 1, true);
-    this.frontJump = new Animation(heroSprites[4], this.x, this.y, 105, 107, 1, 2, 1, false);
-    this.backJump = new Animation(heroSprites[5], this.x, this.y, 105, 103, 1, 2, 1, false);
+    this.frontJump = new Animation(heroSprites[4], this.x, this.y, 105, 107, 1, 1.5, 1, false);
+    this.backJump = new Animation(heroSprites[5], this.x, this.y, 105, 103, 1, 1.5, 1, false);
     this.backCrawl = new Animation(heroSprites[6], this.x, this.y, 138, 100, 1, 0.1, 1, true);
     this.frontCrawl = new Animation(heroSprites[7], this.x, this.y, 141, 100, 1, 0.1, 1, true);
     this.front45Up = new Animation(heroSprites[8], this.x, this.y, 99, 101, 1, 0.1, 1, true);
@@ -338,7 +338,6 @@ Hero.prototype.collide = function (other) {
     && rect1.height + rect1.y > rect2.y) { 
         if (!other.isBullet){
             if (other.enemy) {
-                //gameEngine.removeEntity(this)
                 if (other.x > this.x) {
                     this.x -= 30;
                 }
@@ -398,6 +397,7 @@ Hero.prototype.update = function () {
 
     var totalHeight = 200;
     var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
+    that = this;
 
     if (this.jumping && this.runFlag) {
 
@@ -459,61 +459,60 @@ Hero.prototype.update = function () {
             }
         }
     }
-    that = this;
-
+    
     if (this.firing) {
     
         if (this.CanShoot) {
             if (this.standForward) {
                 if (this.jumping) {
                     if (this.jumpForward) {
-                        this.game.addEntity(new Bullet(this.game, this.x + 110, this.y + 35, this.jumpForward,this.firingStance, false));
+                        this.game.addEntity(new Bullet(this.game, this.x + 110, this.y + 35, this.jumpForward,this.firingStance, false, false));
                     }
                     else {
-                        this.game.addEntity(new Bullet(this.game, this.x - 10 , this.y + 35, this.jumpForward,this.firingStance, false));
+                        this.game.addEntity(new Bullet(this.game, this.x - 10 , this.y + 35, this.jumpForward,this.firingStance, false, false));
                     }
                 }
                 else if (this.crawlForward) {
                     this.game.addEntity(new Bullet(this.game, this.x + 140, this.y + 85, this.standForward,this.firingStance, false));
-                   // this.game.addEntity(new BulletFlash(this.game, AM.getAsset("./img/BulletFlash.png"), this.x + 140, this.y + 85, this.standForward));
+                   
                 }
                 else {
                     if (this.firingStance === 2) {
-                        this.game.addEntity(new Bullet(this.game, this.x + 110, this.y + 35, this.standForward,this.firingStance, true));
+                        this.game.addEntity(new Bullet(this.game, this.x + 110, this.y + 35, this.standForward,this.firingStance, true, false));
                     } 
                     else if (this.firingStance === 3) {
-                        this.game.addEntity(new Bullet(this.game, this.x + 100, this.y - 10, this.standForward,this.firingStance, true));
+                        this.game.addEntity(new Bullet(this.game, this.x + 100, this.y - 10, this.standForward,this.firingStance, true, false));
                     }
                     else if (this.firingStance === 1) {
-                        this.game.addEntity(new Bullet(this.game, this.x + 90, this.y + 90, this.standForward,this.firingStance, true));
+                        this.game.addEntity(new Bullet(this.game, this.x + 95, this.y + 90, this.standForward,this.firingStance, true, false));
                     }
-                    //this.game.addEntity(new BulletFlash(this.game, AM.getAsset("./img/BulletFlash.png"), this.x + 100, this.y + 35, this.standForward));
+                   
                 }
             }
             else {
                 if (this.jumping) {
                     if (this.jumpForward ) {
-                        this.game.addEntity(new Bullet(this.game, this.x + 110, this.y + 35, this.jumpForward,this.firingStance, false));
+                        this.game.addEntity(new Bullet(this.game, this.x + 110, this.y + 35, this.jumpForward,this.firingStance, false, false));
                     }
                     else {
-                        this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 35, this.jumpForward,this.firingStance, false));
+                        this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 35, this.jumpForward,this.firingStance, false, false));
                     }
                 }
                 else if (this.crawlForward) {
-                   this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 85, this.standForward,this.firingStance, false));
-                  // this.game.addEntity(new BulletFlash(this.game, AM.getAsset("./img/BulletFlash.png"), this.x - 40, this.y + 85, this.standForward));
+                   this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 85, this.standForward,this.firingStance, false, false));
+                   
                 }
                 else {
                     if (this.firingStance === 2) {
-                        this.game.addEntity(new Bullet(this.game, this.x - 15, this.y + 35, this.standForward,this.firingStance, true));
+                        this.game.addEntity(new Bullet(this.game, this.x - 15, this.y + 35, this.standForward,this.firingStance, true, false));
                     } 
                     else if (this.firingStance === 3) {
-                        this.game.addEntity(new Bullet(this.game, this.x , this.y - 10, this.standForward,this.firingStance, true));
+                        this.game.addEntity(new Bullet(this.game, this.x , this.y - 10, this.standForward,this.firingStance, true, false));
                     }
                     else if (this.firingStance === 1) {
-                        this.game.addEntity(new Bullet(this.game, this.x - 5, this.y + 95, this.standForward,this.firingStance, true));
+                        this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 95, this.standForward,this.firingStance, true, false));
                     }
-                  // this.game.addEntity(new BulletFlash(this.game, AM.getAsset("./img/BulletFlash.png"), this.x, this.y + 35, this.standForward));
+            
                 }
             }
             this.CanShoot = false;
@@ -625,7 +624,7 @@ EnemySoldier.prototype.update = function () {
     this.isCollide = false;
     this.collideForward = false;
     if (this.health === 0) this.isDead = true;
-    if (this.isDead) gameEngine.removeEntity(this);
+    if (this.isDead) this.removeFromWorld = true;
     for (var i = 0; i < this.game.entities.length; i++) {
         var ent = this.game.entities[i];
         if (ent !== this && this.collide(ent)) {
@@ -639,8 +638,8 @@ EnemySoldier.prototype.update = function () {
         if(this.x - this.game.entities[2].x < 0) this.forward = true;
         else this.forward = false;   
         if (this.enemyShoot) {
-            if (this.forward) this.game.addEntity(new Bullet(this.game, this.x + 110, this.y + 35, this.forward,this.firingStance));
-            else this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 35, this.forward,this.firingStance));
+            if (this.forward) this.game.addEntity(new Bullet(this.game, this.x + 110, this.y + 35, this.forward,this.firingStance, false));
+            else this.game.addEntity(new Bullet(this.game, this.x - 15, this.y + 35, this.forward,this.firingStance, false));
 
             this.enemyShoot = false;
             setTimeout(function(){
@@ -720,7 +719,7 @@ Robot.prototype.update = function () {
     this.isCollide = false;
     this.collideForward = false;
     if (this.health === 0) this.isDead = true;
-    if (this.isDead) gameEngine.removeEntity(this);
+    if (this.isDead) this.removeFromWorld = true;
     for (var i = 0; i < this.game.entities.length; i++) {
         var ent = this.game.entities[i];
         if (ent !== this && this.collide(ent)) {
@@ -782,8 +781,12 @@ function FlyingRobot(game, backRunSprite, frontRunSprite, xCord, yCord, unitSpee
     this.flyingRobotBackRun = new Animation(backRunSprite, this.x, this.y, 52, 50, 2, 0.1, 2, true);
     this.flyingRobotFrontRun = new Animation(frontRunSprite, this.x, this.y, 52, 50, 2, 0.1, 2, true);
     this.speed = unitSpeed;
+    this.height = 50;
+    this.width = 52;
     this.ctx = game.ctx;
+    this.health = 2;
     this.forward = true;
+    this.enemyShoot = true;
     this.center = xCord;
     Entity.call(this, game, xCord, yCord);
 }
@@ -791,18 +794,39 @@ function FlyingRobot(game, backRunSprite, frontRunSprite, xCord, yCord, unitSpee
 FlyingRobot.prototype = new Entity();
 FlyingRobot.prototype.constructor = FlyingRobot;
 
-Robot.prototype.collide = function (other) {
+FlyingRobot.prototype.collide = function (other) {
     var rect1 = {x: this.x, y: this.y, width: this.width, height: this.height} 
     var rect2 = {x: other.x, y: other.y, width: other.width, height: other.height}
     if (rect1.x < rect2.x + rect2.width 
     && rect1.x + rect1.width > rect2.x 
     && rect1.y < rect2.y + rect2.height 
     && rect1.height + rect1.y > rect2.y) { 
+        
         return true;
     } 
 };
 
 FlyingRobot.prototype.update = function () {
+    var enemyThat = this;
+    if (this.health === 0) {
+        this.isDead = true;
+    }
+    if (this.isDead) this.removeFromWorld = true;
+    if (Math.abs(this.x - this.game.entities[2].x) <= 400 ) {
+        if (Math.abs(this.x - this.game.entities[2].x) < 5) {
+            if (this.enemyShoot) {
+                console.log("hello");
+                //this.game.addEntity(new Bullet(this.game, this.x, this.y +100, this.forward,this.firingStance,true));
+                this.enemyShoot = false;
+                setTimeout(function(){
+                enemyThat.enemyShoot = true;
+            }, 500);
+        }
+        else if (this.x - this.game.entities[2].x < 0) this.x -= this.game.clockTick * this.speed;
+        else this.x += this.game.clockTick * this.speed;
+        
+        }
+    }
     if (this.forward && (this.x - this.center < 100)) this.x += this.game.clockTick * this.speed;
     else if (((this.x - this.center) >= 100) && this.forward) {
         this.x -= this.game.clockTick * this.speed;
@@ -823,13 +847,15 @@ FlyingRobot.prototype.draw = function () {
 
 }
 
-function Bullet(game, startX, startY, direction, firingStance, standing) {
+function Bullet(game, startX, startY, direction, firingStance, standing, unitFlying) {
     this.isBullet = true;
     this.speed = 300;
     this.ctx = game.ctx;
     this.firingStance = firingStance;
     this.width = 2;
     this.height = 2;
+    this.isFlying = unitFlying;
+    this.gameGround = 610;
     this.standing = standing;
     this.startX = startX;
     this.forward = direction;
@@ -842,6 +868,10 @@ Bullet.prototype.constructor = Bullet;
 Bullet.prototype.collide = function (other) {
     var rect1 = {x: this.x, y: this.y, width: this.width, height: this.height} 
     var rect2 = {x: other.x, y: other.y, width: other.width, height: other.height}
+    if (other.crawlForward) {
+        rect2.height = 10;
+        rect2.y = other.y + 75;
+    }
     if (rect1.x < rect2.x + rect2.width 
     && rect1.x + rect1.width > rect2.x 
     && rect1.y < rect2.y + rect2.height 
@@ -849,17 +879,17 @@ Bullet.prototype.collide = function (other) {
         if (other.isBullet) {
         }   
         else {
-
             other.health -= 1;  
-            gameEngine.removeEntity(this);
+            this.removeFromWorld = true;
+            
         }   
     } 
 };
 
 Bullet.prototype.update = function () {
     this.isCollide = false;
-    this.collideForward = false;
-    console.log(this.firingStance);
+    this.collideForward = false
+    console.log(this.isFlying);
     for (var i = 0; i < this.game.entities.length; i++) {
         var ent = this.game.entities[i];
         if (ent !== this && this.collide(ent)) {
@@ -870,8 +900,11 @@ Bullet.prototype.update = function () {
     if (this.isCollide) {
         this.isDead;
     }
+   // if (this.isFlying) {
+      //  this.y += this.game.clockTick * this.speed;
+  //  }
     if (this.forward) {
-        if (this.x >= this.startX + 500) gameEngine.removeEntity(this); 
+        if (this.x >= this.startX + 500 || this.y > this.gameGround) this.removeFromWorld = true; 
         else if (!this.standing) this.x += this.game.clockTick * this.speed;
         else if (this.firingStance === 2) this.x += this.game.clockTick * this.speed;
         else if (this.firingStance === 3) {
@@ -884,7 +917,7 @@ Bullet.prototype.update = function () {
         }
     }
     else {
-        if (this.x <= this.startX - 500) gameEngine.removeEntity(this); 
+        if (this.x <= this.startX - 500 || this.y > this.gameGround) this.removeFromWorld = true; 
         else if (!this.standing) this.x -= this.game.clockTick * this.speed;
         else if (this.firingStance === 2) this.x -= this.game.clockTick * this.speed;
         else if (this.firingStance === 3 && this.standing) {
@@ -908,27 +941,6 @@ Bullet.prototype.draw = function () {
     Entity.prototype.draw.call(this);
 }
 
-function BulletFlash(game, spriteSheet, startX, startY, direction, firingStance) {
-    this.bulletFlash = new Animation(spriteSheet, this.x, this.y, 15, 14, 1, 0.1, 1, true);
-    this.ctx = game.ctx;
-    this.forward = direction;
-    this.firingStance = firingStance;
-    Entity.call(this, game, startX, startY);
-}
-
-BulletFlash.prototype = new Entity();
-BulletFlash.prototype.constructor = BulletFlash;
-
-BulletFlash.prototype.update = function () {
-    Entity.prototype.update.call(this);
-}
-
-BulletFlash.prototype.draw = function () {
-    this.bulletFlash.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
-    Entity.prototype.draw.call(this);
-}
-
-//AM.queueDownload("./img/bulletFlash.png");
 AM.queueDownload("./img/backDown45Hero.png");
 AM.queueDownload("./img/backDown45RunHero.png");
 AM.queueDownload("./img/backUp45Hero.png");
