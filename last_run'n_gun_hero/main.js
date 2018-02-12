@@ -313,8 +313,6 @@ function collide(thisUnit, otherUnit) {
         }  
         else if (!otherUnit.isBullet){
             if (thisUnit.isBullet) {
-                console.log("this: " + thisUnit.y);
-                console.log("other: " + otherUnit.y);
                 if (otherUnit.enemy && !(thisUnit.unitType === "hero")) {
 
                 }
@@ -1028,7 +1026,11 @@ GiantRobot.prototype.update = function () {
         else this.active = false;
         if (this.enemyShoot && this.active) {
             this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 80, this.forward
-                ,this.firingStance, false, this.unit));
+                ,this.firingStance, false,false, this.unitType));
+            this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 80, this.forward
+                , 3, true,false, this.unitType));
+            this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 80, this.forward
+                , 1, true,false, this.unitType));
             this.enemyShoot = false;
             setTimeout(function(){
             enemyThat.enemyShoot = true;
@@ -1184,11 +1186,10 @@ Bullet.prototype.update = function () {
 }
 
 Bullet.prototype.draw = function () {
-   // console.log(this.unitType);
     if (this.unitType === "giantRobot") {
         this.ctx.fillStyle = "White";
         this.ctx.beginPath();
-        this.ctx.arc(this.x - cameraX,this.y ,10,0,2*Math.PI); //this might be wrong
+        this.ctx.arc(this.x - cameraX,this.y ,10,0,8*Math.PI); //this might be wrong
         this.ctx.closePath();
         this.ctx.fill();
 
