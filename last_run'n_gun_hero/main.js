@@ -906,7 +906,7 @@ landMine.prototype.draw = function () {
 function GunTurrent(game, firingGunSprite,idleGunSprite,  xCord, yCord, health) {
     this.gunTurrentIdle = new Animation(idleGunSprite, this.x, this.y, 63, 60, 2, 0.1, 2, true);
     this.gunTurrentFiring = new Animation(firingGunSprite, this.x, this.y, 61, 60, 4, 0.6, 4, true);
-    this.health = 500;
+    this.health = health;
     this.ctx = game.ctx;
     this.width = 40;
     this.health = health;
