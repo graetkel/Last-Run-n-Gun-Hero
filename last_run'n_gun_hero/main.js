@@ -776,7 +776,137 @@ Robot.prototype.draw = function () {
     else if (!this.forward) this.robotBackRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
     Entity.prototype.draw.call(this);
 }
+function GunTurrent(game, firingGunSprite,idleGunSprite,  xCord, yCord) {
+    this.gunTurrentIdle = new Animation(idleGunSprite, this.x, this.y, 63, 60, 2, 0.1, 2, true);
+    this.gunTurrentFiring = new Animation(firingGunSprite, this.x, this.y, 61, 60, 4, 0.6, 4, true);
+    this.health = 500;
+    this.ctx = game.ctx;
+    this.width = 40;
+    this.gunTurrent = true;
+    this.enemy = true;
+    this.enemyShoot = true;
+    this.height = 60;
+    this.active = true;
+    this.center = xCord;
+    Entity.call(this, game, xCord, yCord);
+}
 
+GunTurrent.prototype = new Entity();
+GunTurrent.prototype.constructor = GunTurrent;
+
+GunTurrent.prototype.collide = function (other) {
+    var rect1 = {x: this.x, y: this.y, width: this.width, height: this.height} 
+    var rect2 = {x: other.x, y: other.y, width: other.width, height: other.height}
+    if (rect1.x < rect2.x + rect2.width 
+    && rect1.x + rect1.width > rect2.x 
+    && rect1.y < rect2.y + rect2.height 
+    && rect1.height + rect1.y > rect2.y) { 
+        return true;
+    } 
+};
+
+GunTurrent.prototype.update = function () {
+    console.log(this.active);
+    var enemyThat = this;
+    this.isCollide = false;
+    this.collideForward = false;
+    if (this.health === 0) this.isDead = true;
+    if (this.isDead) this.removeFromWorld = true;
+    for (var i = 0; i < this.game.entities.length; i++) {
+        var ent = this.game.entities[i];
+        if (ent !== this && this.collide(ent)) {
+            this.isCollide = true;
+            if (this.x < ent.x) this.collideForward = true;
+        }
+    }
+    if (Math.abs(this.x - this.game.entities[2].x) <= 400 ) {
+        this.active = true;
+        if(this.x - this.game.entities[2].x > 0) this.active = true;
+        else this.active = false;
+        if (this.enemyShoot && this.active) {
+            this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 30, this.forward,this.firingStance, false));
+            this.enemyShoot = false;
+            setTimeout(function(){
+            enemyThat.enemyShoot = true;
+        }, 1300);
+        }
+    }
+    else this.active = false;
+    
+    Entity.prototype.update.call(this);
+}
+
+GunTurrent.prototype.draw = function () {
+    if (this.active) this.gunTurrentFiring.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+    else this.gunTurrentIdle.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+    Entity.prototype.draw.call(this);
+}
+function GiantRobot(game, firingGunSprite,idleGunSprite,  xCord, yCord) {
+    this.gunTurrentIdle = new Animation(idleGunSprite, this.x, this.y, 257, 200, 1, 0.1, 1, true);
+    this.gunTurrentFiring = new Animation(firingGunSprite, this.x, this.y, 265, 200, 2, 0.5, 2, true);
+    this.health = 500;
+    this.ctx = game.ctx;
+    this.unitType = "giantRobot";
+    this.width = 265;
+    this.gunTurrent = true;
+    this.enemy = true;
+    this.enemyShoot = true;
+    this.height = 200;
+    this.active = true;
+    this.center = xCord;
+    Entity.call(this, game, xCord, yCord);
+}
+
+GiantRobot.prototype = new Entity();
+GiantRobot.prototype.constructor = GiantRobot;
+
+GiantRobot.prototype.collide = function (other) {
+    var rect1 = {x: this.x, y: this.y, width: this.width, height: this.height} 
+    var rect2 = {x: other.x, y: other.y, width: other.width, height: other.height}
+    if (rect1.x < rect2.x + rect2.width 
+    && rect1.x + rect1.width > rect2.x 
+    && rect1.y < rect2.y + rect2.height 
+    && rect1.height + rect1.y > rect2.y) { 
+        return true;
+    } 
+};
+
+GiantRobot.prototype.update = function () {
+    console.log(this.active);
+    var enemyThat = this;
+    this.isCollide = false;
+    this.collideForward = false;
+    if (this.health === 0) this.isDead = true;
+    if (this.isDead) this.removeFromWorld = true;
+    for (var i = 0; i < this.game.entities.length; i++) {
+        var ent = this.game.entities[i];
+        if (ent !== this && this.collide(ent)) {
+            this.isCollide = true;
+            if (this.x < ent.x) this.collideForward = true;
+        }
+    }
+    if (Math.abs(this.x - this.game.entities[2].x) <= 400 ) {
+        this.active = true;
+        if(this.x - this.game.entities[2].x > 0) this.active = true;
+        else this.active = false;
+        if (this.enemyShoot && this.active) {
+            this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 80, this.forward,this.firingStance, false, this.unit));
+            this.enemyShoot = false;
+            setTimeout(function(){
+            enemyThat.enemyShoot = true;
+        }, 1100);
+        }
+    }
+    else this.active = false;
+    
+    Entity.prototype.update.call(this);
+}
+
+GiantRobot.prototype.draw = function () {
+    if (this.active) this.gunTurrentFiring.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+    else this.gunTurrentIdle.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+    Entity.prototype.draw.call(this);
+}
 function FlyingRobot(game, backRunSprite, frontRunSprite, xCord, yCord, unitSpeed) {
     this.flyingRobotBackRun = new Animation(backRunSprite, this.x, this.y, 52, 50, 2, 0.1, 2, true);
     this.flyingRobotFrontRun = new Animation(frontRunSprite, this.x, this.y, 52, 50, 2, 0.1, 2, true);
@@ -812,22 +942,29 @@ FlyingRobot.prototype.update = function () {
         this.isDead = true;
     }
     if (this.isDead) this.removeFromWorld = true;
-    if (Math.abs(this.x - this.game.entities[2].x) <= 400 ) {
-        if (Math.abs(this.x - this.game.entities[2].x) < 5) {
+    if (Math.abs(this.x - this.game.entities[2].x) <= 200 ) {  
+        //console.log(Math.abs(this.x - this.game.entities[2].x) < 2);   
+        //console.log(this.x - this.game.entities[2].x > 0);
+        if (Math.abs(this.x - this.game.entities[2].x) < 2) {
+            console.log("close");
             if (this.enemyShoot) {
-                console.log("hello");
-                //this.game.addEntity(new Bullet(this.game, this.x, this.y +100, this.forward,this.firingStance,true));
+                
+                this.game.addEntity(new Bullet(this.game, this.x, this.y +100, this.forward,this.firingStance,true));
                 this.enemyShoot = false;
                 setTimeout(function(){
                 enemyThat.enemyShoot = true;
             }, 500);
         }
-        else if (this.x - this.game.entities[2].x < 0) this.x -= this.game.clockTick * this.speed;
+        
+        else if (this.x - this.game.entities[2].x > 0) {
+            console.log("hello");
+            this.x -= this.game.clockTick * this.speed;
+        }
         else this.x += this.game.clockTick * this.speed;
         
         }
     }
-    if (this.forward && (this.x - this.center < 100)) this.x += this.game.clockTick * this.speed;
+    else if (this.forward && (this.x - this.center < 100)) this.x += this.game.clockTick * this.speed;
     else if (((this.x - this.center) >= 100) && this.forward) {
         this.x -= this.game.clockTick * this.speed;
         this.forward = false;
@@ -847,13 +984,14 @@ FlyingRobot.prototype.draw = function () {
 
 }
 
-function Bullet(game, startX, startY, direction, firingStance, standing, unitFlying) {
+function Bullet(game, startX, startY, direction, firingStance, standing, unitFlying, unitType) {
     this.isBullet = true;
     this.speed = 300;
     this.ctx = game.ctx;
     this.firingStance = firingStance;
     this.width = 2;
     this.height = 2;
+    this.unitType = unitType;
     this.isFlying = unitFlying;
     this.gameGround = 610;
     this.standing = standing;
@@ -900,9 +1038,9 @@ Bullet.prototype.update = function () {
     if (this.isCollide) {
         this.isDead;
     }
-   // if (this.isFlying) {
-      //  this.y += this.game.clockTick * this.speed;
-  //  }
+    if (this.isFlying) {
+        this.y += this.game.clockTick * this.speed;
+    }
     if (this.forward) {
         if (this.x >= this.startX + 500 || this.y > this.gameGround) this.removeFromWorld = true; 
         else if (!this.standing) this.x += this.game.clockTick * this.speed;
@@ -933,11 +1071,22 @@ Bullet.prototype.update = function () {
 }
 
 Bullet.prototype.draw = function () {
-    this.ctx.fillStyle = "White";
-    this.ctx.beginPath();
-    this.ctx.arc(this.x - cameraX,this.y ,4,0,2*Math.PI); //this might be wrong
-    this.ctx.closePath();
-    this.ctx.fill();
+    console.log(this.unitType);
+    if (this.unitType === "giantRobot") {
+        this.ctx.fillStyle = "White";
+        this.ctx.beginPath();
+        this.ctx.arc(this.x - cameraX,this.y ,10,0,2*Math.PI); //this might be wrong
+        this.ctx.closePath();
+        this.ctx.fill();
+
+    }
+    else {
+        this.ctx.fillStyle = "White";
+        this.ctx.beginPath();
+        this.ctx.arc(this.x - cameraX,this.y ,4,0,2*Math.PI); //this might be wrong
+        this.ctx.closePath();
+        this.ctx.fill();
+    }
     Entity.prototype.draw.call(this);
 }
 
@@ -981,7 +1130,10 @@ AM.queueDownload("./img/ground4.png");
 AM.queueDownload("./img/enemySoldier_StandingBackward.png");
 AM.queueDownload("./img/enemySoldier_StandingFoward.png");
 AM.queueDownload("./img/firepowerup.png");
-
+AM.queueDownload("./img/idleGunTurrent.png");
+AM.queueDownload("./img/firingGunTurrent.png");
+AM.queueDownload("./img/giantRobotFoward.png");
+AM.queueDownload("./img/giantRobotFiringFoward.png");
 
 AM.downloadAll(function () {
     var canvas = document.getElementById("gameWorld");
@@ -1016,7 +1168,9 @@ AM.downloadAll(function () {
     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png"), AM.getAsset("./img/flyingRobot_Forward.png"), 400, 100, 60));
     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png"), AM.getAsset("./img/flyingRobot_Forward.png"), 1000, 300, 60));
     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png"), AM.getAsset("./img/flyingRobot_Forward.png"), 1700, 100, 60));
-    gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png"), AM.getAsset("./img/flyingRobot_Forward.png"), 2300, 200, 60));
-    gameEngine.addPowerUp(new FirePowerUp(gameEngine, AM.getAsset("./img/firepowerup.png")));
+    gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png"), AM.getAsset("./img/flyingRobot_Forward.png"), 500, 575));
+    gameEngine.addEntity(new GunTurrent(gameEngine, AM.getAsset("./img/firingGunTurrent.png"), AM.getAsset("./img/idleGunTurrent.png"),400, 565, 60));
+    gameEngine.addEntity(new GiantRobot(gameEngine, AM.getAsset("./img/giantRobotFiringFoward.png"), AM.getAsset("./img/giantRobotFoward.png"),600,427, 60));
+    //gameEngine.addPowerUp(new FirePowerUp(gameEngine, AM.getAsset("./img/firepowerup.png")));
         console.log("All Done!");
 });
