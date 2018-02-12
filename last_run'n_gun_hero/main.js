@@ -354,6 +354,7 @@ function Hero(game, heroSprites,speed, ground, health) {
     this.firingStance = 2;
     this.width = 90;
     this.height = 102;
+    this.standingStance = 2;
     this.runFlag = false;
     this.firing = false;
     this.CanShoot = true;
@@ -375,12 +376,12 @@ Hero.prototype.update = function () {
             if (this.x < ent.x) this.collideForward = true;
         }
     }
-    if (this.game.aimUp && !this.jumping) {
+    if (this.game.aimUp && !this.jumping && this.standingStance === 2) {
         if (this.firingStance < 4) {
             this.firingStance += 1;
         }
     }
-    if (this.game.aimDown && !this.jumping) {
+    if (this.game.aimDown && !this.jumping && this.standingStance === 2) {
         if (this.firingStance > 0) {
             this.firingStance -= 1;
         }
@@ -404,8 +405,17 @@ Hero.prototype.update = function () {
     if (this.game.shooting) this.firing = true;
     else this.firing = false;
 
-    if (this.game.s) this.crawlForward = true;
-    else this.crawlForward = false;
+    if (this.game.s && !this.jumping) {
+        if (this.standingStance > 0) {
+            this.standingStance -= 1;
+        }
+    }
+
+    if (this.game.w && !this.jumping) {
+        if (this.standingStance < 2) {
+            this.standingStance += 1;
+        }
+    }
 
     if (this.game.space) {
         this.jumping = true;
@@ -456,18 +466,14 @@ Hero.prototype.update = function () {
         this.y = this.ground - height;
     }
 
-    else if (this.crawlForward) {
-
-    }
-
-    else if (this.runFlag && this.standForward && !this.crawlForward) {
+    else if (this.runFlag && this.standForward && (this.standingStance === 2)) {
         if (!this.isCollide) this.x += this.game.clockTick * this.speed;
         else {
             if(!this.collideForward) this.x += this.game.clockTick * this.speed;
         }
     }
 
-    else if ((this.runFlag && !this.standForward && !this.crawlForward)) {
+    else if ((this.runFlag && !this.standForward && (this.standingStance === 2))) {
         if (!this.isCollide) {
             if(this.x >= 40) this.x -= this.game.clockTick * this.speed;
         }
@@ -492,10 +498,13 @@ Hero.prototype.update = function () {
                             ,this.firingStance, false, false));
                     }
                 }
-                else if (this.crawlForward) {
+                else if (this.standingStance === 0) {
                     this.game.addEntity(new Bullet(this.game, this.x + 140, this.y + 85, this.standForward
-                        ,this.firingStance, false));
-                   
+                        ,this.firingStance, false)); 
+                }
+                else if (this.standingStance === 1) {
+                    this.game.addEntity(new Bullet(this.game, this.x + 90, this.y + 61, this.standForward
+                     ,this.firingStance, false, false));  
                 }
                 else {
                     if (this.firingStance === 2) {
@@ -528,10 +537,13 @@ Hero.prototype.update = function () {
                             ,this.firingStance, false, false));
                     }
                 }
-                else if (this.crawlForward) {
+                else if (this.standingStance === 0) {
                    this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 85, this.standForward
-                    ,this.firingStance, false, false));
-                   
+                    ,this.firingStance, false, false));  
+                }
+                else if (this.standingStance === 1) {
+                    this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 61, this.standForward
+                     ,this.firingStance, false, false));  
                 }
                 else {
                     if (this.firingStance === 2) {
@@ -570,10 +582,16 @@ Hero.prototype.draw = function () {
     else if (this.jumping && !this.jumpForward) {
         this.backJump.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
     }
-    else if (this.crawlForward && this.standForward) {
+    else if (this.standingStance === 0 && this.standForward) {
         this.frontCrawl.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
     }
-    else if (this.crawlForward && !this.standForward) {
+    else if (this.standingStance === 1 && this.standForward) {
+        this.frontCrouchHero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + 20);
+    }
+    else if (this.standingStance === 1 && !this.standForward) {
+        this.backCrouchHero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + 20);
+    }
+    else if (this.standingStance === 0 && !this.standForward) {
         this.backCrawl.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
     }
     else if (this.firingStance === 2) {

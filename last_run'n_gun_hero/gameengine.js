@@ -73,6 +73,9 @@ GameEngine.prototype.startInput = function () {
         else if (e.code === "KeyS") {
             that.s = true;
         }
+        else if (e.code === "KeyW") {
+            that.w = true;
+        }
         else if (e.code === "ArrowRight") {
             that.shooting = true;
         }
@@ -97,6 +100,9 @@ GameEngine.prototype.startInput = function () {
         }
         else if (e.code === "KeyS") {
             that.s = false;
+        }
+        else if (e.code === "KeyW") {
+            that.w = false;
         }
         else if (e.code === "ArrowRight") {
             that.shooting = false;
@@ -229,6 +235,8 @@ GameEngine.prototype.loop = function () {
     this.space = null;
     this.aimUp = null;
     this.aimDown = null;
+    this.s = null;
+    this.w = null;
 }
 
     /////////////////////////////
