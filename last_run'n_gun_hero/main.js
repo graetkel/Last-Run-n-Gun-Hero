@@ -292,8 +292,32 @@ Camera.prototype.update = function() {
 Camera.prototype.draw = function() {
 }
 
+function collide(thisUnit, otherUnit) {
+    var rect1 = {x: thisUnit.x, y: thisUnit.y, width: thisUnit.width, height: thisUnit.height} 
+    var rect2 = {x: otherUnit.x, y: otherUnit.y, width: otherUnit.width, height: otherUnit.height}
+    if (otherUnit.crawlForward) {
+        rect2.height = 10;
+        rect2.y = otherUnit.y + 75;
+    }
+    if (rect1.x < rect2.x + rect2.width 
+    && rect1.x + rect1.width > rect2.x 
+    && rect1.y < rect2.y + rect2.height 
+    && rect1.height + rect1.y > rect2.y) { 
+        if (otherUnit.isBullet) {
+        }  
+        else if (!otherUnit.isBullet){
+             
+            if (thisUnit.isBullet) {
+                otherUnit.health -= 1; 
+                thisUnit.removeFromWorld = true;   
+            }   
+        }
+        return true;
+    } 
+};
+
 // inheritance
-function Hero(game, heroSprites) {
+function Hero(game, heroSprites,speed, ground) {
     this.frontRun = new Animation(heroSprites[0], this.x, this.y, 105, 101, 8, 0.1, 8, true);
     this.backRun = new Animation(heroSprites[1], this.x, this.y, 105, 102, 8, 0.1, 8, true);
     this.frontStand = new Animation(heroSprites[2], this.x, this.y, 98, 100, 1, 0.1, 1, true);
@@ -311,10 +335,11 @@ function Hero(game, heroSprites) {
     this.back45Down = new Animation(heroSprites[14], this.x, this.y, 88, 102, 1, 0.1, 1, true);
     this.back45DownRun = new Animation(heroSprites[15], this.x, this.y, 91, 101, 8, 0.1, 8, true);
     this.jumping = false;
-    this.speed = 200;
+    this.speed = speed;
     this.hero = true;
+    this.unitType = "hero";
     this.ctx = game.ctx;
-    this.ground = 525;
+    this.ground = ground;
     this.firingStance = 2;
     this.width = 90;
     this.height = 102;
@@ -329,31 +354,12 @@ function Hero(game, heroSprites) {
 Hero.prototype = new Entity();
 Hero.prototype.constructor = Hero;
 
-Hero.prototype.collide = function (other) {
-    var rect1 = {x: this.x, y: this.y, width: this.width, height: this.height} 
-    var rect2 = {x: other.x, y: other.y, width: other.width, height: other.height}
-    if (rect1.x < rect2.x + rect2.width 
-    && rect1.x + rect1.width > rect2.x 
-    && rect1.y < rect2.y + rect2.height 
-    && rect1.height + rect1.y > rect2.y) { 
-        if (!other.isBullet){
-            if (other.enemy) {
-                if (other.x > this.x) {
-                    this.x -= 30;
-                }
-                else this.x += 30;
-            }
-            return true;
-        }
-    } 
-};
-
 Hero.prototype.update = function () {
     this.isCollide = false;
     this.collideForward = false;
     for (var i = 0; i < this.game.entities.length; i++) {
         var ent = this.game.entities[i];
-        if (ent !== this && this.collide(ent)) {
+        if (ent !== this && collide(this, ent)) {
             this.isCollide = true;
             if (this.x < ent.x) this.collideForward = true;
         }
@@ -605,20 +611,6 @@ function EnemySoldier(game, backRunSprite, frontRunSprite, backStandSprite, fron
 EnemySoldier.prototype = new Entity();
 EnemySoldier.prototype.constructor = EnemySoldier;
 
-EnemySoldier.prototype.collide = function (other) {
-    var rect1 = {x: this.x, y: this.y, width: this.width, height: this.height} 
-    var rect2 = {x: other.x, y: other.y, width: other.width, height: other.height}
-    if (rect1.x < rect2.x + rect2.width 
-    && rect1.x + rect1.width > rect2.x 
-    && rect1.y < rect2.y + rect2.height 
-    && rect1.height + rect1.y > rect2.y) { 
-        if (other.isBullet) {
-           // this.isDead = true;
-        }
-        return true;
-    } 
-};
-
 EnemySoldier.prototype.update = function () {
     var enemyThat = this;
     this.isCollide = false;
@@ -627,7 +619,7 @@ EnemySoldier.prototype.update = function () {
     if (this.isDead) this.removeFromWorld = true;
     for (var i = 0; i < this.game.entities.length; i++) {
         var ent = this.game.entities[i];
-        if (ent !== this && this.collide(ent)) {
+        if (ent !== this && collide(this, ent)) {
             this.isCollide = true;
             if (this.x < ent.x) this.collideForward = true;
         }
@@ -704,17 +696,6 @@ function Robot(game, backRunSprite, frontRunSprite, xCord, yCord, unitSpeed) {
 Robot.prototype = new Entity();
 Robot.prototype.constructor = Robot;
 
-Robot.prototype.collide = function (other) {
-    var rect1 = {x: this.x, y: this.y, width: this.width, height: this.height} 
-    var rect2 = {x: other.x, y: other.y, width: other.width, height: other.height}
-    if (rect1.x < rect2.x + rect2.width 
-    && rect1.x + rect1.width > rect2.x 
-    && rect1.y < rect2.y + rect2.height 
-    && rect1.height + rect1.y > rect2.y) { 
-        return true;
-    } 
-};
-
 Robot.prototype.update = function () {
     this.isCollide = false;
     this.collideForward = false;
@@ -722,7 +703,7 @@ Robot.prototype.update = function () {
     if (this.isDead) this.removeFromWorld = true;
     for (var i = 0; i < this.game.entities.length; i++) {
         var ent = this.game.entities[i];
-        if (ent !== this && this.collide(ent)) {
+        if (ent !== this && collide(this, ent)) {
             this.isCollide = true;
             if (this.x < ent.x) this.collideForward = true;
         }
@@ -794,17 +775,6 @@ function GunTurrent(game, firingGunSprite,idleGunSprite,  xCord, yCord) {
 GunTurrent.prototype = new Entity();
 GunTurrent.prototype.constructor = GunTurrent;
 
-GunTurrent.prototype.collide = function (other) {
-    var rect1 = {x: this.x, y: this.y, width: this.width, height: this.height} 
-    var rect2 = {x: other.x, y: other.y, width: other.width, height: other.height}
-    if (rect1.x < rect2.x + rect2.width 
-    && rect1.x + rect1.width > rect2.x 
-    && rect1.y < rect2.y + rect2.height 
-    && rect1.height + rect1.y > rect2.y) { 
-        return true;
-    } 
-};
-
 GunTurrent.prototype.update = function () {
     console.log(this.active);
     var enemyThat = this;
@@ -814,7 +784,7 @@ GunTurrent.prototype.update = function () {
     if (this.isDead) this.removeFromWorld = true;
     for (var i = 0; i < this.game.entities.length; i++) {
         var ent = this.game.entities[i];
-        if (ent !== this && this.collide(ent)) {
+        if (ent !== this && collide(this, ent)) {
             this.isCollide = true;
             if (this.x < ent.x) this.collideForward = true;
         }
@@ -860,17 +830,6 @@ function GiantRobot(game, firingGunSprite,idleGunSprite,  xCord, yCord) {
 GiantRobot.prototype = new Entity();
 GiantRobot.prototype.constructor = GiantRobot;
 
-GiantRobot.prototype.collide = function (other) {
-    var rect1 = {x: this.x, y: this.y, width: this.width, height: this.height} 
-    var rect2 = {x: other.x, y: other.y, width: other.width, height: other.height}
-    if (rect1.x < rect2.x + rect2.width 
-    && rect1.x + rect1.width > rect2.x 
-    && rect1.y < rect2.y + rect2.height 
-    && rect1.height + rect1.y > rect2.y) { 
-        return true;
-    } 
-};
-
 GiantRobot.prototype.update = function () {
     console.log(this.active);
     var enemyThat = this;
@@ -880,7 +839,7 @@ GiantRobot.prototype.update = function () {
     if (this.isDead) this.removeFromWorld = true;
     for (var i = 0; i < this.game.entities.length; i++) {
         var ent = this.game.entities[i];
-        if (ent !== this && this.collide(ent)) {
+        if (ent !== this && collide(this, ent)) {
             this.isCollide = true;
             if (this.x < ent.x) this.collideForward = true;
         }
@@ -923,18 +882,6 @@ function FlyingRobot(game, backRunSprite, frontRunSprite, xCord, yCord, unitSpee
 
 FlyingRobot.prototype = new Entity();
 FlyingRobot.prototype.constructor = FlyingRobot;
-
-FlyingRobot.prototype.collide = function (other) {
-    var rect1 = {x: this.x, y: this.y, width: this.width, height: this.height} 
-    var rect2 = {x: other.x, y: other.y, width: other.width, height: other.height}
-    if (rect1.x < rect2.x + rect2.width 
-    && rect1.x + rect1.width > rect2.x 
-    && rect1.y < rect2.y + rect2.height 
-    && rect1.height + rect1.y > rect2.y) { 
-        
-        return true;
-    } 
-};
 
 FlyingRobot.prototype.update = function () {
     var enemyThat = this;
@@ -1003,34 +950,13 @@ function Bullet(game, startX, startY, direction, firingStance, standing, unitFly
 Bullet.prototype = new Entity();
 Bullet.prototype.constructor = Bullet;
 
-Bullet.prototype.collide = function (other) {
-    var rect1 = {x: this.x, y: this.y, width: this.width, height: this.height} 
-    var rect2 = {x: other.x, y: other.y, width: other.width, height: other.height}
-    if (other.crawlForward) {
-        rect2.height = 10;
-        rect2.y = other.y + 75;
-    }
-    if (rect1.x < rect2.x + rect2.width 
-    && rect1.x + rect1.width > rect2.x 
-    && rect1.y < rect2.y + rect2.height 
-    && rect1.height + rect1.y > rect2.y) {
-        if (other.isBullet) {
-        }   
-        else {
-            other.health -= 1;  
-            this.removeFromWorld = true;
-            
-        }   
-    } 
-};
-
 Bullet.prototype.update = function () {
     this.isCollide = false;
     this.collideForward = false
     console.log(this.isFlying);
     for (var i = 0; i < this.game.entities.length; i++) {
         var ent = this.game.entities[i];
-        if (ent !== this && this.collide(ent)) {
+        if (ent !== this && collide(this, ent)) {
             this.isCollide = true;
             if (this.x < ent.x) this.collideForward = true;
         }
@@ -1150,7 +1076,7 @@ AM.downloadAll(function () {
     , AM.getAsset("./img/backDown45Hero.png"), AM.getAsset("./img/backDown45RunHero.png")];
     gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/backgroundtrees.jpg")));
     gameEngine.addEntity(new Platform(gameEngine));
-    gameEngine.addEntity(new Hero(gameEngine, heroSprite));
+    gameEngine.addEntity(new Hero(gameEngine, heroSprite, 200, 525));
     gameEngine.addEntity(new Camera(gameEngine));
     //gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 300, 575, 60));
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 1200, 575, 60));
