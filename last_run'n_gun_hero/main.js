@@ -56,9 +56,6 @@ Animation.prototype.isDone = function () {
     return (this.elapsedTime >= this.totalTime);
 }
 
-
-
-
 /**
  * The next 3 functions are the first level background image
  * setup to repeat infinitely.
@@ -905,6 +902,7 @@ GunTurrent.prototype.draw = function () {
     else this.gunTurrentIdle.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
     Entity.prototype.draw.call(this);
 }
+
 function GiantRobot(game, firingGunSprite,idleGunSprite,  xCord, yCord, health) {
     this.gunTurrentIdle = new Animation(idleGunSprite, this.x, this.y, 257, 200, 1, 0.1, 1, true);
     this.gunTurrentFiring = new Animation(firingGunSprite, this.x, this.y, 265, 200, 2, 0.5, 2, true);
@@ -961,6 +959,7 @@ GiantRobot.prototype.draw = function () {
     else this.gunTurrentIdle.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
     Entity.prototype.draw.call(this);
 }
+
 function FlyingRobot(game, backRunSprite, frontRunSprite, xCord, yCord, unitSpeed, health) {
     this.flyingRobotBackRun = new Animation(backRunSprite, this.x, this.y, 52, 50, 2, 0.1, 2, true);
     this.flyingRobotFrontRun = new Animation(frontRunSprite, this.x, this.y, 52, 50, 2, 0.1, 2, true);
