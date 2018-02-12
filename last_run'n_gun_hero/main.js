@@ -339,6 +339,14 @@ function Hero(game, heroSprites,speed, ground, health) {
     this.back45UpRun = new Animation(heroSprites[13], this.x, this.y, 90, 100, 8, 0.1, 8, true);
     this.back45Down = new Animation(heroSprites[14], this.x, this.y, 88, 102, 1, 0.1, 1, true);
     this.back45DownRun = new Animation(heroSprites[15], this.x, this.y, 91, 101, 8, 0.1, 8, true);
+    this.frontDown90Hero = new Animation(heroSprites[16], this.x, this.y, 90, 102, 1, 0.1, 1, true);
+    this.frontDamageHero = new Animation(heroSprites[17], this.x, this.y, 100, 100, 1, 0.1, 1, true);
+    this.frontCrouchHero = new Animation(heroSprites[18], this.x, this.y, 77, 80, 1, 0.1, 1, true);
+    this.fowardUp90Hero = new Animation(heroSprites[19], this.x, this.y, 90, 102, 1, 0.1, 1, true);
+    this.backUp90Hero = new Animation(heroSprites[20], this.x, this.y, 90, 102, 1, 0.1, 1, true);
+    this.backDown90Hero = new Animation(heroSprites[21], this.x, this.y, 91, 102, 1, 0.1, 1, true);
+    this.backDamageHero = new Animation(heroSprites[22], this.x, this.y, 100, 100, 1, 0.1, 1, true);
+    this.backCrouchHero = new Animation(heroSprites[23], this.x, this.y, 80, 80, 1, 0.1, 1, true);
     this.jumping = false;
     this.speed = speed;
     this.health = health;
@@ -1124,6 +1132,15 @@ AM.queueDownload("./img/idleGunTurrent.png");
 AM.queueDownload("./img/firingGunTurrent.png");
 AM.queueDownload("./img/giantRobotFoward.png");
 AM.queueDownload("./img/giantRobotFiringFoward.png");
+AM.queueDownload("./img/backCrouchHero.png");
+AM.queueDownload("./img/backDamageHero.png");
+AM.queueDownload("./img/backDown90Hero.png");
+AM.queueDownload("./img/backUp90Hero.png");
+AM.queueDownload("./img/fowardUp90Hero.png");
+AM.queueDownload("./img/frontCrouchHero.png");
+AM.queueDownload("./img/frontDamageHero.png");
+AM.queueDownload("./img/frontDown90Hero.png");
+AM.queueDownload("./img/landMines.png");
 
 AM.downloadAll(function () {
     var canvas = document.getElementById("gameWorld");
@@ -1138,7 +1155,10 @@ AM.downloadAll(function () {
     , AM.getAsset("./img/backJump.png"), AM.getAsset("./img/backCrawl.png"), AM.getAsset("./img/frontCrawl.png")
     , AM.getAsset("./img/frontUp45Hero.png"), AM.getAsset("./img/frontUp45RunHero.png"), AM.getAsset("./img/frontDown45Hero.png")
     , AM.getAsset("./img/frontDown45RunHero.png"), AM.getAsset("./img/backUp45Hero.png"), AM.getAsset("./img/backUp45RunHero.png")
-    , AM.getAsset("./img/backDown45Hero.png"), AM.getAsset("./img/backDown45RunHero.png")];
+    , AM.getAsset("./img/backDown45Hero.png"), AM.getAsset("./img/backDown45RunHero.png"), AM.getAsset("./img/frontDown90Hero.png")
+    , AM.getAsset("./img/frontDamageHero.png"), AM.getAsset("./img/frontCrouchHero.png"), AM.getAsset("./img/fowardUp90Hero.png")
+    , AM.getAsset("./img/backUp90Hero.png"), AM.getAsset("./img/backDown90Hero.png"), AM.getAsset("./img/backDamageHero.png")
+    , AM.getAsset("./img/backCrouchHero.png")];
 
 
     gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/backgroundtrees.jpg")));
