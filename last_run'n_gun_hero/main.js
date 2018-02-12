@@ -913,6 +913,7 @@ function GunTurrent(game, firingGunSprite,idleGunSprite,  xCord, yCord, health) 
     this.unitType = "turrent";
     this.gunTurrent = true;
     this.enemy = true;
+    this.isDead = false;
     this.enemyShoot = true;
     this.height = 60;
     this.active = true;
@@ -970,6 +971,7 @@ function GiantRobot(game, firingGunSprite,idleGunSprite,  xCord, yCord, health) 
     this.width = 265;
     this.gunTurrent = true;
     this.enemy = true;
+    this.isDead = false;
     this.enemyShoot = true;
     this.height = 200;
     this.active = true;
@@ -1300,10 +1302,10 @@ AM.downloadAll(function () {
     , AM.getAsset("./img/flyingRobot_Forward.png"), 500, 200,60, 2));
 
     gameEngine.addEntity(new GunTurrent(gameEngine, AM.getAsset("./img/firingGunTurrent.png")
-    , AM.getAsset("./img/idleGunTurrent.png"),400, 565, 60, 5));
+    , AM.getAsset("./img/idleGunTurrent.png"),400, 565, 5));
 
     gameEngine.addEntity(new GiantRobot(gameEngine, AM.getAsset("./img/giantRobotFiringFoward.png")
-    , AM.getAsset("./img/giantRobotFoward.png"),600,427, 60, 5));
+    , AM.getAsset("./img/giantRobotFoward.png"),600,427, 5));
 
     gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),200,610, 5));
 
