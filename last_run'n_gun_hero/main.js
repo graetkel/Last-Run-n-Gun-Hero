@@ -863,6 +863,46 @@ Robot.prototype.draw = function () {
     Entity.prototype.draw.call(this);
 }
 
+function landMine(game, landMineSprite,  xCord, yCord, health) {
+    this.landMineActive = new Animation(landMineSprite, this.x, this.y, 23, 19, 4, 0.1, 4, true);
+    this.health = 500;
+    this.ctx = game.ctx;
+    this.width = 22;
+    this.health = health;
+    this.unitType = "landMine";
+    this.gunTurrent = true;
+    this.enemy = true;
+    this.height = 19;
+    this.center = xCord;
+    Entity.call(this, game, xCord, yCord);
+}
+
+landMine.prototype = new Entity();
+landMine.prototype.constructor = landMine;
+
+landMine.prototype.update = function () {
+   // console.log(this.active);
+    var enemyThat = this;
+    this.isCollide = false;
+    this.collideForward = false;
+    if (this.health === 0) this.isDead = true;
+    if (this.isDead) this.removeFromWorld = true;
+    for (var i = 0; i < this.game.entities.length; i++) {
+        var ent = this.game.entities[i];
+        if (ent !== this && collide(this, ent)) {
+            this.isCollide = true;
+            if (this.x < ent.x) this.collideForward = true;
+        }
+    }
+    
+    Entity.prototype.update.call(this);
+}
+
+landMine.prototype.draw = function () {
+    this.landMineActive.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+    Entity.prototype.draw.call(this);
+}
+
 function GunTurrent(game, firingGunSprite,idleGunSprite,  xCord, yCord, health) {
     this.gunTurrentIdle = new Animation(idleGunSprite, this.x, this.y, 63, 60, 2, 0.1, 2, true);
     this.gunTurrentFiring = new Animation(firingGunSprite, this.x, this.y, 61, 60, 4, 0.6, 4, true);
@@ -1264,6 +1304,8 @@ AM.downloadAll(function () {
 
     gameEngine.addEntity(new GiantRobot(gameEngine, AM.getAsset("./img/giantRobotFiringFoward.png")
     , AM.getAsset("./img/giantRobotFoward.png"),600,427, 60, 5));
+
+    gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),200,610, 5));
 
     //gameEngine.addPowerUp(new FirePowerUp(gameEngine, AM.getAsset("./img/firepowerup.png")));
 
