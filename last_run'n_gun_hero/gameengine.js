@@ -43,11 +43,11 @@ GameEngine.prototype.init = function (ctx) {
     this.surfaceHeight = this.ctx.canvas.height;
     this.startInput();
     this.timer = new Timer();
-    console.log('game initialized');
+   // console.log('game initialized');
 }
 
 GameEngine.prototype.start = function () {
-    console.log("starting game");
+   // console.log("starting game");
     var that = this;
     (function gameLoop() {
         that.loop();
@@ -56,7 +56,7 @@ GameEngine.prototype.start = function () {
 }
 
 GameEngine.prototype.startInput = function () {
-    console.log('Starting input');
+   // console.log('Starting input');
     var that = this;
     this.ctx.canvas.addEventListener("keydown", function (e) {
         
@@ -83,7 +83,7 @@ GameEngine.prototype.startInput = function () {
             that.aimDown = true;
         }
         e.preventDefault();
-        console.log("Key down Event - Char " + e.code + " Code " + e.keyCode);
+       // console.log("Key down Event - Char " + e.code + " Code " + e.keyCode);
     }, false);
     this.ctx.canvas.addEventListener("keyup", function (e) {
         
@@ -107,7 +107,7 @@ GameEngine.prototype.startInput = function () {
         else if (e.code === "ArrowDown") {
             that.aimDown = false;
         }
-        console.log("Key Up Event - Char " + e.code + " Code " + e.keyCode);
+        //console.log("Key Up Event - Char " + e.code + " Code " + e.keyCode);
     }, false);
 }
 
@@ -119,7 +119,7 @@ GameEngine.prototype.startInput = function () {
  * copycat of the previous addEntity function.
 */
 GameEngine.prototype.addPowerUp = function (powerUp) {
-    console.log('added powerUp');
+    //console.log('added powerUp');
     this.powerUps.push(powerUp);
 }
 
@@ -128,8 +128,8 @@ GameEngine.prototype.addPowerUp = function (powerUp) {
  * copycat of the previous removeEntity function.
  */
 GameEngine.prototype.removePowerUp = function (powerUp) {
-    console.log('removed powerUp');
-    console.log(powerUp);
+   // console.log('removed powerUp');
+   // console.log(powerUp);
     powerUp.removeFromWorld = true;
 }
 
@@ -138,7 +138,7 @@ GameEngine.prototype.removePowerUp = function (powerUp) {
  * copycat from the previous getEntity function.
  */
 GameEngine.prototype.getPowerUp = function () {
-    console.log('got PowerUp');
+ //   console.log('got PowerUp');
     return this.powerUps;
 }
 
@@ -146,20 +146,20 @@ GameEngine.prototype.getPowerUp = function () {
 
 
 GameEngine.prototype.addEntity = function (entity) {
-    console.log('added entity');
+   // console.log('added entity');
     this.entities.push(entity);
 }
 
 GameEngine.prototype.removeEntity = function (entity) {
-    console.log('removed entity');
-    console.log(entity);
+    //console.log('removed entity');
+   // console.log(entity);
     entity.removeFromWorld = true;
     //i = this.entities.indexOf(entity);
     //this.entities.splice(i, 1);
 }
 
 GameEngine.prototype.getEntity = function () {
-    console.log('got entity');
+  //  console.log('got entity');
     return this.entities;
 }
 

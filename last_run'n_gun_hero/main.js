@@ -342,7 +342,7 @@ function Hero(game, heroSprites,speed, ground, health) {
     this.frontDown90Hero = new Animation(heroSprites[16], this.x, this.y, 90, 102, 1, 0.1, 1, true);
     this.frontDamageHero = new Animation(heroSprites[17], this.x, this.y, 100, 100, 1, 0.1, 1, true);
     this.frontCrouchHero = new Animation(heroSprites[18], this.x, this.y, 77, 80, 1, 0.1, 1, true);
-    this.fowardUp90Hero = new Animation(heroSprites[19], this.x, this.y, 90, 102, 1, 0.1, 1, true);
+    this.frontUp90Hero = new Animation(heroSprites[19], this.x, this.y, 90, 102, 1, 0.1, 1, true);
     this.backUp90Hero = new Animation(heroSprites[20], this.x, this.y, 90, 102, 1, 0.1, 1, true);
     this.backDown90Hero = new Animation(heroSprites[21], this.x, this.y, 91, 102, 1, 0.1, 1, true);
     this.backDamageHero = new Animation(heroSprites[22], this.x, this.y, 100, 100, 1, 0.1, 1, true);
@@ -379,12 +379,12 @@ Hero.prototype.update = function () {
         }
     }
     if (this.game.aimUp && !this.jumping) {
-        if (this.firingStance < 3) {
+        if (this.firingStance < 4) {
             this.firingStance += 1;
         }
     }
     if (this.game.aimDown && !this.jumping) {
-        if (this.firingStance > 1) {
+        if (this.firingStance > 0) {
             this.firingStance -= 1;
         }
     }
@@ -414,7 +414,9 @@ Hero.prototype.update = function () {
         this.jumping = true;
         this.firingStance = 2;
     }
-
+    if (this.firingStance === 0 || this.firingStance === 4) {
+        this.runFlag = false;
+    }
     var totalHeight = 200;
     that = this;
 
@@ -511,6 +513,10 @@ Hero.prototype.update = function () {
                         this.game.addEntity(new Bullet(this.game, this.x + 95, this.y + 90, this.standForward
                             ,this.firingStance, true, false));
                     }
+                    else if (this.firingStance === 4) {
+                        this.game.addEntity(new Bullet(this.game, this.x + 35, this.y - 15, this.standForward
+                            ,this.firingStance, true, false));
+                    }
                    
                 }
             }
@@ -543,6 +549,10 @@ Hero.prototype.update = function () {
                         this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 95, this.standForward
                             ,this.firingStance, true, false));
                     }
+                    else if (this.firingStance === 4) {
+                        this.game.addEntity(new Bullet(this.game, this.x + 55, this.y - 15, this.standForward
+                            ,this.firingStance, true, false));
+                    }
             
                 }
             }
@@ -556,6 +566,7 @@ Hero.prototype.update = function () {
 }
 
 Hero.prototype.draw = function () {
+    
     if (this.jumping && this.jumpForward) {
         this.frontJump.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
     }
@@ -597,6 +608,7 @@ Hero.prototype.draw = function () {
         else if (!this.runFlag && !this.standForward) {
             this.back45Up.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
         }
+    
     }
     else if (this.firingStance === 1) {
         if (this.runFlag && this.standForward) {
@@ -611,6 +623,22 @@ Hero.prototype.draw = function () {
         }
         else if (!this.runFlag && !this.standForward) {
             this.back45Down.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+        }
+    }
+    else if (this.firingStance === 0) {
+        if (this.standForward) {
+            this.frontDown90Hero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+        }
+        else {
+            this.backDown90Hero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+        }
+    }
+    else if (this.firingStance === 4) {
+        if (this.standForward) {
+            this.frontUp90Hero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+        }
+        else {
+            this.backUp90Hero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
         }
     }
     Entity.prototype.draw.call(this);
@@ -1040,6 +1068,7 @@ Bullet.prototype.update = function () {
     if (this.forward) {
         if (this.x >= this.startX + 500 || this.y > this.gameGround) this.removeFromWorld = true; 
         else if (!this.standing) this.x += this.game.clockTick * this.speed;
+        else if (this.firingStance === 4) this.y -= this.game.clockTick * this.speed;
         else if (this.firingStance === 2) this.x += this.game.clockTick * this.speed;
         else if (this.firingStance === 3) {
             this.x += this.game.clockTick * this.speed;
@@ -1053,6 +1082,7 @@ Bullet.prototype.update = function () {
     else {
         if (this.x <= this.startX - 500 || this.y > this.gameGround) this.removeFromWorld = true; 
         else if (!this.standing) this.x -= this.game.clockTick * this.speed;
+        else if (this.firingStance === 4) this.y -= this.game.clockTick * this.speed;
         else if (this.firingStance === 2) this.x -= this.game.clockTick * this.speed;
         else if (this.firingStance === 3 && this.standing) {
             this.x -= this.game.clockTick * this.speed;
