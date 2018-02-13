@@ -297,7 +297,7 @@ function collide(thisUnit, otherUnit) {
         rect2.width = 100;
         rect2.x = otherUnit.x + 80;
     }
-    if (otherUnit.crawlForward) {
+    if (otherUnit.standingStance === 0) {
         rect2.height = 10;
         rect2.y = otherUnit.y + 75;
     }
@@ -324,7 +324,8 @@ function collide(thisUnit, otherUnit) {
             if (thisUnit.hero) {
 
                 if (otherUnit.landMine) {
-                    otherUnit.isDead = true;
+                    thisUnit.health -= 10;
+                    otherUnit.health = 0;
                 }
                 else {
                     
@@ -355,12 +356,12 @@ function Hero(game, heroSprites,speed, ground, health, lives) {
     this.back45DownRun = new Animation(heroSprites[15], this.x, this.y, 91, 101, 8, 0.1, 8, true);
     this.frontDown90Hero = new Animation(heroSprites[16], this.x, this.y, 90, 102, 1, 0.1, 1, true);
     this.frontDamageHero = new Animation(heroSprites[17], this.x, this.y, 100, 100, 1, 0.1, 1, true);
-    this.frontCrouchHero = new Animation(heroSprites[18], this.x, this.y, 96, 100, 1, 0.1, 1, true);
+    this.frontCrouchHero = new Animation(heroSprites[18], this.x, this.y, 96, 80, 1, 0.1, 1, true);
     this.frontUp90Hero = new Animation(heroSprites[19], this.x, this.y, 90, 102, 1, 0.1, 1, true);
     this.backUp90Hero = new Animation(heroSprites[20], this.x, this.y, 90, 102, 1, 0.1, 1, true);
     this.backDown90Hero = new Animation(heroSprites[21], this.x, this.y, 91, 102, 1, 0.1, 1, true);
     this.backDamageHero = new Animation(heroSprites[22], this.x, this.y, 100, 100, 1, 0.1, 1, true);
-    this.backCrouchHero = new Animation(heroSprites[23], this.x, this.y, 100, 100, 1, 0.1, 1, true);
+    this.backCrouchHero = new Animation(heroSprites[23], this.x, this.y, 100, 80, 1, 0.1, 1, true);
     this.jumping = false;
     this.speed = speed;
     this.health = health;
@@ -455,7 +456,7 @@ Hero.prototype.update = function () {
     that = this;
 
     if (this.jumping && this.runFlag) {
-
+        this.standingStance = 2;
         if (this.frontJump.isDone() || this.backJump.isDone()) {
             this.frontJump.elapsedTime = 0;
             this.backJump.elapsedTime = 0;
@@ -476,6 +477,7 @@ Hero.prototype.update = function () {
         else if(this.x >= 40 && !this.isCollide) this.x -= (this.game.clockTick * this.speed) / 2;
     }
     else if (this.jumping) {
+        this.standingStance = 2;
         if (this.frontJump.isDone() || this.backJump.isDone()) {
             this.frontJump.elapsedTime = 0;
             this.backJump.elapsedTime = 0;
@@ -613,10 +615,10 @@ Hero.prototype.draw = function () {
         this.frontCrawl.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
     }
     else if (this.standingStance === 1 && this.standForward) {
-        this.frontCrouchHero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+        this.frontCrouchHero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + 20);
     }
     else if (this.standingStance === 1 && !this.standForward) {
-        this.backCrouchHero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+        this.backCrouchHero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + 20);
     }
     else if (this.standingStance === 0 && !this.standForward) {
         this.backCrawl.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
@@ -692,8 +694,8 @@ function EnemySoldier(game, backRunSprite, frontRunSprite, backStandSprite, fron
     this.enemyFrontRun = new Animation(frontRunSprite, this.x, this.y, 104, 100, 8, 0.1, 8, true);
     this.enemyBackStand = new Animation(backStandSprite, this.x, this.y, 98, 100, 1, 0.1, 1, true);
     this.enemyFrontStand = new Animation(frontStandSprite, this.x, this.y, 98, 100, 1, 0.1, 1, true);
-    this.enemyBackCrouch = new Animation(frontCrouchSprite, this.x, this.y, 98, 100, 1, 0.1, 1, true);
-    this.enemyFrontCrouch = new Animation(backCrouchSprite, this.x, this.y, 98, 100, 1, 0.1, 1, true);
+    this.enemyBackCrouch = new Animation(frontCrouchSprite, this.x, this.y, 98, 80, 1, 0.1, 1, true);
+    this.enemyFrontCrouch = new Animation(backCrouchSprite, this.x, this.y, 98, 80, 1, 0.1, 1, true);
     this.speed = unitSpeed;
     this.health = health;
     this.ctx = game.ctx;
@@ -716,7 +718,7 @@ EnemySoldier.prototype.update = function () {
     var enemyThat = this;
     this.isCollide = false;
     this.collideForward = false;
-    if (this.health === 0) this.isDead = true;
+    if (this.health <= 0) this.isDead = true;
     if (this.isDead) {
         gameEngine.removeEntity(this);
         ///////////////////////////////////////////
@@ -743,7 +745,11 @@ EnemySoldier.prototype.update = function () {
         this.timer += this.game.clockTick;
         if (this.timer >= 10 || this.timer === 0) {
             this.timer = 0;
-            if (Math.floor((Math.random() * 2) + 1) === 1) {
+            if (this.game.entities[2].standingStance === 1) {
+                this.crouch = true;
+                this.height = 40;
+            }
+            else if (Math.floor((Math.random() * 2) + 1) === 1) {
                 this.crouch = true;
                 this.height = 40;
             }
@@ -805,7 +811,7 @@ EnemySoldier.prototype.draw = function () {
     if (this.forward) {
         if (this.standing) {
             if (this.crouch) this.enemyBackCrouch.drawFrame(this.game.clockTick, this.ctx
-                , this.x - cameraX, this.y );
+                , this.x - cameraX, this.y + 20);
             else this.enemyFrontStand.drawFrame(this.game.clockTick, this.ctx
                 , this.x - cameraX, this.y);   
         }
@@ -814,7 +820,7 @@ EnemySoldier.prototype.draw = function () {
     else {
         if (this.standing) {
             if (this.crouch) this.enemyFrontCrouch.drawFrame(this.game.clockTick, this.ctx
-                , this.x - cameraX, this.y);
+                , this.x - cameraX, this.y + 20);
             else this.enemyBackStand.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
         }
         else this.enemyBackRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y );
@@ -822,14 +828,14 @@ EnemySoldier.prototype.draw = function () {
     Entity.prototype.draw.call(this);
 }
 
-function Robot(game, backRunSprite, frontRunSprite, xCord, yCord, unitSpeed, health) {
+function Robot(game, backRunSprite, frontRunSprite, xCord, yCord, unitSpeed, health, unitType) {
     this.robotBackRun = new Animation(backRunSprite, this.x, this.y, 51, 49, 3, 0.1, 3, true);
     this.robotFrontRun = new Animation(frontRunSprite, this.x, this.y, 51, 49, 3, 0.1, 3, true);
     this.speed = unitSpeed;
     this.health = health;
     this.ctx = game.ctx;
     this.width = 40;
-    this.unitType = "robot";
+    this.unitType = unitType;
     this.enemy = true;
     this.height = 49;
     this.forward = true;
@@ -843,10 +849,18 @@ Robot.prototype.constructor = Robot;
 Robot.prototype.update = function () {
     this.isCollide = false;
     this.collideForward = false;
-    if (this.health === 0) this.isDead = true;
+    if (this.health <= 0) this.isDead = true;
     if (this.isDead) {
+        if (this.unitType === "redRobot") {
+            for (var i = 0; i < this.game.entities.length; i++) {
+                var ent = this.game.entities[i];
+                if (ent !== this && (Math.abs(this.x - ent.x) <= 300)) {
+                    ent.health -= 10;
+                }
+            }
+        }
         gameEngine.removeEntity(this);
-
+        this.game.addEntity(new robotFlash(this.game, AM.getAsset("./img/robotFlash.png"),  this.x - 100, this.y - 150));
         ///////////////////////////////////////////
         ///// Buff Drops everytime right now //////
         ///////////////////////////////////////////
@@ -919,15 +933,33 @@ Robot.prototype.draw = function () {
     Entity.prototype.draw.call(this);
 }
 
+function robotFlash(game, robotFlashSprite, xCord, yCord) {
+    this.robotActiveFlash = new Animation(robotFlashSprite, this.x, this.y, 262, 250, 1, 0.3, 1, false);
+    this.ctx = game.ctx;
+    Entity.call(this, game, xCord, yCord);
+}
+
+robotFlash.prototype = new Entity();
+robotFlash.prototype.constructor = robotFlash;
+
+robotFlash.prototype.update = function () {
+    Entity.prototype.update.call(this);
+}
+
+robotFlash.prototype.draw = function () {
+    this.robotActiveFlash.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+    Entity.prototype.draw.call(this);
+}
+
 function landMine(game, landMineSprite,  xCord, yCord, health) {
     this.landMineActive = new Animation(landMineSprite, this.x, this.y, 22.75, 20, 4, 0.1, 4, true);
-    this.health = 500;
     this.ctx = game.ctx;
     this.width = 22;
     this.health = health;
     this.unitType = "landMine";
     this.landMine = true;
     this.enemy = true;
+    this.isDead = false;
     this.height = 19;
     this.center = xCord;
     Entity.call(this, game, xCord, yCord);
@@ -939,9 +971,12 @@ landMine.prototype.constructor = landMine;
 landMine.prototype.update = function () {
     var enemyThat = this;
     this.isCollide = false;
+    if (this.health <= 0) this.isDead = true;
+    if (this.isDead) {
+        this.removeFromWorld = true;
+        this.game.addEntity(new landMineFlash(this.game, AM.getAsset("./img/landMineFlash.png"),  this.x - 5, this.y - 10));
+    }
     this.collideForward = false;
-    if (this.health === 0) this.isDead = true;
-    if (this.isDead) this.removeFromWorld = true;
     for (var i = 0; i < this.game.entities.length; i++) {
         var ent = this.game.entities[i];
         if (ent !== this && collide(this, ent)) {
@@ -955,6 +990,24 @@ landMine.prototype.update = function () {
 
 landMine.prototype.draw = function () {
     this.landMineActive.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+    Entity.prototype.draw.call(this);
+}
+
+function landMineFlash(game, landMineFlashSprite, xCord, yCord) {
+    this.landMineFlashActive = new Animation(landMineFlashSprite, this.x, this.y, 42, 43, 1, 0.3, 1, false);
+    this.ctx = game.ctx;
+    Entity.call(this, game, xCord, yCord);
+}
+
+landMineFlash.prototype = new Entity();
+landMineFlash.prototype.constructor = landMineFlash;
+
+landMineFlash.prototype.update = function () {
+    Entity.prototype.update.call(this);
+}
+
+landMineFlash.prototype.draw = function () {
+    this.landMineFlashActive.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
     Entity.prototype.draw.call(this);
 }
 
@@ -983,7 +1036,7 @@ GunTurrent.prototype.update = function () {
     var enemyThat = this;
     this.isCollide = false;
     this.collideForward = false;
-    if (this.health === 0) this.isDead = true;
+    if (this.health <= 0) this.isDead = true;
     if (this.isDead) this.removeFromWorld = true;
     for (var i = 0; i < this.game.entities.length; i++) {
         var ent = this.game.entities[i];
@@ -1040,7 +1093,7 @@ GiantRobot.prototype.update = function () {
     var enemyThat = this;
     this.isCollide = false;
     this.collideForward = false;
-    if (this.health === 0) this.isDead = true;
+    if (this.health <= 0) this.isDead = true;
     if (this.isDead) this.removeFromWorld = true;
     for (var i = 0; i < this.game.entities.length; i++) {
         var ent = this.game.entities[i];
@@ -1085,7 +1138,7 @@ function FlyingRobot(game, backRunSprite, frontRunSprite, xCord, yCord, unitSpee
     this.height = 50;
     this.width = 52;
     this.enemy = true;
-    this.unitType = "flyingRobot"
+    this.unitType = "flyingRobot";
     this.ctx = game.ctx;
     this.health = health;
     this.forward = true;
@@ -1100,7 +1153,7 @@ FlyingRobot.prototype.constructor = FlyingRobot;
 
 FlyingRobot.prototype.update = function () {
     var enemyThat = this;
-    if (this.health === 0) {
+    if (this.health <= 0) {
         this.isDead = true;
     }
     if (this.isDead) this.removeFromWorld = true;
@@ -1299,6 +1352,8 @@ AM.queueDownload("./img/frontCrouchHero.png");
 AM.queueDownload("./img/frontDamageHero.png");
 AM.queueDownload("./img/frontDown90Hero.png");
 AM.queueDownload("./img/landMines.png");
+AM.queueDownload("./img/landMineFlash.png");
+AM.queueDownload("./img/robotFlash.png");
 
 AM.downloadAll(function () {
     var canvas = document.getElementById("gameWorld");
@@ -1327,7 +1382,7 @@ AM.downloadAll(function () {
     
     gameEngine.addEntity(new Camera(gameEngine));
     
-   // gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 300, 575, 60, 1));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 300, 575, 60, 1, "redRobot"));
     
     //gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 1200, 575, 60, 1));
     
@@ -1335,10 +1390,10 @@ AM.downloadAll(function () {
     
     //gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/green_Robot.png"), AM.getAsset("./img/green_Robot.png"), 2400, 575, 60, 1));
     
-    // gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
-    // , AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
-    // , AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
-    // , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 800, 525, 200, 3));
+    //  gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
+    //  , AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
+    //  , AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
+    //  , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 800, 525, 200, 3));
     
     // gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
     // , AM.getAsset("./img/flyingRobot_Forward.png"), 1300, 100, 60, 2));
@@ -1358,8 +1413,8 @@ AM.downloadAll(function () {
     // , AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
     // , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 2850, 525, 200, 3));
     
-    gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
-    , AM.getAsset("./img/flyingRobot_Forward.png"), 400, 100, 60, 2));
+    //gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
+    //, AM.getAsset("./img/flyingRobot_Forward.png"), 400, 100, 60, 2));
 
     // gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
     // , AM.getAsset("./img/flyingRobot_Forward.png"), 1000, 300, 60, 2));
