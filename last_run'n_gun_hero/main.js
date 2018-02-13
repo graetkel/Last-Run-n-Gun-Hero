@@ -1115,7 +1115,7 @@ FlyingRobot.prototype.update = function () {
                         ,this.firingStance,true, false,this.unitType));
                 }
                 else {
-                    this.game.addEntity(new Bullet(this.game, this.x + 30, this.y + 70, this.forward
+                    this.game.addEntity(new Bullet(this.game, this.x + 15, this.y + 70, this.forward
                         ,this.firingStance,true, false,this.unitType));
                 }
                 this.enemyShoot = false;
@@ -1325,7 +1325,7 @@ AM.downloadAll(function () {
     
     gameEngine.addEntity(new Camera(gameEngine));
     
-    //gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 300, 575, 60, 1));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 300, 575, 60, 1));
     
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 1200, 575, 60, 1));
     
