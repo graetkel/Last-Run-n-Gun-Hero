@@ -70,10 +70,10 @@ function Background(game, spritesheet) {
 };
 
 Background.prototype.update = function () {
-    if (this.game.d && cameraX != 0 && !this.game.s) {
+    if (this.game.d && cameraX != 0 && !this.game.s && this.game.entities[2].x < 3200 - cameraMid) {
         this.x += this.game.clockTick * this.speed;
     }
-    if (this.game.a &&cameraX != 0 && !this.game.s) {
+    if (this.game.a && cameraX != 0 && !this.game.s && this.game.entities[2].x < 3200 - cameraMid) {
         this.x -= this.game.clockTick * this.speed;
     }
 
@@ -92,14 +92,14 @@ Background.prototype.draw = function () {
  * These are the functions which create the fire powerup
  * Still a work in progress
  */
-function FirePowerUp(game, spritesheet) {
+function FirePowerUp(game, spritesheet, xLocation, yLocation) {
     this.animation = new Animation(spritesheet, this.x, this.y, 214, 207, 2, 0.10, 6, true);
     this.isFirePowerUp = true;
     this.height = 60;
     this.width = 64;
     this.speed = 0;
     this.ctx = game.ctx;  
-    PowerUp.call(this, game, 300, 563);
+    PowerUp.call(this, game, xLocation, yLocation);
 }
 
 FirePowerUp.prototype = new PowerUp();
@@ -714,7 +714,20 @@ EnemySoldier.prototype.update = function () {
     this.isCollide = false;
     this.collideForward = false;
     if (this.health === 0) this.isDead = true;
-    if (this.isDead) this.removeFromWorld = true;
+    if (this.isDead) {
+        gameEngine.removeEntity(this);
+        ///////////////////////////////////////////
+        ///// Buff Drops everytime right now //////
+        ///////////////////////////////////////////
+        //Change the '* 1' inside the Math.random//
+        /// to '* 10' to make it a 1/10th chance //
+        ///////////////////////////////////////////
+        var powerUpChance = Math.floor(Math.random() * 1)+1 ; //Generates a random number between 1-10
+        if (powerUpChance === 1) {
+            gameEngine.addPowerUp(new FirePowerUp(gameEngine,
+                AM.getAsset("./img/firepowerup.png"), this.x, this.y + 35 ));
+        }
+    }
     for (var i = 0; i < this.game.entities.length; i++) {
         var ent = this.game.entities[i];
         if (ent !== this && collide(this, ent)) {
@@ -828,7 +841,22 @@ Robot.prototype.update = function () {
     this.isCollide = false;
     this.collideForward = false;
     if (this.health === 0) this.isDead = true;
-    if (this.isDead) this.removeFromWorld = true;
+    if (this.isDead) {
+        gameEngine.removeEntity(this);
+
+        ///////////////////////////////////////////
+        ///// Buff Drops everytime right now //////
+        ///////////////////////////////////////////
+        //Change the '* 1' inside the Math.random//
+        /// to '* 10' to make it a 1/10th chance //
+        ///////////////////////////////////////////
+        var powerUpChance = Math.floor(Math.random() * 1)+1 ; //Generates a random number between 1-10
+        if (powerUpChance === 1) {
+            gameEngine.addPowerUp(new FirePowerUp(gameEngine,
+                AM.getAsset("./img/firepowerup.png"), this.x, this.y -15 ));
+        }
+
+    } 
     for (var i = 0; i < this.game.entities.length; i++) {
         var ent = this.game.entities[i];
         if (ent !== this && collide(this, ent)) {
