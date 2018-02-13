@@ -355,12 +355,12 @@ function Hero(game, heroSprites,speed, ground, health) {
     this.back45DownRun = new Animation(heroSprites[15], this.x, this.y, 91, 101, 8, 0.1, 8, true);
     this.frontDown90Hero = new Animation(heroSprites[16], this.x, this.y, 90, 102, 1, 0.1, 1, true);
     this.frontDamageHero = new Animation(heroSprites[17], this.x, this.y, 100, 100, 1, 0.1, 1, true);
-    this.frontCrouchHero = new Animation(heroSprites[18], this.x, this.y, 77, 80, 1, 0.1, 1, true);
+    this.frontCrouchHero = new Animation(heroSprites[18], this.x, this.y, 96, 100, 1, 0.1, 1, true);
     this.frontUp90Hero = new Animation(heroSprites[19], this.x, this.y, 90, 102, 1, 0.1, 1, true);
     this.backUp90Hero = new Animation(heroSprites[20], this.x, this.y, 90, 102, 1, 0.1, 1, true);
     this.backDown90Hero = new Animation(heroSprites[21], this.x, this.y, 91, 102, 1, 0.1, 1, true);
     this.backDamageHero = new Animation(heroSprites[22], this.x, this.y, 100, 100, 1, 0.1, 1, true);
-    this.backCrouchHero = new Animation(heroSprites[23], this.x, this.y, 80, 80, 1, 0.1, 1, true);
+    this.backCrouchHero = new Animation(heroSprites[23], this.x, this.y, 100, 100, 1, 0.1, 1, true);
     this.jumping = false;
     this.speed = speed;
     this.health = health;
@@ -426,12 +426,14 @@ Hero.prototype.update = function () {
     if (this.game.s && !this.jumping) {
         if (this.standingStance > 0) {
             this.standingStance -= 1;
+            this.firingStance = 2;
         }
     }
 
     if (this.game.w && !this.jumping) {
         if (this.standingStance < 2) {
             this.standingStance += 1;
+            this.firingStance = 2;
         }
     }
 
@@ -610,10 +612,10 @@ Hero.prototype.draw = function () {
         this.frontCrawl.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
     }
     else if (this.standingStance === 1 && this.standForward) {
-        this.frontCrouchHero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + 20);
+        this.frontCrouchHero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
     }
     else if (this.standingStance === 1 && !this.standForward) {
-        this.backCrouchHero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + 20);
+        this.backCrouchHero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
     }
     else if (this.standingStance === 0 && !this.standForward) {
         this.backCrawl.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
@@ -689,8 +691,8 @@ function EnemySoldier(game, backRunSprite, frontRunSprite, backStandSprite, fron
     this.enemyFrontRun = new Animation(frontRunSprite, this.x, this.y, 104, 100, 8, 0.1, 8, true);
     this.enemyBackStand = new Animation(backStandSprite, this.x, this.y, 98, 100, 1, 0.1, 1, true);
     this.enemyFrontStand = new Animation(frontStandSprite, this.x, this.y, 98, 100, 1, 0.1, 1, true);
-    this.enemyBackCrouch = new Animation(frontCrouchSprite, this.x, this.y, 78, 80, 1, 0.1, 1, true);
-    this.enemyFrontCrouch = new Animation(backCrouchSprite, this.x, this.y, 78, 80, 1, 0.1, 1, true);
+    this.enemyBackCrouch = new Animation(frontCrouchSprite, this.x, this.y, 98, 100, 1, 0.1, 1, true);
+    this.enemyFrontCrouch = new Animation(backCrouchSprite, this.x, this.y, 98, 100, 1, 0.1, 1, true);
     this.speed = unitSpeed;
     this.health = health;
     this.ctx = game.ctx;
@@ -802,7 +804,7 @@ EnemySoldier.prototype.draw = function () {
     if (this.forward) {
         if (this.standing) {
             if (this.crouch) this.enemyBackCrouch.drawFrame(this.game.clockTick, this.ctx
-                , this.x - cameraX, this.y + 20);
+                , this.x - cameraX, this.y );
             else this.enemyFrontStand.drawFrame(this.game.clockTick, this.ctx
                 , this.x - cameraX, this.y);   
         }
@@ -811,7 +813,7 @@ EnemySoldier.prototype.draw = function () {
     else {
         if (this.standing) {
             if (this.crouch) this.enemyFrontCrouch.drawFrame(this.game.clockTick, this.ctx
-                , this.x - cameraX, this.y + 20);
+                , this.x - cameraX, this.y);
             else this.enemyBackStand.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
         }
         else this.enemyBackRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y );
@@ -917,7 +919,7 @@ Robot.prototype.draw = function () {
 }
 
 function landMine(game, landMineSprite,  xCord, yCord, health) {
-    this.landMineActive = new Animation(landMineSprite, this.x, this.y, 23, 19, 4, 0.1, 4, true);
+    this.landMineActive = new Animation(landMineSprite, this.x, this.y, 22.75, 20, 4, 0.1, 4, true);
     this.health = 500;
     this.ctx = game.ctx;
     this.width = 22;
@@ -1325,7 +1327,7 @@ AM.downloadAll(function () {
     
     gameEngine.addEntity(new Camera(gameEngine));
     
-    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 300, 575, 60, 1));
+   // gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 300, 575, 60, 1));
     
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 1200, 575, 60, 1));
     
@@ -1368,13 +1370,13 @@ AM.downloadAll(function () {
     //gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
     //, AM.getAsset("./img/flyingRobot_Forward.png"), 500, 200,60, 2));
 
-    // gameEngine.addEntity(new GunTurrent(gameEngine, AM.getAsset("./img/firingGunTurrent.png")
-    // , AM.getAsset("./img/idleGunTurrent.png"),400, 565, 5));
+    gameEngine.addEntity(new GunTurrent(gameEngine, AM.getAsset("./img/firingGunTurrent.png")
+    , AM.getAsset("./img/idleGunTurrent.png"),400, 565, 5));
 
     gameEngine.addEntity(new GiantRobot(gameEngine, AM.getAsset("./img/giantRobotFiringFoward.png")
      , AM.getAsset("./img/giantRobotFoward.png"),600,427, 5));
 
-    //gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),200,610, 5));
+    gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),200,610, 5));
 
     //gameEngine.addPowerUp(new FirePowerUp(gameEngine, AM.getAsset("./img/firepowerup.png")));
 
