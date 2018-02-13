@@ -1079,7 +1079,7 @@ GiantRobot.prototype.draw = function () {
 
 function FlyingRobot(game, backRunSprite, frontRunSprite, xCord, yCord, unitSpeed, health) {
     this.flyingRobotBackRun = new Animation(backRunSprite, this.x, this.y, 52, 50, 2, 0.1, 2, true);
-    this.flyingRobotFrontRun = new Animation(frontRunSprite, this.x, this.y, 52, 50, 2, 0.1, 2, true);
+    this.flyingRobotFrontRun = new Animation(frontRunSprite, this.x, this.y, 53, 50, 2, 0.1, 2, true);
     this.speed = unitSpeed;
     this.height = 50;
     this.width = 52;
@@ -1107,7 +1107,7 @@ FlyingRobot.prototype.update = function () {
     
     if (Math.abs(this.x - this.game.entities[2].x) <= 300 ) { 
         
-        if (Math.abs(this.x - (this.game.entities[2].x) - 10) < 5) {
+        if (Math.abs(this.x - (this.game.entities[2].x) - 15) < 5) {
             console.log((this.x - this.game.entities[2].x > 0)); 
             if (this.enemyShoot) { 
                 if (this.forward) { 
@@ -1115,7 +1115,7 @@ FlyingRobot.prototype.update = function () {
                         ,this.firingStance,true, false,this.unitType));
                 }
                 else {
-                    this.game.addEntity(new Bullet(this.game, this.x + 15, this.y + 70, this.forward
+                    this.game.addEntity(new Bullet(this.game, this.x + 20, this.y + 70, this.forward
                         ,this.firingStance,true, false,this.unitType));
                 }
                 this.enemyShoot = false;
