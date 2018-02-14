@@ -318,7 +318,9 @@ function collide(thisUnit, otherUnit) {
                 }
                 else {
                     otherUnit.health -= 1; 
-                    console.log("3");
+                    if (otherUnit.hero && !otherUnit.hurt) {
+                        otherUnit.hurt = true;
+                    }
                     thisUnit.removeFromWorld = true;   
                 }
             }   
@@ -328,8 +330,9 @@ function collide(thisUnit, otherUnit) {
                     thisUnit.health -= 10;
                     otherUnit.health = 0;
                 }
-                else {
-                    
+                else if (otherUnit.enemy && !thisUnit.hurt){
+                    thisUnit.hurt = true;;
+                    thisUnit.health -= 1;
                 }
             }
         }
@@ -363,6 +366,9 @@ function Hero(game, heroSprites,speed, ground, health, lives) {
     this.backDown90Hero = new Animation(heroSprites[21], this.x, this.y, 91, 102, 1, 0.1, 1, true);
     this.backDamageHero = new Animation(heroSprites[22], this.x, this.y, 100, 100, 1, 0.1, 1, true);
     this.backCrouchHero = new Animation(heroSprites[23], this.x, this.y, 100, 80, 1, 0.1, 1, true);
+    this.frontDamageHero = new Animation(heroSprites[24], this.x, this.y, 100, 100, 1, .5, 1, true);
+    this.backDamageHero = new Animation(heroSprites[25], this.x, this.y, 100, 100, 1, 0.1, 1, true);
+
     this.jumping = false;
     this.speed = speed;
     this.health = health;
@@ -373,7 +379,9 @@ function Hero(game, heroSprites,speed, ground, health, lives) {
     this.ground = ground;
     this.firingStance = 2;
     this.width = 90;
+    this.hurtCount = 6;
     this.height = 102;
+    this.hurt = false;
     this.standingStance = 2;
     this.runFlag = false;
     this.firing = false;
@@ -390,6 +398,7 @@ Hero.prototype.constructor = Hero;
 Hero.prototype.update = function () {
     this.isCollide = false;
     this.collideForward = false;
+
     for (var i = 0; i < this.game.entities.length; i++) {
         var ent = this.game.entities[i];
         if (ent !== this && collide(this, ent)) {
@@ -495,7 +504,16 @@ Hero.prototype.update = function () {
 
         this.y = this.ground - height;
     }
-
+    else if (this.hurt) {
+        if (this.hurtCount > 0) {
+            this.x -= 5;
+            this.hurtCount -= 1;
+        }
+        else {
+            this.hurtCount = 6;
+            this.hurt = false;
+        }
+    }
     else if (this.runFlag && this.standForward && (this.standingStance === 2)) {
         if (!this.isCollide) this.x += this.game.clockTick * this.speed;
         else {
@@ -513,7 +531,7 @@ Hero.prototype.update = function () {
             }
         }
     }
-    
+
     if (this.firing) {
     
         if (this.CanShoot) {
@@ -627,6 +645,9 @@ Hero.prototype.draw = function () {
     }
     else if (this.jumping && !this.jumpForward) {
         this.backJump.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+    }
+    else if (this.hurt) {
+        this.frontDamageHero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX , this.y);
     }
     else if (this.standingStance === 0 && this.standForward) {
         this.frontCrawl.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
@@ -888,9 +909,10 @@ Robot.prototype.update = function () {
                     ent.health -= 10;
                 }
             }
-        }
+        
         gameEngine.removeEntity(this);
         this.game.addEntity(new robotFlash(this.game, AM.getAsset("./img/robotFlash.png"),  this.x - 100, this.y - 150));
+        }
         ///////////////////////////////////////////
         ///// Buff Drops everytime right now //////
         ///////////////////////////////////////////
@@ -908,7 +930,8 @@ Robot.prototype.update = function () {
         var ent = this.game.entities[i];
         if (ent !== this && collide(this, ent)) {
             this.isCollide = true;
-            if (this.x < ent.x) this.collideForward = true;
+            this.forward = !this.forward;
+            //if (this.x < ent.x) this.collideForward = true;
         }
     }
     if (this.forward && (this.x - this.center < 100)) 
@@ -1417,6 +1440,8 @@ AM.queueDownload("./img/landMines.png");
 AM.queueDownload("./img/landMineFlash.png");
 AM.queueDownload("./img/robotFlash.png");
 AM.queueDownload("./img/bulletFlash.png");
+AM.queueDownload("./img/frontDamageHero.png");
+AM.queueDownload("./img/backDamageHero.png");
 
 AM.downloadAll(function () {
     var canvas = document.getElementById("gameWorld");
@@ -1434,7 +1459,7 @@ AM.downloadAll(function () {
     , AM.getAsset("./img/backDown45Hero.png"), AM.getAsset("./img/backDown45RunHero.png"), AM.getAsset("./img/frontDown90Hero.png")
     , AM.getAsset("./img/frontDamageHero.png"), AM.getAsset("./img/frontCrouchHero.png"), AM.getAsset("./img/fowardUp90Hero.png")
     , AM.getAsset("./img/backUp90Hero.png"), AM.getAsset("./img/backDown90Hero.png"), AM.getAsset("./img/backDamageHero.png")
-    , AM.getAsset("./img/backCrouchHero.png")];
+    , AM.getAsset("./img/backCrouchHero.png"), AM.getAsset("./img/frontDamageHero.png"), AM.getAsset("./img/backDamageHero.png")];
 
 
     gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/backgroundtrees.jpg")));
@@ -1445,7 +1470,7 @@ AM.downloadAll(function () {
     
     gameEngine.addEntity(new Camera(gameEngine));
     
-    //gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 300, 575, 60, 1, "redRobot"));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 350, 575, 60, 1, "redRobot"));
     
     //gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 1200, 575, 60, 1));
     
@@ -1491,8 +1516,8 @@ AM.downloadAll(function () {
     // gameEngine.addEntity(new GunTurrent(gameEngine, AM.getAsset("./img/firingGunTurrent.png")
     // , AM.getAsset("./img/idleGunTurrent.png"),400, 565, 5));
 
-    gameEngine.addEntity(new GiantRobot(gameEngine, AM.getAsset("./img/giantRobotFiringFoward.png")
-    , AM.getAsset("./img/giantRobotFoward.png"),600,427, 5));
+    //gameEngine.addEntity(new GiantRobot(gameEngine, AM.getAsset("./img/giantRobotFiringFoward.png")
+    //, AM.getAsset("./img/giantRobotFoward.png"),600,427, 5));
 
     //gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),200,610, 5));
 
