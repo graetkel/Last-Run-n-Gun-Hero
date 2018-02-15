@@ -1,5 +1,10 @@
+//This is the original
+/***********/
+
 var AM = new AssetManager();
 var gameEngine = new GameEngine();
+var map1 = new mapOne();
+var map2 = new mapTwo();
 //In order to get the camera feature to work make sure every
 //x position value is its position - cameraX
 
@@ -84,9 +89,9 @@ Background.prototype.update = function () {
 };
 
 Background.prototype.draw = function () {
-    this.ctx.drawImage(this.spritesheet, this.x, this.y);
-    this.ctx.drawImage(this.spritesheet, this.x + 2077, this.y);
-    this.ctx.drawImage(this.spritesheet, this.x - 2077, this.y);
+    this.ctx.drawImage(this.spritesheet, this.x, this.y + cameraY);
+    this.ctx.drawImage(this.spritesheet, this.x + 2077, this.y + cameraY);
+    this.ctx.drawImage(this.spritesheet, this.x - 2077, this.y + cameraY);
 };
 
 
@@ -100,7 +105,7 @@ function FirePowerUp(game, spritesheet, xLocation, yLocation) {
     this.height = 60;
     this.width = 64;
     this.speed = 0;
-    this.ctx = game.ctx;  
+    this.ctx = game.ctx;
     PowerUp.call(this, game, xLocation, yLocation);
 }
 
@@ -116,58 +121,25 @@ FirePowerUp.prototype.update = function () {
 }
 
 FirePowerUp.prototype.draw = function () {
-    this.animation.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y, .3);
+    this.animation.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY, .3);
 }
 
 FirePowerUp.prototype.collide = function (other) {
-    var rect1 = {x: this.x, y: this.y, width: this.width, height: this.height} 
+    var rect1 = {x: this.x, y: this.y, width: this.width, height: this.height}
     var rect2 = {x: other.x, y: other.y, width: other.width, height: other.height}
-    if (rect1.x < rect2.x + rect2.width 
-    && rect1.x + rect1.width > rect2.x 
-    && rect1.y < rect2.y + rect2.height 
-    && rect1.height + rect1.y > rect2.y) { 
+    if (rect1.x < rect2.x + rect2.width
+    && rect1.x + rect1.width > rect2.x
+    && rect1.y < rect2.y + rect2.height
+    && rect1.height + rect1.y > rect2.y) {
         return true;
-    } 
+    }
 };
 
 
 
-var map = {
-    cols: 128,
-    rows: 28,
-    tsize: 64,
-    layer: [[' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','.',],
-[' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','.',],
-[' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','.',],
-[' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','.',],
-[' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','v','v','v','v','v',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','.',],
-[' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','.',],
-[' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','.',],
-[' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ',' ',' ','v','v','v','v','v',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','.',],
-[' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','.',],
-['c','c','x',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','u','l','l','l','i',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','.',],
-['c','c','x',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','l','l','l','l','l',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','c','c','c','v','v','v','v',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','.',],
-['c','c','x',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','l','l','l','l','l',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','.',],
-['c','c','x',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','o','l','l','l','p',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','.',],
-['c','c','x',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','t',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','.',],
-['c','c','x',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','t',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','v','v','v','v','v','c','c',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','.',],
-['c','c','x',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','u','l','l','l','i',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','t',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','.',],
-['c','c','x',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','l','l','l','l','l',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v',' ',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','.',],
-['c','c','x',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','l','l','l','l','l',' ',' ',' ',' ',' ',' ','u','l','i',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','.',],
-['c','c','x',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','l','l','l','l','l',' ',' ',' ',' ',' ',' ','l','l','l',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','.',],
-['c','c','x',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','o','l','l','l','p',' ',' ',' ',' ',' ',' ','l','l','l',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','.',],
-['c','c','x',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','t',' ',' ',' ',' ',' ',' ',' ',' ','o','l','p',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','.',],
-['c','c','x',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','t',' ',' ',' ',' ',' ',' ',' ',' ',' ','t',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','.',],
-['c','c','x',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','t',' ',' ',' ',' ',' ',' ',' ',' ',' ','t',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','.',],
-['c','c','x',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','t',' ',' ',' ',' ',' ',' ',' ',' ',' ','t',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ','c','c','c','c','c',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','.',],
-['c','c','c','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v','v',],
-['c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c',],
-['c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c',],
-['c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c','c',]]
-}
+var map = map2;
 
 // no inheritance
-//CHANGED from Background to Platform
 function Platform(game) {
     this.x = 0;
     this.y = 0;
@@ -178,54 +150,65 @@ function Platform(game) {
 
 Platform.prototype.draw = function () {
     var posX = this.x - cameraX;
-    //-----
-    //ctx.fillStyle = "SaddleBrown";
-    //ctx.fillRect(startX, StartY, Width, Height)
     var sqFt = 25;
     var xAxis, yAxis;
-    //var canvasX = grid[0].length;
-    //var canvasY = grid.length;
-    //console.log("canX : " + grid[0].length + " canY: " + grid.length);
 
     for (yAxis = 0; yAxis < map.rows; yAxis++) {
       for (xAxis = 0; xAxis < map.cols; xAxis++) {
-        //if (Math.abs(sqFt*xAxis - this.game.entities[3].x) < 300 && Math.abs(25 + sqFt*yAxis - this.game.entities[3].y) < 300) {
         var obstacle = map.layer[yAxis][xAxis];
 
             function tilePicker(color) {
                 this.ctx.fillStyle = color;
                 this.ctx.fillRect(sqFt * xAxis - cameraX, 25 + sqFt * yAxis, sqFt, sqFt);
             };
+
+            var xCoor = sqFt * xAxis - cameraX;
+            var yCoor = 25 + sqFt * yAxis + cameraY;
             switch (obstacle) {
                 case 'c': // middle ground
-                    this.ctx.drawImage(AM.getAsset("./img/ground1.png"), sqFt * xAxis - cameraX, 25 + sqFt * yAxis, sqFt, sqFt);
+                    this.ctx.drawImage(AM.getAsset("./img/ground1.png"), xCoor, yCoor, sqFt, sqFt);
                     break;
                 case 'v': // top ground
-                    this.ctx.drawImage(AM.getAsset("./img/ground2.png"), sqFt * xAxis - cameraX, 25 + sqFt * yAxis, sqFt, sqFt);
+                    this.ctx.drawImage(AM.getAsset("./img/ground2.png"), xCoor, yCoor, sqFt, sqFt);
                     break;
                 case 'z': // left ground
-                    this.ctx.drawImage(AM.getAsset("./img/ground3.png"), sqFt * xAxis - cameraX, 25 + sqFt * yAxis, sqFt, sqFt);
+                    this.ctx.drawImage(AM.getAsset("./img/ground3.png"), xCoor, yCoor, sqFt, sqFt);
                     break;
                 case 'x': // right ground
-                    this.ctx.drawImage(AM.getAsset("./img/ground4.png"), sqFt * xAxis - cameraX, 25 + sqFt * yAxis, sqFt, sqFt);
+                    this.ctx.drawImage(AM.getAsset("./img/ground4.png"), xCoor, yCoor, sqFt, sqFt);
+                    break;
+                case 'b': // bottom ground
+                    this.ctx.drawImage(AM.getAsset("./img/ground5.png"), xCoor, yCoor, sqFt, sqFt);
+                    break;
+                case 'a': // NW Ground
+                    this.ctx.drawImage(AM.getAsset("./img/nwGround.png"), xCoor, yCoor, sqFt, sqFt);
+                    break;
+                case 's': // SW Ground
+                    this.ctx.drawImage(AM.getAsset("./img/swGround.png"), xCoor, yCoor, sqFt, sqFt);
+                    break;
+                case 'd': // NE Ground
+                    this.ctx.drawImage(AM.getAsset("./img/neGround.png"), xCoor, yCoor, sqFt, sqFt);
+                    break;
+                case 'f': // SE Ground
+                    this.ctx.drawImage(AM.getAsset("./img/seGround.png"), xCoor, yCoor, sqFt, sqFt);
                     break;
                 case 't': // tree trunk
-                    this.ctx.drawImage(AM.getAsset("./img/treeTrunk.png"), sqFt * xAxis - cameraX, 25 + sqFt * yAxis, sqFt, sqFt);
+                    this.ctx.drawImage(AM.getAsset("./img/treeTrunk.png"), xCoor, yCoor, sqFt, sqFt);
                     break;
                 case 'l': // middle leaf
-                    this.ctx.drawImage(AM.getAsset("./img/leaf1.png"), sqFt * xAxis - cameraX, 25 + sqFt * yAxis, sqFt, sqFt);
+                    this.ctx.drawImage(AM.getAsset("./img/leaf1.png"), xCoor, yCoor, sqFt, sqFt);
                     break;
                 case 'u': // NW leaf
-                    this.ctx.drawImage(AM.getAsset("./img/leaf2.png"), sqFt * xAxis - cameraX, 25 + sqFt * yAxis, sqFt, sqFt);
+                    this.ctx.drawImage(AM.getAsset("./img/leaf2.png"), xCoor, yCoor, sqFt, sqFt);
                     break;
                 case 'i': // NE leaf
-                    this.ctx.drawImage(AM.getAsset("./img/leaf3.png"), sqFt * xAxis - cameraX, 25 + sqFt * yAxis, sqFt, sqFt);
+                    this.ctx.drawImage(AM.getAsset("./img/leaf3.png"), xCoor, yCoor, sqFt, sqFt);
                     break;
                 case 'o': // SW leaf
-                    this.ctx.drawImage(AM.getAsset("./img/leaf4.png"), sqFt * xAxis - cameraX, 25 + sqFt * yAxis, sqFt, sqFt);
+                    this.ctx.drawImage(AM.getAsset("./img/leaf4.png"), xCoor, yCoor, sqFt, sqFt);
                     break;
                 case 'p': // SE leaf
-                    this.ctx.drawImage(AM.getAsset("./img/leaf5.png"), sqFt * xAxis - cameraX, 25 + sqFt * yAxis, sqFt, sqFt);
+                    this.ctx.drawImage(AM.getAsset("./img/leaf5.png"), xCoor, yCoor, sqFt, sqFt);
                     break;
                 case 'w': // concrete walls
                     //tilePicker("gray");
@@ -234,13 +217,8 @@ Platform.prototype.draw = function () {
                     //tilePicker("SaddleBrown");
                     break;
             }
-
-            //ctx.fillRect(50*xAxis,50*yAxis,50,50);
-          //}
         }
     }
-    //ctx.fillRect(0,500,800,50);
-
     Entity.prototype.draw.call(this);
 };
 
@@ -262,12 +240,9 @@ function Camera(game) {
 Camera.prototype = new Entity();
 Camera.prototype.constructor = Camera;
 
-Camera.prototype.move = function(xAmt, yAmt) {
-  this.xOffset += xAmt; //I dont think this will work
-  this.yOffset += yAmt;
-}
 
 var cameraX = 0;
+var cameraY = 0;
 
 Camera.prototype.update = function() {
   //This if statement might need to be two seperate if statements
@@ -275,17 +250,19 @@ Camera.prototype.update = function() {
   //   this.xOffset = this.game.entities[1].x;
   //   this.yOffset = this.game.entities[1].y;
   // }
-
-
+  var mapWidth = map.cols * 25;
   //this.game.ctx.canvas.width = 3200;
   cameraMid = this.game.ctx.canvas.width / 2;
   if (this.game.entities[2].x < cameraMid) {
     cameraX = 0;
-  } else if (this.game.entities[2].x > 3200 - cameraMid) {
-    cameraX = 3200 - this.game.ctx.canvas.width;
+  } else if (this.game.entities[2].x > mapWidth - cameraMid) {
+    cameraX = mapWidth - this.game.ctx.canvas.width;
   } else {
     cameraX = this.game.entities[2].x - cameraMid;
   }
+
+  //The Y coordinates have been of this whole time.
+  cameraY = -1 * (this.game.ctx.canvas.width/map.rows) + 8;
 
 }
 
@@ -293,7 +270,7 @@ Camera.prototype.draw = function() {
 }
 
 function collide(thisUnit, otherUnit) {
-    var rect1 = {x: thisUnit.x, y: thisUnit.y, width: thisUnit.width, height: thisUnit.height} 
+    var rect1 = {x: thisUnit.x, y: thisUnit.y, width: thisUnit.width, height: thisUnit.height}
     var rect2 = {x: otherUnit.x, y: otherUnit.y, width: otherUnit.width, height: otherUnit.height}
     if (otherUnit.unitType === "giantRobot") {
         rect2.width = 100;
@@ -307,25 +284,25 @@ function collide(thisUnit, otherUnit) {
         rect2.height = 30;
         rect2.y = otherUnit.y + 60;
     }
-    if (rect1.x < rect2.x + rect2.width 
-    && rect1.x + rect1.width > rect2.x 
-    && rect1.y < rect2.y + rect2.height 
-    && rect1.height + rect1.y > rect2.y) { 
+    if (rect1.x < rect2.x + rect2.width
+    && rect1.x + rect1.width > rect2.x
+    && rect1.y < rect2.y + rect2.height
+    && rect1.height + rect1.y > rect2.y) {
         if (otherUnit.isBullet) {
-        }  
+        }
         else if (!otherUnit.isBullet){
             if (thisUnit.isBullet) {
                 if (otherUnit.enemy && !(thisUnit.unitType === "hero")) {
 
                 }
                 else {
-                    otherUnit.health -= 1; 
+                    otherUnit.health -= 1;
                     if (otherUnit.hero && !otherUnit.immune) {
                         otherUnit.hurt = true;
                     }
-                    thisUnit.removeFromWorld = true;   
+                    thisUnit.removeFromWorld = true;
                 }
-            }   
+            }
             if (thisUnit.hero) {
                 if (otherUnit.landMine) {
                     thisUnit.health -= 10;
@@ -339,7 +316,7 @@ function collide(thisUnit, otherUnit) {
             }
         }
         return true;
-    } 
+    }
 };
 
 // inheritance
@@ -378,7 +355,8 @@ function Hero(game, heroSprites,speed, ground, health, lives) {
     this.lives = lives;
     this.unitType = "hero";
     this.ctx = game.ctx;
-    this.ground = ground;
+    this.floor = 500;
+    this.ground = 500;
     this.firingStance = 2;
     this.width = 90;
     this.hurtCount = 6;
@@ -393,6 +371,8 @@ function Hero(game, heroSprites,speed, ground, health, lives) {
     this.standForward = true;
     this.crouch = false;
     this.immune = false;
+    this.falling = false;
+    this.spaceTime = 0;
     Entity.call(this, game, 100, 525);
 }
 
@@ -452,10 +432,15 @@ Hero.prototype.update = function () {
         }
     }
 
+//---------
     if (this.game.space) {
+      if (!this.falling && !this.jumping) {
         this.jumping = true;
-        this.firingStance = 2;
+        this.falling = false;
+        this.spaceTime = this.game.timer.gameTime + 0.5;
+      }
     }
+//---------
     if (this.firingStance === 0 || this.firingStance === 4) {
         this.runFlag = false;
     }
@@ -477,48 +462,65 @@ Hero.prototype.update = function () {
             this.immuneCount = 20;
         }
     }
-    if (this.jumping && this.runFlag) {
-        this.standingStance = 2;
-        if (this.frontJump.isDone() || this.backJump.isDone()) {
-            this.frontJump.elapsedTime = 0;
-            this.backJump.elapsedTime = 0;
+    //-------------------------------------
+    //&*&*&*&*&*&*&*&*&*&*&*&*&**&*&*&**&*&*&*
+    var heroGroundX = Math.round(this.x/25) + 1;
+    var heroGroundY = Math.round(this.y/25);
+    //var ground25 = this.ground / 25;
+    //&*&*&*&*&*&*&*&*&*&*&*&*&*&**&*&*&*&*&*&*
+
+
+        //### Start ##############################################################
+
+        //This makes the hero go up if he jumps and once he gets to the top he falls
+        if (this.jumping) {
+          if (this.game.timer.gameTime <= this.spaceTime) {
+            this.y = this.y - 5;
+            this.falling = false;
+            console.log("jumping");
+          } else {
+            this.falling = true;
             this.jumping = false;
-            this.standForward = this.jumpForward;
+            console.log("falling");
+          }
         }
-        var jumpDistance;
-        if (this.frontJump.elapsedTime > 0) jumpDistance = this.frontJump.elapsedTime / this.frontJump.totalTime;
-        else jumpDistance = this.backJump.elapsedTime / this.backJump.totalTime;
 
-        if (jumpDistance > 0.5)
-            jumpDistance = 1 - jumpDistance;
-            var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
-
-        if (!this.isCollide) this.y = this.ground - height;
-
-        if (this.standForward && !this.isCollide) this.x += (this.game.clockTick * this.speed);
-        else if(this.x >= 40 && !this.isCollide) this.x -= (this.game.clockTick * this.speed);
-    }
-    else if (this.jumping) {
-        this.standingStance = 2;
-        if (this.frontJump.isDone() || this.backJump.isDone()) {
-            this.frontJump.elapsedTime = 0;
-            this.backJump.elapsedTime = 0;
-            this.jumping = false;
-            this.standForward = this.jumpForward;
+        //If there is no platform right below hero, start falling
+        if (!this.jumping && !(map.layer[heroGroundY+3][heroGroundX] == 'v'
+            || map.layer[heroGroundY+3][heroGroundX] == 'a'
+            || map.layer[heroGroundY+3][heroGroundX] == 'd')) {
+          this.falling = true;
+          console.log("No platform");
         }
-        var jumpDistance;
-        if (this.frontJump.elapsedTime > 0) jumpDistance = this.frontJump.elapsedTime / this.frontJump.totalTime;
-        else jumpDistance = this.backJump.elapsedTime / this.backJump.totalTime;
 
-        if (jumpDistance > 0.5)
-            jumpDistance = 1 - jumpDistance;
-            var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
-        if (!this.isCollide) this.y = this.ground - height;
-    }
-    else if ((this.y < this.ground) && !this.isCollide) {
-        this.y += 5;
-    }
-    else if (this.hurt) {
+        //If hero is falling
+        if (this.falling) {
+          //If there is a floor below the hero make it that the hero is not falling or jumping
+          if (map.layer[heroGroundY+3][heroGroundX] == 'v'
+              || map.layer[heroGroundY+3][heroGroundX] == 'a'
+              || map.layer[heroGroundY+3][heroGroundX] == 'd') {
+               this.falling = false;
+               this.jumping = false;
+               this.frontJump.elapsedTime = 0;
+               this.y += 10 //this only happens once
+               console.log("Platform below");
+          } else {
+            //if there is do platform below hero fall down, sum amount of pixels
+            if (this.falling) {
+              this.y += 5;
+              console.log("I'm falling down");
+            }
+          }
+        } // End of if falling statement
+
+        //This is not working ************************
+
+    //---------
+
+    // if ((this.y < this.ground) && !this.isCollide) {
+    //     this.y += 5;
+    // }
+    if (this.hurt) {
         if (this.hurtCount > 0) {
             if (!this.isCollide) this.x -= 5;
             this.hurtCount -= 1;
@@ -548,7 +550,7 @@ Hero.prototype.update = function () {
     }
 
     if (this.firing) {
-    
+
         if (this.CanShoot) {
             if (this.standForward) {
                 if (this.jumping) {
@@ -566,19 +568,19 @@ Hero.prototype.update = function () {
                 else if (this.standingStance === 0) {
                     this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 130, this.y + 80))
                     this.game.addEntity(new Bullet(this.game, this.x + 145, this.y + 85, this.standForward
-                        ,this.firingStance, false, false, this.unitType, 300)); 
+                        ,this.firingStance, false, false, this.unitType, 300));
                 }
                 else if (this.standingStance === 1) {
                     this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 80, this.y + 56))
                     this.game.addEntity(new Bullet(this.game, this.x + 90, this.y + 61, this.standForward
-                     ,this.firingStance, false, false, this.unitType, 300));  
+                     ,this.firingStance, false, false, this.unitType, 300));
                 }
                 else {
                     if (this.firingStance === 2) {
                         this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 92, this.y + 31))
                         this.game.addEntity(new Bullet(this.game, this.x + 110, this.y + 35, this.standForward
                             ,this.firingStance, true, false, this.unitType, 300));
-                    } 
+                    }
                     else if (this.firingStance === 3) {
                         this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 70, this.y + 3))
                         this.game.addEntity(new Bullet(this.game, this.x + 100, this.y - 10, this.standForward
@@ -594,7 +596,7 @@ Hero.prototype.update = function () {
                         this.game.addEntity(new Bullet(this.game, this.x + 35, this.y - 15, this.standForward
                             ,this.firingStance, true, false, this.unitType, 300));
                     }
-                   
+
                 }
             }
             else {
@@ -613,19 +615,19 @@ Hero.prototype.update = function () {
                 else if (this.standingStance === 0) {
                     this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x, this.y + 80))
                    this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 85, this.standForward
-                    ,this.firingStance, false, false, this.unitType, 300));  
+                    ,this.firingStance, false, false, this.unitType, 300));
                 }
                 else if (this.standingStance === 1) {
                     this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 3, this.y + 55))
                     this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 61, this.standForward
-                     ,this.firingStance, false, false, this.unitType, 300));  
+                     ,this.firingStance, false, false, this.unitType, 300));
                 }
                 else {
                     if (this.firingStance === 2) {
                         this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x - 2, this.y + 30))
                         this.game.addEntity(new Bullet(this.game, this.x - 15, this.y + 35, this.standForward
                             ,this.firingStance, true, false, this.unitType, 300));
-                    } 
+                    }
                     else if (this.firingStance === 3) {
                         this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 10, this.y + 3))
                         this.game.addEntity(new Bullet(this.game, this.x , this.y - 10, this.standForward
@@ -641,7 +643,7 @@ Hero.prototype.update = function () {
                         this.game.addEntity(new Bullet(this.game, this.x + 55, this.y - 15, this.standForward
                             ,this.firingStance, true, false, this.unitType, 300));
                     }
-            
+
                 }
             }
             this.CanShoot = false;
@@ -654,88 +656,88 @@ Hero.prototype.update = function () {
 }
 
 Hero.prototype.draw = function () {
-    
-    if (this.jumping && this.jumpForward) {
-        this.frontJump.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+
+    if (this.jumping) { //&& this.jumpForward
+        this.frontJump.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
     }
-    else if (this.jumping && !this.jumpForward) {
-        this.backJump.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+    else if (this.jumping) { // && !this.jumpForward
+        this.backJump.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
     }
     else if (this.hurt) {
-        this.frontDamageHero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX , this.y);
+        this.frontDamageHero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX , this.y + cameraY);
     }
     else if (this.standingStance === 0 && this.standForward) {
-        this.frontCrawl.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+        this.frontCrawl.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
     }
     else if (this.standingStance === 1 && this.standForward) {
-        this.frontCrouchHero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + 20);
+        this.frontCrouchHero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY + 20);
     }
     else if (this.standingStance === 1 && !this.standForward) {
-        this.backCrouchHero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + 20);
+        this.backCrouchHero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY + 20);
     }
     else if (this.standingStance === 0 && !this.standForward) {
-        this.backCrawl.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+        this.backCrawl.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
     }
     else if (this.firingStance === 2) {
         if (this.runFlag && this.standForward) {
-            this.frontRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+            this.frontRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
         }
         else if (this.runFlag && !this.standForward) {
-            this.backRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+            this.backRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
         }
         else if (!this.runFlag && this.standForward) {
 
-            this.frontStand.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+            this.frontStand.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
         }
         else if (!this.runFlag && !this.standForward) {
-            this.backStand.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+            this.backStand.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
         }
     }
     else if (this.firingStance === 3) {
         if (this.runFlag && this.standForward) {
-            this.front45UpRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+            this.front45UpRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
         }
         else if (this.runFlag && !this.standForward) {
-            this.back45UpRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+            this.back45UpRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
         }
         else if (!this.runFlag && this.standForward) {
 
-            this.front45Up.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+            this.front45Up.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
         }
         else if (!this.runFlag && !this.standForward) {
-            this.back45Up.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+            this.back45Up.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
         }
-    
+
     }
     else if (this.firingStance === 1) {
         if (this.runFlag && this.standForward) {
-            this.front45DownRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+            this.front45DownRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
         }
         else if (this.runFlag && !this.standForward) {
-            this.back45DownRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+            this.back45DownRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
         }
         else if (!this.runFlag && this.standForward) {
 
-            this.front45Down.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+            this.front45Down.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
         }
         else if (!this.runFlag && !this.standForward) {
-            this.back45Down.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+            this.back45Down.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
         }
     }
     else if (this.firingStance === 0) {
         if (this.standForward) {
-            this.frontDown90Hero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+            this.frontDown90Hero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
         }
         else {
-            this.backDown90Hero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+            this.backDown90Hero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
         }
     }
     else if (this.firingStance === 4) {
         if (this.standForward) {
-            this.frontUp90Hero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+            this.frontUp90Hero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
         }
         else {
-            this.backUp90Hero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+            this.backUp90Hero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
         }
     }
     Entity.prototype.draw.call(this);
@@ -815,7 +817,7 @@ EnemySoldier.prototype.update = function () {
         }
         this.standing = true;
         if(this.x - this.game.entities[2].x < 0) this.forward = true;
-        else this.forward = false;   
+        else this.forward = false;
         if (this.enemyShoot) {
             if (this.forward) {
                 if (this.crouch) {
@@ -829,7 +831,7 @@ EnemySoldier.prototype.update = function () {
                         ,this.firingStance, false, false, this.unitType, 300));
                 }
             }
-            else 
+            else
                 if (this.crouch) {
                     this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 1, this.y + 55))
                     this.game.addEntity(new Bullet(this.game, this.x -15, this.y + 60, this.forward
@@ -846,7 +848,7 @@ EnemySoldier.prototype.update = function () {
         }, 500);
         }
     }
-    else if (this.forward && (this.x - this.center < 100)) 
+    else if (this.forward && (this.x - this.center < 100))
     if (!this.isCollide) this.x += this.game.clockTick * this.speed;
         else {
             if(!this.collideForward) this.x += this.game.clockTick * this.speed;
@@ -878,19 +880,19 @@ EnemySoldier.prototype.draw = function () {
     if (this.forward) {
         if (this.standing) {
             if (this.crouch) this.enemyBackCrouch.drawFrame(this.game.clockTick, this.ctx
-                , this.x - cameraX, this.y + 20);
+                , this.x - cameraX, this.y + cameraY + 20);
             else this.enemyFrontStand.drawFrame(this.game.clockTick, this.ctx
-                , this.x - cameraX, this.y);   
+                , this.x - cameraX, this.y + cameraY);
         }
-        else this.enemyFrontRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+        else this.enemyFrontRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
     }
     else {
         if (this.standing) {
             if (this.crouch) this.enemyFrontCrouch.drawFrame(this.game.clockTick, this.ctx
-                , this.x - cameraX, this.y + 20);
-            else this.enemyBackStand.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+                , this.x - cameraX, this.y + cameraY + 20);
+            else this.enemyBackStand.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
         }
-        else this.enemyBackRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y );
+        else this.enemyBackRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY );
     }
     Entity.prototype.draw.call(this);
 }
@@ -927,13 +929,13 @@ Robot.prototype.update = function () {
                     }
                 }
             }
-        
-        
+
+
         this.game.addEntity(new robotFlash(this.game, AM.getAsset("./img/robotFlash.png"),  this.x - 180, this.y - 180));
         }
         if (this.unitType !== "blueRobot") {
             gameEngine.removeEntity(this);
-        
+
             ///////////////////////////////////////////
             ///// Buff Drops everytime right now //////
             ///////////////////////////////////////////
@@ -947,7 +949,7 @@ Robot.prototype.update = function () {
             }
         }
 
-    } 
+    }
     for (var i = 0; i < this.game.entities.length; i++) {
         var ent = this.game.entities[i];
         if (ent.hero && (Math.abs(ent.x - this.x) < 10) ) {
@@ -962,11 +964,11 @@ Robot.prototype.update = function () {
                 var jumpDistance;
                 if (this.frontJump.elapsedTime > 0) jumpDistance = this.frontJump.elapsedTime / this.frontJump.totalTime;
                 else jumpDistance = this.backJump.elapsedTime / this.backJump.totalTime;
-        
+
                 if (jumpDistance > 0.5)
                     jumpDistance = 1 - jumpDistance;
                     var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
-        
+
                 this.y = this.ground - height;
         }
         if (ent !== this && collide(this, ent)) {
@@ -977,7 +979,7 @@ Robot.prototype.update = function () {
     }
     }
     if (this.isCollide) console.log(this.unitType + " " + this.isCollide);
-    if (this.forward && (this.x - this.center < 100)) 
+    if (this.forward && (this.x - this.center < 100))
         if (!this.isCollide) {
             this.x += this.game.clockTick * this.speed;
         }
@@ -1023,9 +1025,9 @@ Robot.prototype.update = function () {
 
 Robot.prototype.draw = function () {
     if (this.forward) this.robotFrontRun.drawFrame(this.game.clockTick, this.ctx
-        , this.x - cameraX, this.y);
+        , this.x - cameraX, this.y + cameraY);
     else if (!this.forward) this.robotBackRun.drawFrame(this.game.clockTick, this.ctx
-        , this.x - cameraX, this.y);
+        , this.x - cameraX, this.y + cameraY);
     Entity.prototype.draw.call(this);
 }
 
@@ -1043,7 +1045,7 @@ robotFlash.prototype.update = function () {
 }
 
 robotFlash.prototype.draw = function () {
-    this.robotActiveFlash.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+    this.robotActiveFlash.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
     Entity.prototype.draw.call(this);
 }
 
@@ -1080,12 +1082,12 @@ landMine.prototype.update = function () {
             if (this.x < ent.x) this.collideForward = true;
         }
     }
-    
+
     Entity.prototype.update.call(this);
 }
 
 landMine.prototype.draw = function () {
-    this.landMineActive.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+    this.landMineActive.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
     Entity.prototype.draw.call(this);
 }
 
@@ -1104,7 +1106,7 @@ landMineFlash.prototype.update = function () {
 }
 
 landMineFlash.prototype.draw = function () {
-    this.landMineFlashActive.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+    this.landMineFlashActive.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
     Entity.prototype.draw.call(this);
 }
 
@@ -1123,7 +1125,7 @@ bulletFlash.prototype.update = function () {
 }
 
 bulletFlash.prototype.draw = function () {
-    this.bulletFlashActive.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+    this.bulletFlashActive.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
     Entity.prototype.draw.call(this);
 }
 
@@ -1176,13 +1178,13 @@ GunTurrent.prototype.update = function () {
         }
     }
     else this.active = false;
-    
+
     Entity.prototype.update.call(this);
 }
 
 GunTurrent.prototype.draw = function () {
-    if (this.active) this.gunTurrentFiring.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
-    else this.gunTurrentIdle.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+    if (this.active) this.gunTurrentFiring.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+    else this.gunTurrentIdle.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
     Entity.prototype.draw.call(this);
 }
 
@@ -1238,14 +1240,14 @@ GiantRobot.prototype.update = function () {
         }
     }
     else this.active = false;
-    
+
     Entity.prototype.update.call(this);
 }
 
 GiantRobot.prototype.draw = function () {
     if (this.active) this.gunTurrentFiring.drawFrame(this.game.clockTick, this.ctx
-        , this.x - cameraX, this.y);
-    else this.gunTurrentIdle.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y);
+        , this.x - cameraX, this.y + cameraY);
+    else this.gunTurrentIdle.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
     Entity.prototype.draw.call(this);
 }
 
@@ -1277,10 +1279,10 @@ FlyingRobot.prototype.update = function () {
     if (this.isDead) this.removeFromWorld = true;
     if ((Math.abs(this.game.entities[2].x - this.center) < 130)) this.heroInRange = true;
     else this.heroInRange = false;
-    if ((Math.abs(this.x - this.game.entities[2].x) <= 200) && this.heroInRange) { 
+    if ((Math.abs(this.x - this.game.entities[2].x) <= 200) && this.heroInRange) {
         if (Math.abs(this.x - (this.game.entities[2].x) - 15) < 5) {
-            if (this.enemyShoot) { 
-                if (this.forward) { 
+            if (this.enemyShoot) {
+                if (this.forward) {
                     this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 25, this.y + 44))
                     this.game.addEntity(new Bullet(this.game, this.x + 30, this.y + 70, this.forward
                         ,this.firingStance,true, false,this.unitType, 300));
@@ -1304,7 +1306,7 @@ FlyingRobot.prototype.update = function () {
             this.x += this.game.clockTick * this.speed;
             this.forward = true;
         }
-        
+
     }
     else if (this.forward && (this.x - this.center < 100)) {
         this.x += this.game.clockTick * this.speed;
@@ -1325,9 +1327,9 @@ FlyingRobot.prototype.update = function () {
 
 FlyingRobot.prototype.draw = function () {
     if (this.forward) this.flyingRobotFrontRun.drawFrame(this.game.clockTick, this.ctx
-        , this.x - cameraX, this.y);
+        , this.x - cameraX, this.y + cameraY);
     else if (!this.forward) this.flyingRobotBackRun.drawFrame(this.game.clockTick, this.ctx
-        , this.x - cameraX, this.y);
+        , this.x - cameraX, this.y + cameraY);
     Entity.prototype.draw.call(this);
 
 }
@@ -1369,8 +1371,8 @@ Bullet.prototype.update = function () {
     }
     if (this.forward) {
         if (this.x >= this.startX + 500 || this.y > this.gameGround) {
-            this.removeFromWorld = true; 
-        } 
+            this.removeFromWorld = true;
+        }
         else if (!this.standing) this.x += this.game.clockTick * this.speed;
         else if (this.firingStance === 4) this.y -= this.game.clockTick * this.speed;
         else if (this.firingStance === 2) this.x += this.game.clockTick * this.speed;
@@ -1387,7 +1389,7 @@ Bullet.prototype.update = function () {
         if (this.unitType === "giantRobot" && this.y > this.gameGround) this.firingStance = 2;
         if (this.x <= this.startX - 500 ) this.removeFromWorld = true;
         if ( this.y > this.gameGround && this.unitType !== "giantRobot") {
-             this.removeFromWorld = true; 
+             this.removeFromWorld = true;
         }
         else if (!this.standing) this.x -= this.game.clockTick * this.speed;
         else if (this.firingStance === 4) this.y -= this.game.clockTick * this.speed;
@@ -1408,7 +1410,7 @@ Bullet.prototype.draw = function () {
     if (this.unitType === "giantRobot") {
         this.ctx.fillStyle = "White";
         this.ctx.beginPath();
-        this.ctx.arc(this.x - cameraX,this.y ,10,0,8*Math.PI); //this might be wrong
+        this.ctx.arc(this.x - cameraX,this.y + cameraY ,10,0,8*Math.PI); //this might be wrong
         this.ctx.closePath();
         this.ctx.fill();
 
@@ -1416,7 +1418,7 @@ Bullet.prototype.draw = function () {
     else {
         this.ctx.fillStyle = "White";
         this.ctx.beginPath();
-        this.ctx.arc(this.x - cameraX,this.y ,4,0,2*Math.PI); //this might be wrong
+        this.ctx.arc(this.x - cameraX,this.y + cameraY ,4,0,2*Math.PI); //this might be wrong
         this.ctx.closePath();
         this.ctx.fill();
     }
@@ -1460,6 +1462,11 @@ AM.queueDownload("./img/ground1.png");
 AM.queueDownload("./img/ground2.png");
 AM.queueDownload("./img/ground3.png");
 AM.queueDownload("./img/ground4.png");
+AM.queueDownload("./img/ground5.png");
+AM.queueDownload("./img/nwGround.png");
+AM.queueDownload("./img/neGround.png");
+AM.queueDownload("./img/swGround.png");
+AM.queueDownload("./img/seGround.png");
 AM.queueDownload("./img/enemySoldier_StandingBackward.png");
 AM.queueDownload("./img/enemySoldier_StandingFoward.png");
 AM.queueDownload("./img/enemySoldier_CrouchBackward.png");
@@ -1488,7 +1495,7 @@ AM.downloadAll(function () {
     var canvas = document.getElementById("gameWorld");
     var ctx = canvas.getContext("2d");
     //var gameEngine = new GameEngine();
-    
+
     gameEngine.init(ctx);
     gameEngine.start();
 
@@ -1506,42 +1513,42 @@ AM.downloadAll(function () {
     gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/backgroundtrees.jpg")));
 
     gameEngine.addEntity(new Platform(gameEngine));
-    
+
     gameEngine.addEntity(new Hero(gameEngine, heroSprite, 200, 525, 5, 3));
-    
+
     gameEngine.addEntity(new Camera(gameEngine));
-    
+
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 350, 575, 60, 1, "redRobot"));
-    
+
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 1200, 575, 60, 1, "blueRobot"));
-    
+
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/orange_Robot.png"), AM.getAsset("./img/orange_Robot.png"), 1800, 575, 60, 1, "orangeRobot"));
-    
+
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/green_Robot.png"), AM.getAsset("./img/green_Robot.png"), 2300, 575, 60, 1, "greenRobot"));
-    
+
     gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
     , AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
     , AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
     , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 800, 525, 200, 3));
-    
+
     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
     , AM.getAsset("./img/flyingRobot_Forward.png"), 1300, 100, 60, 2));
-    
+
     gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
     , AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
     , AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
     , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 1600, 330, 200, 3));
-    
+
     gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
     , AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
     , AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
     , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 2100, 525, 200, 3));
-    
+
     gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
     , AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
     , AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
     , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 2500, 525, 200, 3));
-    
+
     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
     , AM.getAsset("./img/flyingRobot_Forward.png"), 400, 100, 60, 2));
 
