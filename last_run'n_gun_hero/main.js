@@ -318,20 +318,20 @@ function collide(thisUnit, otherUnit) {
                 }
                 else {
                     otherUnit.health -= 1; 
-                    if (otherUnit.hero && !otherUnit.hurt) {
+                    if (otherUnit.hero && !otherUnit.immune) {
                         otherUnit.hurt = true;
                     }
                     thisUnit.removeFromWorld = true;   
                 }
             }   
             if (thisUnit.hero) {
-
                 if (otherUnit.landMine) {
                     thisUnit.health -= 10;
+                    thisUnit.hurt = true;
                     otherUnit.health = 0;
                 }
-                else if (otherUnit.enemy && !thisUnit.hurt){
-                    thisUnit.hurt = true;;
+                else if (otherUnit.enemy && !thisUnit.immune){
+                    thisUnit.hurt = true;
                     thisUnit.health -= 1;
                 }
             }
@@ -385,10 +385,12 @@ function Hero(game, heroSprites,speed, ground, health, lives) {
     this.standingStance = 2;
     this.runFlag = false;
     this.firing = false;
+    this.immuneCount = 20;
     this.CanShoot = true;
     this.jumpForward = true;
     this.standForward = true;
     this.crouch = false;
+    this.immune = false;
     Entity.call(this, game, 100, 525);
 }
 
@@ -464,6 +466,15 @@ Hero.prototype.update = function () {
     var totalHeight = 200;
     that = this;
 
+    if (this.immune) {
+        if (this.immuneCount > 0) {
+            this.immuneCount -= 1;
+        }
+        else {
+            this.immune = false;
+            this.immuneCount = 20;
+        }
+    }
     if (this.jumping && this.runFlag) {
         this.standingStance = 2;
         if (this.frontJump.isDone() || this.backJump.isDone()) {
@@ -480,10 +491,10 @@ Hero.prototype.update = function () {
             jumpDistance = 1 - jumpDistance;
             var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
 
-        this.y = this.ground - height;
+        if (!this.isCollide) this.y = this.ground - height;
 
-        if (this.standForward && !this.isCollide) this.x += (this.game.clockTick * this.speed) / 2;
-        else if(this.x >= 40 && !this.isCollide) this.x -= (this.game.clockTick * this.speed) / 2;
+        if (this.standForward && !this.isCollide) this.x += (this.game.clockTick * this.speed);
+        else if(this.x >= 40 && !this.isCollide) this.x -= (this.game.clockTick * this.speed);
     }
     else if (this.jumping) {
         this.standingStance = 2;
@@ -500,33 +511,36 @@ Hero.prototype.update = function () {
         if (jumpDistance > 0.5)
             jumpDistance = 1 - jumpDistance;
             var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
-
-        this.y = this.ground - height;
+        if (!this.isCollide) this.y = this.ground - height;
+    }
+    else if ((this.y < this.ground) && !this.isCollide) {
+        this.y += 5;
     }
     else if (this.hurt) {
         if (this.hurtCount > 0) {
-            this.x -= 5;
+            if (!this.isCollide) this.x -= 5;
             this.hurtCount -= 1;
         }
         else {
             this.hurtCount = 6;
+            this.immune = true;
             this.hurt = false;
         }
     }
     else if (this.runFlag && this.standForward && (this.standingStance === 2)) {
         if (!this.isCollide) this.x += this.game.clockTick * this.speed;
         else {
-            if(!this.collideForward) this.x += this.game.clockTick * this.speed;
+            if (!this.collideForward) this.x += this.game.clockTick * this.speed;
         }
     }
 
     else if ((this.runFlag && !this.standForward && (this.standingStance === 2))) {
         if (!this.isCollide) {
-            if(this.x >= 40) this.x -= this.game.clockTick * this.speed;
+            if (this.x >= 40) this.x -= this.game.clockTick * this.speed;
         }
         else {
             if (this.collideForward) {
-                if(this.x >= 40) this.x -= this.game.clockTick * this.speed;
+                if (this.x >= 40) this.x -= this.game.clockTick * this.speed;
             }
         }
     }
@@ -775,6 +789,7 @@ EnemySoldier.prototype.update = function () {
         var ent = this.game.entities[i];
         if (ent !== this && collide(this, ent)) {
             this.isCollide = true;
+            this.forward = !this.forward;
             if (this.x < ent.x) this.collideForward = true;
         }
     }
@@ -912,7 +927,7 @@ Robot.prototype.update = function () {
             }
         
         
-        this.game.addEntity(new robotFlash(this.game, AM.getAsset("./img/robotFlash.png"),  this.x - 100, this.y - 150));
+        this.game.addEntity(new robotFlash(this.game, AM.getAsset("./img/robotFlash.png"),  this.x - 180, this.y - 180));
         }
         if (this.unitType !== "blueRobot") {
             gameEngine.removeEntity(this);
@@ -933,12 +948,33 @@ Robot.prototype.update = function () {
     } 
     for (var i = 0; i < this.game.entities.length; i++) {
         var ent = this.game.entities[i];
+        if (ent.hero && (Math.abs(ent.x - this.x) < 10) ) {
+            if (this.jumping) {
+                this.standingStance = 2;
+                if (this.frontJump.isDone() || this.backJump.isDone()) {
+                    this.frontJump.elapsedTime = 0;
+                    this.backJump.elapsedTime = 0;
+                    this.jumping = false;
+                    this.standForward = this.jumpForward;
+                }
+                var jumpDistance;
+                if (this.frontJump.elapsedTime > 0) jumpDistance = this.frontJump.elapsedTime / this.frontJump.totalTime;
+                else jumpDistance = this.backJump.elapsedTime / this.backJump.totalTime;
+        
+                if (jumpDistance > 0.5)
+                    jumpDistance = 1 - jumpDistance;
+                    var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
+        
+                this.y = this.ground - height;
+        }
         if (ent !== this && collide(this, ent)) {
             this.isCollide = true;
             this.forward = !this.forward;
-            //if (this.x < ent.x) this.collideForward = true;
+            if (this.x < ent.x) this.collideForward = true;
         }
     }
+    }
+    if (this.isCollide) console.log(this.unitType + " " + this.isCollide);
     if (this.forward && (this.x - this.center < 100)) 
         if (!this.isCollide) {
             this.x += this.game.clockTick * this.speed;
@@ -1331,7 +1367,6 @@ Bullet.prototype.update = function () {
     }
     if (this.forward) {
         if (this.x >= this.startX + 500 || this.y > this.gameGround) {
-            console.log("1");
             this.removeFromWorld = true; 
         } 
         else if (!this.standing) this.x += this.game.clockTick * this.speed;
@@ -1350,7 +1385,6 @@ Bullet.prototype.update = function () {
         if (this.unitType === "giantRobot" && this.y > this.gameGround) this.firingStance = 2;
         if (this.x <= this.startX - 500 ) this.removeFromWorld = true;
         if ( this.y > this.gameGround && this.unitType !== "giantRobot") {
-            console.log("2");
              this.removeFromWorld = true; 
         }
         else if (!this.standing) this.x -= this.game.clockTick * this.speed;
@@ -1518,11 +1552,11 @@ AM.downloadAll(function () {
     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
     , AM.getAsset("./img/flyingRobot_Forward.png"), 500, 200,60, 2));
 
-    //gameEngine.addEntity(new GunTurrent(gameEngine, AM.getAsset("./img/firingGunTurrent.png")
-    //, AM.getAsset("./img/idleGunTurrent.png"),400, 565, 5));
+    gameEngine.addEntity(new GunTurrent(gameEngine, AM.getAsset("./img/firingGunTurrent.png")
+    , AM.getAsset("./img/idleGunTurrent.png"),700, 565, 5));
 
     gameEngine.addEntity(new GiantRobot(gameEngine, AM.getAsset("./img/giantRobotFiringFoward.png")
-    , AM.getAsset("./img/giantRobotFoward.png"),2850,427, 5));
+    , AM.getAsset("./img/giantRobotFoward.png"),2850,427, 8));
 
     gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),200,610, 5));
 
