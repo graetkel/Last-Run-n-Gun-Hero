@@ -70,10 +70,12 @@ function Background(game, spritesheet) {
 };
 
 Background.prototype.update = function () {
-    if (this.game.d && cameraX != 0 && !this.game.s && this.game.entities[2].x < 3200 - cameraMid) {
+    if (this.game.d && cameraX != 0 && !this.game.s
+         && this.game.entities[2].x < 3200 - cameraMid && Hero.standingStance == 2) {
         this.x += this.game.clockTick * this.speed;
     }
-    if (this.game.a && cameraX != 0 && !this.game.s && this.game.entities[2].x < 3200 - cameraMid) {
+    if (this.game.a && cameraX != 0 && !this.game.s
+         && this.game.entities[2].x < 3200 - cameraMid && Hero.standingStance == 2) {
         this.x -= this.game.clockTick * this.speed;
     }
 
