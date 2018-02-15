@@ -398,7 +398,6 @@ Hero.prototype.constructor = Hero;
 Hero.prototype.update = function () {
     this.isCollide = false;
     this.collideForward = false;
-
     for (var i = 0; i < this.game.entities.length; i++) {
         var ent = this.game.entities[i];
         if (ent !== this && collide(this, ent)) {
@@ -912,19 +911,23 @@ Robot.prototype.update = function () {
                 }
             }
         
-        gameEngine.removeEntity(this);
+        
         this.game.addEntity(new robotFlash(this.game, AM.getAsset("./img/robotFlash.png"),  this.x - 100, this.y - 150));
         }
-        ///////////////////////////////////////////
-        ///// Buff Drops everytime right now //////
-        ///////////////////////////////////////////
-        //Change the '* 1' inside the Math.random//
-        /// to '* 10' to make it a 1/10th chance //
-        ///////////////////////////////////////////
-        var powerUpChance = Math.floor(Math.random() * 1)+1 ; //Generates a random number between 1-10
-        if (powerUpChance === 1) {
-            gameEngine.addPowerUp(new FirePowerUp(gameEngine,
-                AM.getAsset("./img/firepowerup.png"), this.x, this.y -15 ));
+        if (this.unitType !== "blueRobot") {
+            gameEngine.removeEntity(this);
+        
+            ///////////////////////////////////////////
+            ///// Buff Drops everytime right now //////
+            ///////////////////////////////////////////
+            //Change the '* 1' inside the Math.random//
+            /// to '* 10' to make it a 1/10th chance //
+            ///////////////////////////////////////////
+            var powerUpChance = Math.floor(Math.random() * 1)+1 ; //Generates a random number between 1-10
+            if (powerUpChance === 1) {
+                gameEngine.addPowerUp(new FirePowerUp(gameEngine,
+                    AM.getAsset("./img/firepowerup.png"), this.x, this.y -15 ));
+            }
         }
 
     } 
@@ -1474,11 +1477,11 @@ AM.downloadAll(function () {
     
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 350, 575, 60, 1, "redRobot"));
     
-    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 1200, 575, 60, 1));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 1200, 575, 60, 1, "blueRobot"));
     
-    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/orange_Robot.png"), AM.getAsset("./img/orange_Robot.png"), 1800, 575, 60, 1));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/orange_Robot.png"), AM.getAsset("./img/orange_Robot.png"), 1800, 575, 60, 1, "orangeRobot"));
     
-    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/green_Robot.png"), AM.getAsset("./img/green_Robot.png"), 2400, 575, 60, 1));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/green_Robot.png"), AM.getAsset("./img/green_Robot.png"), 2300, 575, 60, 1, "greenRobot"));
     
     gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
     , AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
@@ -1501,7 +1504,7 @@ AM.downloadAll(function () {
     gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
     , AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
     , AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
-    , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 2850, 525, 200, 3));
+    , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 2500, 525, 200, 3));
     
     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
     , AM.getAsset("./img/flyingRobot_Forward.png"), 400, 100, 60, 2));
@@ -1519,7 +1522,7 @@ AM.downloadAll(function () {
     //, AM.getAsset("./img/idleGunTurrent.png"),400, 565, 5));
 
     gameEngine.addEntity(new GiantRobot(gameEngine, AM.getAsset("./img/giantRobotFiringFoward.png")
-    , AM.getAsset("./img/giantRobotFoward.png"),600,427, 5));
+    , AM.getAsset("./img/giantRobotFoward.png"),2850,427, 5));
 
     gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),200,610, 5));
 
