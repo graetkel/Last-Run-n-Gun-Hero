@@ -5,6 +5,7 @@ var AM = new AssetManager();
 var gameEngine = new GameEngine();
 var map1 = new mapOne();
 var map2 = new mapTwo();
+var map3 = new mapThree();
 //In order to get the camera feature to work make sure every
 //x position value is its position - cameraX
 
@@ -137,7 +138,7 @@ FirePowerUp.prototype.collide = function (other) {
 
 
 
-var map = map2;
+var map = map3;
 
 // no inheritance
 function Platform(game) {
@@ -400,13 +401,17 @@ Hero.prototype.update = function () {
         }
     }
     if (this.game.a) {
-        if (!this.jumping) this.jumpForward = false;
+        if (!this.jumping) {
+          this.jumpForward = false;
+        }
         this.standForward = false;
         this.runFlag = true;
     }
 
     if (this.game.d) {
-        if (!this.jumping) this.jumpForward = true;
+        if (!this.jumping) {
+          this.jumpForward = true;
+        }
         this.standForward = true;
         this.runFlag = true;
     }
