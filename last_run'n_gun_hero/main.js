@@ -80,8 +80,8 @@ Background.prototype.update = function () {
 
     var mapWidth = map.cols * 25;
 
-    if (this.game.d 
-         && cameraX != 0 
+    if (this.game.d
+         && cameraX != 0
          && this.game.entities[2].x < mapWidth - cameraMid
          && mainguy.crouch == false
          && mainguy.firingStance != 4
@@ -90,8 +90,8 @@ Background.prototype.update = function () {
 
         this.x += this.game.clockTick * this.speed;
     }
-    if (this.game.a 
-         && cameraX != 0 
+    if (this.game.a
+         && cameraX != 0
          && this.game.entities[2].x < mapWidth - cameraMid
          && mainguy.crouch == false
          && mainguy.firingStance != 4
@@ -1611,6 +1611,22 @@ Bullet.prototype.draw = function () {
     Entity.prototype.draw.call(this);
 }
 
+//------- Music --------
+
+function playaudio(obj,audiofile) {
+  if (obj.mp3) {
+      if(obj.mp3.paused) obj.mp3.play();
+      else obj.mp3.pause();
+  } else {
+      obj.mp3 = new Audio(audiofile);
+      obj.mp3.play();
+  }
+  obj.innerHTML = (obj.mp3.paused) ? "Play" : "Pause";
+}
+
+//----- End of Music ----
+
+
 AM.queueDownload("./img/backDown45Hero.png");
 AM.queueDownload("./img/backDown45RunHero.png");
 AM.queueDownload("./img/backUp45Hero.png");
@@ -1726,7 +1742,7 @@ AM.downloadAll(function () {
 
     gameEngine.addEntity(new Camera(gameEngine));
 
-   // gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 350, 575, 60, 1, "redRobot"));
+   gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 350, 575, 60, 1, "redRobot"));
 
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 1200, 575, 60, 1, "blueRobot"));
 
@@ -1778,6 +1794,8 @@ AM.downloadAll(function () {
     gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),200,610, 5));
 
     gameEngine.addPowerUp(new FirePowerUp(gameEngine, AM.getAsset("./img/firepowerup.png")));
+
+    playaudio(gameEngine, "./music/Top5Songs.mp3")
 
         console.log("All Done!");
 });
