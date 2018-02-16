@@ -1523,6 +1523,22 @@ Bullet.prototype.draw = function () {
     Entity.prototype.draw.call(this);
 }
 
+//------- Music --------
+
+function playaudio(obj,audiofile) {
+  if (obj.mp3) {
+      if(obj.mp3.paused) obj.mp3.play();
+      else obj.mp3.pause();
+  } else {
+      obj.mp3 = new Audio(audiofile);
+      obj.mp3.play();
+  }
+  obj.innerHTML = (obj.mp3.paused) ? "Play" : "Pause";
+}
+
+//----- End of Music ----
+
+
 AM.queueDownload("./img/backDown45Hero.png");
 AM.queueDownload("./img/backDown45RunHero.png");
 AM.queueDownload("./img/backUp45Hero.png");
@@ -1623,7 +1639,7 @@ AM.downloadAll(function () {
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/orange_Robot.png"), AM.getAsset("./img/orange_Robot.png"), 1800, 575, 60, 1, "orangeRobot"));
 
     //gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/green_Robot.png"), AM.getAsset("./img/green_Robot.png"), 2300, 575, 60, 1, "greenRobot"));
-    
+
     //gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
     //, AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
     //, AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
@@ -1668,6 +1684,8 @@ AM.downloadAll(function () {
     gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),200,610, 5));
 
     gameEngine.addPowerUp(new FirePowerUp(gameEngine, AM.getAsset("./img/firepowerup.png")));
+
+    playaudio(gameEngine, "./music/Top5Songs.mp3")
 
         console.log("All Done!");
 });
