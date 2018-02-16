@@ -512,12 +512,23 @@ Hero.prototype.update = function () {
             this.immuneCount = 20;
         }
     }
-    //-------------------------------------
-    //&*&*&*&*&*&*&*&*&*&*&*&*&**&*&*&**&*&*&*
-    var heroGroundX = Math.round(this.x/25) + 1;
-    var heroGroundY = Math.round(this.y/25);
-    //var ground25 = this.ground / 25;
-    //&*&*&*&*&*&*&*&*&*&*&*&*&*&**&*&*&*&*&*&*
+    
+    if (!this.powerUpFire) {
+        //-------------------------------------
+        //&*&*&*&*&*&*&*&*&*&*&*&*&**&*&*&**&*&*&*
+        var heroGroundX = Math.round(this.x/25) + 1;
+        var heroGroundY = Math.round(this.y/25);
+        //var ground25 = this.ground / 25;
+        //&*&*&*&*&*&*&*&*&*&*&*&*&*&**&*&*&*&*&*&*
+    } else {
+        //
+        //This is what I (Ryan) Added in
+        //looks like it fixed it. Not 100% Though.
+        //
+        var heroGroundX = Math.round(this.x/25) +2;
+        var heroGroundY = Math.round(this.y/25);
+    }
+    
 
         if (this.jumping || this.falling) {
           this.frontJump.elapsedTime = 0;
@@ -1611,20 +1622,20 @@ Bullet.prototype.draw = function () {
     Entity.prototype.draw.call(this);
 }
 
-//------- Music --------
+// //------- Music --------
 
-function playaudio(obj,audiofile) {
-  if (obj.mp3) {
-      if(obj.mp3.paused) obj.mp3.play();
-      else obj.mp3.pause();
-  } else {
-      obj.mp3 = new Audio(audiofile);
-      obj.mp3.play();
-  }
-  obj.innerHTML = (obj.mp3.paused) ? "Play" : "Pause";
-}
+// function playaudio(obj,audiofile) {
+//   if (obj.mp3) {
+//       if(obj.mp3.paused) obj.mp3.play();
+//       else obj.mp3.pause();
+//   } else {
+//       obj.mp3 = new Audio(audiofile);
+//       obj.mp3.play();
+//   }
+//   obj.innerHTML = (obj.mp3.paused) ? "Play" : "Pause";
+// }
 
-//----- End of Music ----
+// //----- End of Music ----
 
 
 AM.queueDownload("./img/backDown45Hero.png");
