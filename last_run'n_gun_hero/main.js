@@ -85,6 +85,7 @@ Background.prototype.update = function () {
          && this.game.entities[2].x < mapWidth - cameraMid
          && mainguy.crouch == false
          && mainguy.firingStance != 4
+         && mainguy.firingStance != 0
          && mainguy.standingStance != 0
          && mainguy.isCollide == false) {
 
@@ -95,6 +96,7 @@ Background.prototype.update = function () {
          && this.game.entities[2].x < mapWidth - cameraMid
          && mainguy.crouch == false
          && mainguy.firingStance != 4
+         && mainguy.firingStance != 0
          && mainguy.standingStance != 0
          && mainguy.isCollide == false) {
 
