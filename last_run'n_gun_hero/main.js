@@ -250,8 +250,6 @@ Platform.prototype.draw = function () {
 
 Platform.prototype.update = function () {
     this.x += this.game.clockTick * this.speed;
-    //if (this.x < -1920) this.x = 1916;
-    //if (this.x < -2083) this.x = Background1X + 2075;
 };
 
 function Camera(game) {
@@ -271,13 +269,8 @@ var cameraX = 0;
 var cameraY = 0;
 
 Camera.prototype.update = function() {
-  //This if statement might need to be two seperate if statements
-  // if (this.xOffset != this.game.entities[1].x && this.yOffset != this.game.entities[1].y) {
-  //   this.xOffset = this.game.entities[1].x;
-  //   this.yOffset = this.game.entities[1].y;
-  // }
+
   var mapWidth = map.cols * 25;
-  //this.game.ctx.canvas.width = 3200;
   cameraMid = this.game.ctx.canvas.width / 2;
   if (this.game.entities[2].x < cameraMid) {
     cameraX = 0;
@@ -514,26 +507,24 @@ Hero.prototype.update = function () {
             this.immuneCount = 20;
         }
     }
-    
+
     if (!this.powerUpFire) {
         //-------------------------------------
-        //&*&*&*&*&*&*&*&*&*&*&*&*&**&*&*&**&*&*&*
+        //&*&*&*&*  This is the hero's grid values  &*&*&**&*&*&**&*&*
         var heroGroundX = Math.round(this.x/25) + 1;
         var heroGroundY = Math.round(this.y/25);
-        //var ground25 = this.ground / 25;
-        //&*&*&*&*&*&*&*&*&*&*&*&*&*&**&*&*&*&*&*&*
+        //&*&*&*&*&*&*&*&*&*&*&*&*&*&**&*&*&*&*&*&*&*&*&*&*&**&*&*&*&*
     } else {
-        //
         //This is what I (Ryan) Added in
         //looks like it fixed it. Not 100% Though.
-        //
         var heroGroundX = Math.round(this.x/25) +2;
         var heroGroundY = Math.round(this.y/25);
     }
-    
+
 
         if (this.jumping || this.falling) {
           this.frontJump.elapsedTime = 0;
+          this.backJump.elapsedTime = 0;
         }
         //### Start ##############################################################
 
@@ -548,11 +539,9 @@ Hero.prototype.update = function () {
             if (this.game.timer.gameTime <= this.spaceTime) {
               this.y = this.y - 5;
               this.falling = false;
-              console.log("jumping");
             } else {
               this.falling = true;
               this.jumping = false;
-              console.log("falling");
             }
           }
         }
@@ -562,7 +551,6 @@ Hero.prototype.update = function () {
             || map.layer[heroGroundY+3][heroGroundX] == 'a'
             || map.layer[heroGroundY+3][heroGroundX] == 'd')) {
           this.falling = true;
-          console.log("No platform");
         }
 
         //If hero is falling
@@ -573,14 +561,12 @@ Hero.prototype.update = function () {
               || map.layer[heroGroundY+3][heroGroundX] == 'd') {
                this.falling = false;
                this.jumping = false;
-               //this.frontJump.elapsedTime = 0;
+               //Since I'm rounding the hero always land 10 pixels to early so I added some hard code.
                this.y += 10 //this only happens once
-               //console.log("Platform below");
           } else {
             //if there is do platform below hero fall down, sum amount of pixels
             if (this.falling) {
               this.y += 5;
-              //console.log("I'm falling down");
             }
           }
         } // End of if falling statement
@@ -588,67 +574,62 @@ Hero.prototype.update = function () {
         if (this.runFlag) {
           //If there is a wall right of the hero
           if (this.game.d) {
+            //Right of hero's head
             if (map.layer[heroGroundY][heroGroundX+1] == 'a'
                 || map.layer[heroGroundY][heroGroundX+1] == 'z'
                 || map.layer[heroGroundY][heroGroundX+1] == 's') {
-                  console.log("R0: " + map.layer[heroGroundY][heroGroundX+1]);
                   this.x -= this.game.clockTick * this.speed;
             }
+            //Right of hero's torso
             if (map.layer[heroGroundY+1][heroGroundX+1] == 'a'
                 || map.layer[heroGroundY+1][heroGroundX+1] == 'z'
                 || map.layer[heroGroundY+1][heroGroundX+1] == 's') {
-                  console.log("R1: " + map.layer[heroGroundY+1][heroGroundX+1]);
                   this.x -= this.game.clockTick * this.speed;
             }
+            //Right of hero's legs
             if (map.layer[heroGroundY+2][heroGroundX+1] == 'a'
                 || map.layer[heroGroundY+2][heroGroundX+1] == 'z'
                 || map.layer[heroGroundY+2][heroGroundX+1] == 's') {
-                  console.log("R2: " + map.layer[heroGroundY+2][heroGroundX+1]);
                   this.x -= this.game.clockTick * this.speed;
             }
+            //Right of the ground below hero (Need this for special cases)
             if ((map.layer[heroGroundY+3][heroGroundX+1] == 'a'
                 || map.layer[heroGroundY+3][heroGroundX+1] == 'z'
                 || map.layer[heroGroundY+3][heroGroundX+1] == 's')
                 && this.falling) {
-                  console.log("R3: " + map.layer[heroGroundY+2][heroGroundX+1]);
                   this.x -= this.game.clockTick * this.speed;
             }
           }
 
           //If there is a wall left of the hero
           if (this.game.a) {
+            //Left of hero's head
             if (map.layer[heroGroundY][heroGroundX-1] == 'd'
                 || map.layer[heroGroundY][heroGroundX-1] == 'x'
                 || map.layer[heroGroundY][heroGroundX-1] == 'f') {
-                  console.log("L0: " + map.layer[heroGroundY][heroGroundX-1]);
                   this.x += this.game.clockTick * this.speed;
             }
+            //Left of hero's torso
             if (map.layer[heroGroundY+1][heroGroundX-1] == 'd'
                 || map.layer[heroGroundY+1][heroGroundX-1] == 'x'
                 || map.layer[heroGroundY+1][heroGroundX-1] == 'f') {
-                  console.log("L1: " + map.layer[heroGroundY+1][heroGroundX-1]);
                   this.x += this.game.clockTick * this.speed;
             }
+            //Left of hero's legs
             if (map.layer[heroGroundY+2][heroGroundX-1] == 'd'
                 || map.layer[heroGroundY+2][heroGroundX-1] == 'x'
                 || map.layer[heroGroundY+2][heroGroundX-1] == 'f') {
-                  console.log("L2: " + map.layer[heroGroundY+2][heroGroundX-1]);
                   this.x += this.game.clockTick * this.speed;
             }
+            //left of the ground below hero (Need this for special cases)
             if ((map.layer[heroGroundY+3][heroGroundX-1] == 'd'
                 || map.layer[heroGroundY+3][heroGroundX-1] == 'x'
                 || map.layer[heroGroundY+3][heroGroundX-1] == 'f')
                 && this.falling) {
-                  console.log("L3: " + map.layer[heroGroundY+2][heroGroundX-1]);
                   this.x += this.game.clockTick * this.speed;
             }
           }
         }
-
-        //--- fix animation --
-        // if (this.game.d && this.jumping)
-
-        //--- end of fix animation ---
 
     if (this.hurt) {
         if (this.hurtCount > 0) {
@@ -795,7 +776,7 @@ Hero.prototype.update = function () {
 Hero.prototype.draw = function () {
 
     //Keldon - added && this.standForward
-    if (this.jumping || this.falling && this.standForward) { //&& this.jumpForward
+    if ((this.jumping || this.falling) && this.standForward) { //&& this.jumpForward
         if (!this.powerUpFire) {
             this.frontJump.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
         } else {
@@ -803,7 +784,7 @@ Hero.prototype.draw = function () {
         }
     }
     //Keldon - added && !this.standForward
-    else if (this.jumping || this.falling && !this.standForward) { // && !this.jumpForward
+    else if ((this.jumping || this.falling) && !this.standForward) { // && !this.jumpForward
         if (!this.powerUpFire) {
             this.backJump.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
         } else {
