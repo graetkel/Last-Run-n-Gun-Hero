@@ -134,6 +134,13 @@ FirePowerUp.prototype.update = function () {
 
     if (this.collide(mainguy)) {
         gameEngine.removePowerUp(this);
+        mainguy.powerUpFire = true;
+        console.log("fired up!");
+
+        setTimeout(function removeFire() {
+            mainguy.powerUpFire = false;
+            console.log("fired down");
+            }, 10000);
     }
 }
 
@@ -154,7 +161,7 @@ FirePowerUp.prototype.collide = function (other) {
 
 
 
-var map = map2;
+var map = map1;
 
 // no inheritance
 function Platform(game) {
@@ -364,6 +371,23 @@ function Hero(game, heroSprites,speed, ground, health, lives) {
     this.backCrouchHero = new Animation(heroSprites[23], this.x, this.y, 100, 80, 1, 0.1, 1, true);
     this.frontDamageHero = new Animation(heroSprites[24], this.x, this.y, 100, 100, 1, .5, 1, true);
     this.backDamageHero = new Animation(heroSprites[25], this.x, this.y, 100, 100, 1, 0.1, 1, true);
+    this.flameFrontStand = new Animation(heroSprites[26], this.x, this.y, 214, 180, 2, 0.1, 6, true);
+    this.flameBackStand = new Animation(heroSprites[27], this.x, this.y, 214, 180, 2, 0.1, 6, true);
+    this.flameFrontRun = new Animation(heroSprites[28], this.x, this.y, 214, 180, 3, 0.1, 8, true);
+    this.flameBackRun = new Animation(heroSprites[29], this.x, this.y, 214, 180, 3, 0.1, 8, true);
+    this.flameFrontCrawl = new Animation(heroSprites[30], this.x, this.y, 220, 117.5, 2, 0.1, 6, true);
+    this.flameBackCrawl = new Animation(heroSprites[31], this.x, this.y, 220, 117.5, 2, 0.1, 6, true);
+    this.flameFrontJump = new Animation(heroSprites[32], this.x, this.y, 214, 180, 2, 0.1, 6, true);
+    this.flameBackJump = new Animation(heroSprites[33], this.x, this.y, 214, 180, 2, 0.1, 6, true);
+    this.flameFront45Up = new Animation(heroSprites[34], this.x, this.y, 214, 180, 2, 0.1, 6, true);
+    this.flameBack45Up = new Animation(heroSprites[35], this.x, this.y, 214, 180, 2, 0.1, 6, true);
+    this.flameFront45UpRun = new Animation(heroSprites[36], this.x, this.y, 214, 180, 3, 0.1, 8, true);
+    this.flameBack45UpRun = new Animation(heroSprites[37], this.x, this.y, 214, 180, 3, 0.1, 8, true);
+    this.flameFront45DownRun = new Animation(heroSprites[38], this.x, this.y, 214, 180, 3, 0.1, 8, true);
+    this.flameBack45DownRun = new Animation(heroSprites[39], this.x, this.y, 214, 180, 3, 0.1, 8, true);
+    this.flameBack45Down = new Animation(heroSprites[40], this.x, this.y, 214, 180, 2, 0.1, 6, true);
+    this.flameFront45Down = new Animation(heroSprites[41], this.x, this.y, 214, 180, 2, 0.1, 6, true);
+
 
     this.jumping = false;
     this.speed = speed;
@@ -391,6 +415,8 @@ function Hero(game, heroSprites,speed, ground, health, lives) {
     this.falling = false;
     this.spaceTime = 0;
     this.lookingRight = true;
+    this.powerUpFire = false;
+
     Entity.call(this, game, 100, 525);
 }
 
@@ -755,17 +781,31 @@ Hero.prototype.update = function () {
 
 Hero.prototype.draw = function () {
 
-    if (this.jumping || this.falling) { //&& this.jumpForward
-        this.frontJump.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+    //Keldon - added && this.standForward
+    if (this.jumping || this.falling && this.standForward) { //&& this.jumpForward
+        if (!this.powerUpFire) {
+            this.frontJump.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+        } else {
+            this.flameFrontJump.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY -15, .65);
+        }
     }
-    else if (this.jumping || this.falling) { // && !this.jumpForward
-        this.backJump.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+    //Keldon - added && !this.standForward
+    else if (this.jumping || this.falling && !this.standForward) { // && !this.jumpForward
+        if (!this.powerUpFire) {
+            this.backJump.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+        } else {
+            this.flameBackJump.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY -15, .65);
+        }
     }
     else if (this.hurt) {
         this.frontDamageHero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX , this.y + cameraY);
     }
     else if (this.standingStance === 0 && this.standForward) {
-        this.frontCrawl.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+        if (!this.powerUpFire) {
+            this.frontCrawl.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+        } else {
+            this.flameFrontCrawl.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY +23, .65);
+        }
     }
     else if (this.standingStance === 1 && this.standForward) {
         this.frontCrouchHero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY + 20);
@@ -774,52 +814,100 @@ Hero.prototype.draw = function () {
         this.backCrouchHero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY + 20);
     }
     else if (this.standingStance === 0 && !this.standForward) {
-        this.backCrawl.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+        if (!this.powerUpFire) {
+            this.backCrawl.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+        } else {
+            this.flameBackCrawl.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY +23, .65);
+        }
     }
     else if (this.firingStance === 2) {
         if (this.runFlag && this.standForward) {
-            this.frontRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+            if (!this.powerUpFire) {
+                this.frontRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+            } else {
+                this.flameFrontRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY -15, .65);
+            }
         }
         else if (this.runFlag && !this.standForward) {
-            this.backRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+            if (!this.powerUpFire) {
+                this.backRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+            } else {
+                this.flameBackRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY -15, .65);
+            }
         }
         else if (!this.runFlag && this.standForward) {
-
-            this.frontStand.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+            if (!this.powerUpFire) {
+                this.frontStand.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+            } else {
+                this.flameFrontStand.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY -15, .65);
+            }
         }
         else if (!this.runFlag && !this.standForward) {
-            this.backStand.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+            if (!this.powerUpFire) {
+                this.backStand.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+            } else {
+                this.flameBackStand.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY -15, .65);
+            }
         }
     }
     else if (this.firingStance === 3) {
         if (this.runFlag && this.standForward) {
-            this.front45UpRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+            if (!this.powerUpFire) {
+                this.front45UpRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+            } else {
+                this.flameFront45UpRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY -15, .65);
+            }
         }
         else if (this.runFlag && !this.standForward) {
-            this.back45UpRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+            if (!this.powerUpFire) {
+                this.back45UpRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+            } else {
+                this.flameBack45UpRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY -15, .65);
+            }
         }
         else if (!this.runFlag && this.standForward) {
-
-            this.front45Up.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+            if (!this.powerUpFire) {
+                this.front45Up.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+            } else {
+                this.flameFront45Up.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY -15, .65);
+            }
         }
         else if (!this.runFlag && !this.standForward) {
-            this.back45Up.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+            if (!this.powerUpFire) {
+                this.back45Up.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+            } else {
+                this.flameBack45Up.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY -15, .65);
+            }
         }
-
     }
     else if (this.firingStance === 1) {
         if (this.runFlag && this.standForward) {
-            this.front45DownRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+            if (!this.powerUpFire) {
+                this.front45DownRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+            } else {
+                this.flameFront45DownRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY -15, .65);
+            }
         }
         else if (this.runFlag && !this.standForward) {
-            this.back45DownRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+            if (!this.powerUpFire) {
+                this.back45DownRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+            } else {
+                this.flameBack45DownRun.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY -15, .65);
+            }
         }
         else if (!this.runFlag && this.standForward) {
-
-            this.front45Down.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+            if (!this.powerUpFire) {
+                this.front45Down.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+            } else {
+                this.flameFront45Down.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY -15, .65);
+            }
         }
         else if (!this.runFlag && !this.standForward) {
-            this.back45Down.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+            if (!this.powerUpFire) {
+                this.back45Down.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+            } else {
+                this.flameBack45Down.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY -15, .65);
+            }
         }
     }
     else if (this.firingStance === 0) {
@@ -1588,6 +1676,22 @@ AM.queueDownload("./img/robotFlash.png");
 AM.queueDownload("./img/bulletFlash.png");
 AM.queueDownload("./img/frontDamageHero.png");
 AM.queueDownload("./img/backDamageHero.png");
+AM.queueDownload("./img/flameStandF.png");
+AM.queueDownload("./img/flameStandB.png");
+AM.queueDownload("./img/flameWalkForward.png");
+AM.queueDownload("./img/flameWalkBackward.png");
+AM.queueDownload("./img/FlameLDF.png");
+AM.queueDownload("./img/FlameLDB.png");
+AM.queueDownload("./img/flameJumpF.png");
+AM.queueDownload("./img/flameJumpB.png");
+AM.queueDownload("./img/FlameStandShootFU.png");
+AM.queueDownload("./img/FlameStandShootBU.png");
+AM.queueDownload("./img/FlameRunShootFU.png");
+AM.queueDownload("./img/FlameRunShootBU.png");
+AM.queueDownload("./img/FlameRunShootFD.png");
+AM.queueDownload("./img/FlameRunShootBD.png");
+AM.queueDownload("./img/FlameStandShootBD.png");
+AM.queueDownload("./img/FlameStandShootFD.png");
 
 AM.downloadAll(function () {
     var canvas = document.getElementById("gameWorld");
@@ -1605,7 +1709,13 @@ AM.downloadAll(function () {
     , AM.getAsset("./img/backDown45Hero.png"), AM.getAsset("./img/backDown45RunHero.png"), AM.getAsset("./img/frontDown90Hero.png")
     , AM.getAsset("./img/frontDamageHero.png"), AM.getAsset("./img/frontCrouchHero.png"), AM.getAsset("./img/fowardUp90Hero.png")
     , AM.getAsset("./img/backUp90Hero.png"), AM.getAsset("./img/backDown90Hero.png"), AM.getAsset("./img/backDamageHero.png")
-    , AM.getAsset("./img/backCrouchHero.png"), AM.getAsset("./img/frontDamageHero.png"), AM.getAsset("./img/backDamageHero.png")];
+    , AM.getAsset("./img/backCrouchHero.png"), AM.getAsset("./img/frontDamageHero.png"), AM.getAsset("./img/backDamageHero.png")
+    , AM.getAsset("./img/flameStandF.png"), AM.getAsset("./img/flameStandB.png"), AM.getAsset("./img/flameWalkForward.png")
+    , AM.getAsset("./img/flameWalkBackward.png"), AM.getAsset("./img/FlameLDF.png"), AM.getAsset("./img/FlameLDB.png")
+    , AM.getAsset("./img/flameJumpF.png"), AM.getAsset("./img/flameJumpB.png"), AM.getAsset("./img/FlameStandShootFU.png")
+    , AM.getAsset("./img/FlameStandShootBU.png"), AM.getAsset("./img/FlameRunShootFU.png"), AM.getAsset("./img/FlameRunShootBU.png")
+    , AM.getAsset("./img/FlameRunShootFD.png"), AM.getAsset("./img/FlameRunShootBD.png"), AM.getAsset("./img/FlameStandShootBD.png")
+    , AM.getAsset("./img/FlameStandShootFD.png")];
 
 
     gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/backgroundtrees.jpg")));
@@ -1624,10 +1734,10 @@ AM.downloadAll(function () {
 
     //gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/green_Robot.png"), AM.getAsset("./img/green_Robot.png"), 2300, 575, 60, 1, "greenRobot"));
 
-    //gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
-    //, AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
-    //, AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
-    //, AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 800, 525, 200, 3));
+    gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
+    , AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
+    , AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
+    , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 800, 525, 200, 3));
 
     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
     , AM.getAsset("./img/flyingRobot_Forward.png"), 1300, 100, 60, 2));
