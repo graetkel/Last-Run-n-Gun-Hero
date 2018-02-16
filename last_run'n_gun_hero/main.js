@@ -80,8 +80,8 @@ Background.prototype.update = function () {
 
     var mapWidth = map.cols * 25;
 
-    if (this.game.d 
-         && cameraX != 0 
+    if (this.game.d
+         && cameraX != 0
          && this.game.entities[2].x < mapWidth - cameraMid
          && mainguy.crouch == false
          && mainguy.firingStance != 4
@@ -90,8 +90,8 @@ Background.prototype.update = function () {
 
         this.x += this.game.clockTick * this.speed;
     }
-    if (this.game.a 
-         && cameraX != 0 
+    if (this.game.a
+         && cameraX != 0
          && this.game.entities[2].x < mapWidth - cameraMid
          && mainguy.crouch == false
          && mainguy.firingStance != 4
@@ -1616,14 +1616,14 @@ AM.downloadAll(function () {
 
     gameEngine.addEntity(new Camera(gameEngine));
 
-   // gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 350, 575, 60, 1, "redRobot"));
+   gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 350, 575, 60, 1, "redRobot"));
 
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 1200, 575, 60, 1, "blueRobot"));
 
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/orange_Robot.png"), AM.getAsset("./img/orange_Robot.png"), 1800, 575, 60, 1, "orangeRobot"));
 
     //gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/green_Robot.png"), AM.getAsset("./img/green_Robot.png"), 2300, 575, 60, 1, "greenRobot"));
-
+    
     //gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
     //, AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
     //, AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
