@@ -390,6 +390,7 @@ function Hero(game, heroSprites,speed, ground, health, lives) {
     this.immune = false;
     this.falling = false;
     this.spaceTime = 0;
+    this.lookingRight = true;
     Entity.call(this, game, 100, 525);
 }
 
@@ -419,6 +420,7 @@ Hero.prototype.update = function () {
     if (this.game.a) {
         if (!this.jumping) {
           this.jumpForward = false;
+          this.lookingRight = false;
         }
         this.standForward = false;
         this.runFlag = true;
@@ -427,6 +429,7 @@ Hero.prototype.update = function () {
     if (this.game.d) {
         if (!this.jumping) {
           this.jumpForward = true;
+          this.lookingRight = true;
         }
         this.standForward = true;
         this.runFlag = true;
@@ -490,19 +493,28 @@ Hero.prototype.update = function () {
     //var ground25 = this.ground / 25;
     //&*&*&*&*&*&*&*&*&*&*&*&*&*&**&*&*&*&*&*&*
 
-
+        if (this.jumping || this.falling) {
+          this.frontJump.elapsedTime = 0;
+        }
         //### Start ##############################################################
 
         //This makes the hero go up if he jumps and once he gets to the top he falls
         if (this.jumping) {
-          if (this.game.timer.gameTime <= this.spaceTime) {
-            this.y = this.y - 5;
-            this.falling = false;
-            console.log("jumping");
-          } else {
-            this.falling = true;
+          if (map.layer[heroGroundY-1][heroGroundX] == 's'
+              || map.layer[heroGroundY-1][heroGroundX] == 'b'
+              || map.layer[heroGroundY-1][heroGroundX] == 'f') {
             this.jumping = false;
-            console.log("falling");
+            this.falling = true;
+          } else {
+            if (this.game.timer.gameTime <= this.spaceTime) {
+              this.y = this.y - 5;
+              this.falling = false;
+              console.log("jumping");
+            } else {
+              this.falling = true;
+              this.jumping = false;
+              console.log("falling");
+            }
           }
         }
 
@@ -522,25 +534,83 @@ Hero.prototype.update = function () {
               || map.layer[heroGroundY+3][heroGroundX] == 'd') {
                this.falling = false;
                this.jumping = false;
-               this.frontJump.elapsedTime = 0;
+               //this.frontJump.elapsedTime = 0;
                this.y += 10 //this only happens once
-               console.log("Platform below");
+               //console.log("Platform below");
           } else {
             //if there is do platform below hero fall down, sum amount of pixels
             if (this.falling) {
               this.y += 5;
-              console.log("I'm falling down");
+              //console.log("I'm falling down");
             }
           }
         } // End of if falling statement
 
-        //This is not working ************************
+        if (this.runFlag) {
+          //If there is a wall right of the hero
+          if (this.game.d) {
+            if (map.layer[heroGroundY][heroGroundX+1] == 'a'
+                || map.layer[heroGroundY][heroGroundX+1] == 'z'
+                || map.layer[heroGroundY][heroGroundX+1] == 's') {
+                  console.log("R0: " + map.layer[heroGroundY][heroGroundX+1]);
+                  this.x -= this.game.clockTick * this.speed;
+            }
+            if (map.layer[heroGroundY+1][heroGroundX+1] == 'a'
+                || map.layer[heroGroundY+1][heroGroundX+1] == 'z'
+                || map.layer[heroGroundY+1][heroGroundX+1] == 's') {
+                  console.log("R1: " + map.layer[heroGroundY+1][heroGroundX+1]);
+                  this.x -= this.game.clockTick * this.speed;
+            }
+            if (map.layer[heroGroundY+2][heroGroundX+1] == 'a'
+                || map.layer[heroGroundY+2][heroGroundX+1] == 'z'
+                || map.layer[heroGroundY+2][heroGroundX+1] == 's') {
+                  console.log("R2: " + map.layer[heroGroundY+2][heroGroundX+1]);
+                  this.x -= this.game.clockTick * this.speed;
+            }
+            if ((map.layer[heroGroundY+3][heroGroundX+1] == 'a'
+                || map.layer[heroGroundY+3][heroGroundX+1] == 'z'
+                || map.layer[heroGroundY+3][heroGroundX+1] == 's')
+                && this.falling) {
+                  console.log("R3: " + map.layer[heroGroundY+2][heroGroundX+1]);
+                  this.x -= this.game.clockTick * this.speed;
+            }
+          }
 
-    //---------
+          //If there is a wall left of the hero
+          if (this.game.a) {
+            if (map.layer[heroGroundY][heroGroundX-1] == 'd'
+                || map.layer[heroGroundY][heroGroundX-1] == 'x'
+                || map.layer[heroGroundY][heroGroundX-1] == 'f') {
+                  console.log("L0: " + map.layer[heroGroundY][heroGroundX-1]);
+                  this.x += this.game.clockTick * this.speed;
+            }
+            if (map.layer[heroGroundY+1][heroGroundX-1] == 'd'
+                || map.layer[heroGroundY+1][heroGroundX-1] == 'x'
+                || map.layer[heroGroundY+1][heroGroundX-1] == 'f') {
+                  console.log("L1: " + map.layer[heroGroundY+1][heroGroundX-1]);
+                  this.x += this.game.clockTick * this.speed;
+            }
+            if (map.layer[heroGroundY+2][heroGroundX-1] == 'd'
+                || map.layer[heroGroundY+2][heroGroundX-1] == 'x'
+                || map.layer[heroGroundY+2][heroGroundX-1] == 'f') {
+                  console.log("L2: " + map.layer[heroGroundY+2][heroGroundX-1]);
+                  this.x += this.game.clockTick * this.speed;
+            }
+            if ((map.layer[heroGroundY+3][heroGroundX-1] == 'd'
+                || map.layer[heroGroundY+3][heroGroundX-1] == 'x'
+                || map.layer[heroGroundY+3][heroGroundX-1] == 'f')
+                && this.falling) {
+                  console.log("L3: " + map.layer[heroGroundY+2][heroGroundX-1]);
+                  this.x += this.game.clockTick * this.speed;
+            }
+          }
+        }
 
-    // if ((this.y < this.ground) && !this.isCollide) {
-    //     this.y += 5;
-    // }
+        //--- fix animation --
+        // if (this.game.d && this.jumping)
+
+        //--- end of fix animation ---
+
     if (this.hurt) {
         if (this.hurtCount > 0) {
             if (!this.isCollide) this.x -= 5;
@@ -553,19 +623,26 @@ Hero.prototype.update = function () {
         }
     }
     else if (this.runFlag && this.standForward && (this.standingStance === 2)) {
-        if (!this.isCollide) this.x += this.game.clockTick * this.speed;
-        else {
-            if (!this.collideForward) this.x += this.game.clockTick * this.speed;
+        if (!this.isCollide) {
+          this.x += this.game.clockTick * this.speed;
+        } else {
+            if (!this.collideForward) {
+              this.x += this.game.clockTick * this.speed;
+            }
         }
     }
 
     else if ((this.runFlag && !this.standForward && (this.standingStance === 2))) {
         if (!this.isCollide) {
-            if (this.x >= 40) this.x -= this.game.clockTick * this.speed;
+            if (this.x >= 40) {
+              this.x -= this.game.clockTick * this.speed;
+            }
         }
         else {
             if (this.collideForward) {
-                if (this.x >= 40) this.x -= this.game.clockTick * this.speed;
+                if (this.x >= 40) {
+                  this.x -= this.game.clockTick * this.speed;
+                }
             }
         }
     }
@@ -678,10 +755,10 @@ Hero.prototype.update = function () {
 
 Hero.prototype.draw = function () {
 
-    if (this.jumping) { //&& this.jumpForward
+    if (this.jumping || this.falling) { //&& this.jumpForward
         this.frontJump.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
     }
-    else if (this.jumping) { // && !this.jumpForward
+    else if (this.jumping || this.falling) { // && !this.jumpForward
         this.backJump.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
     }
     else if (this.hurt) {
