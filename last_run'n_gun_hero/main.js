@@ -140,10 +140,12 @@ FirePowerUp.prototype.update = function () {
     if (powerUpCollide(this, mainguy)) {
         gameEngine.removePowerUp(this);
         mainguy.powerUpFire = true;
+        mainguy.immune = true;
         //console.log("fired up!");
 
         setTimeout(function removeFire() {
             mainguy.powerUpFire = false;
+            mainguy.immune = false;
             //console.log("fired down");
             }, 10000);
     }
@@ -603,8 +605,8 @@ Hero.prototype.update = function () {
     var totalHeight = 200;
     that = this;
 
-    if (this.immune) {
-        if (this.immuneCount > 0) {
+    if (this.immune && !this.powerUpFire) {
+        if (this.immuneCount > 0 ) {
             this.immuneCount -= 1;
         }
         else {
@@ -755,7 +757,7 @@ Hero.prototype.update = function () {
             }
           }
         }
-
+    
     if (this.hurt) {
         if (this.hurtCount > 0) {
 
