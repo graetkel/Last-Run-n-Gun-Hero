@@ -811,6 +811,8 @@ Hero.prototype.reset = function () {			// THU add
 	this.dead = false;
 	this.crouch = false;
     this.lives--;
+    this.standingStance = 2;
+    this.firingStance = 1;
     if (this.lives < 0) this.lives = 0;
 	if (this.times < 0) this.times = 0;
     this.game.lives.innerHTML = "Lives: " + this.lives;
@@ -2268,7 +2270,7 @@ Bullet.prototype = new Entity();
 Bullet.prototype.constructor = Bullet;
 
 Bullet.prototype.reset = function () {
-	this.isBullet = true;
+	//this.isBullet = true;
 }
 
 
