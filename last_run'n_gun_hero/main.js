@@ -137,11 +137,11 @@ FirePowerUp.prototype.update = function () {
     if (powerUpCollide(this, mainguy)) {
         gameEngine.removePowerUp(this);
         mainguy.powerUpFire = true;
-        console.log("fired up!");
+        //console.log("fired up!");
 
         setTimeout(function removeFire() {
             mainguy.powerUpFire = false;
-            console.log("fired down");
+            //console.log("fired down");
             }, 10000);
     }
 }
@@ -171,8 +171,8 @@ HeartPowerUp.prototype.update = function () {
     var mainguy = this.game.entities[2];
 
     if (powerUpCollide(this, mainguy)) {
-        gameEngine.removePowerUp(this);    
-        console.log("health picked up");
+        gameEngine.removePowerUp(this);
+        //console.log("health picked up");
 
         if (mainguy.health < 5) {
             mainguy.health++;
@@ -465,7 +465,7 @@ Hero.prototype.update = function () {
     if (this.x >= 3000) {
       NextLevel(this.game);
     }
-    console.log(this.game.entities[2].x);
+    //console.log(this.game.entities[2].x);
 
     this.isCollide = false;
     this.collideForward = false;
@@ -1287,7 +1287,7 @@ Robot.prototype.update = function () {
         }
     }
     }
-    if (this.isCollide) console.log(this.unitType + " " + this.isCollide);
+    //if (this.isCollide) console.log(this.unitType + " " + this.isCollide);
     if (this.forward && (this.x - this.center < 100))
         if (!this.isCollide) {
             this.x += this.game.clockTick * this.speed;
@@ -1718,11 +1718,11 @@ Bullet.prototype.update = function () {
 
 Bullet.prototype.draw = function () {
     if (this.unitType === "giantRobot") {
-<<<<<<< HEAD
+//<<<<<<< HEAD
         this.ctx.fillStyle = "Yellow"; //Made it easier to see
-=======
+//=======
         this.ctx.fillStyle = "rgb(0,255,0)";
->>>>>>> origin/master
+//>>>>>>> origin/master
         this.ctx.beginPath();
         this.ctx.arc(this.x - cameraX,this.y + cameraY ,10,0,8*Math.PI); //this might be wrong
         this.ctx.closePath();
@@ -1730,11 +1730,11 @@ Bullet.prototype.draw = function () {
 
     }
     else {
-<<<<<<< HEAD
+//<<<<<<< HEAD
         this.ctx.fillStyle = "Red"; //Made it easier to see
-=======
+//=======
         this.ctx.fillStyle = "rgb(0,255,0)";
->>>>>>> origin/master
+//>>>>>>> origin/master
         this.ctx.beginPath();
         this.ctx.arc(this.x - cameraX,this.y + cameraY ,4,0,2*Math.PI); //this might be wrong
         this.ctx.closePath();
@@ -1985,7 +1985,7 @@ AM.downloadAll(function () {
 
     gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),200,610, 5));
 
-<<<<<<< HEAD
+//<<<<<<< HEAD
     gameEngine.addPowerUp(new FirePowerUp(gameEngine, AM.getAsset("./img/firepowerup.png")));
 
   } else if (map = map2) {
@@ -2031,9 +2031,9 @@ AM.downloadAll(function () {
     //-----------------------
 
     //playaudio(gameEngine, "./music/Top5Songs.mp3")
-=======
+//=======
     playaudio(gameEngine, "./music/Top5Songs.mp3")
->>>>>>> origin/master
+//>>>>>>> origin/master
 
         console.log("All Done!");
 });
