@@ -117,7 +117,6 @@ Background.prototype.draw = function () {
 
 /**
  * These are the functions which create the fire powerup
- * Still a work in progress
  */
 function FirePowerUp(game, spritesheet, xLocation, yLocation) {
     this.animation = new Animation(spritesheet, this.x, this.y, 214, 207, 2, 0.10, 6, true);
@@ -135,7 +134,7 @@ FirePowerUp.prototype.constructor = FirePowerUp;
 FirePowerUp.prototype.update = function () {
     var mainguy = this.game.entities[2];
 
-    if (this.collide(mainguy)) {
+    if (powerUpCollide(this, mainguy)) {
         gameEngine.removePowerUp(this);
         mainguy.powerUpFire = true;
         console.log("fired up!");
@@ -151,17 +150,52 @@ FirePowerUp.prototype.draw = function () {
     this.animation.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY, .3);
 }
 
-FirePowerUp.prototype.collide = function (other) {
-    var rect1 = {x: this.x, y: this.y, width: this.width, height: this.height}
-    var rect2 = {x: other.x, y: other.y, width: other.width, height: other.height}
+
+/**
+ * Heart Powerup
+ */
+function HeartPowerUp(game, spritesheet, xLocation, yLocation) {
+    this.animation = new Animation(spritesheet, this.x, this.y, 100, 80, 6, 0.10, 6, true);
+    this.isFirePowerUp = true;
+    this.height = 60;
+    this.width = 75;
+    this.speed = 0;
+    this.ctx = game.ctx;
+    PowerUp.call(this, game, xLocation, yLocation);
+}
+
+HeartPowerUp.prototype = new PowerUp();
+HeartPowerUp.prototype.constructor = HeartPowerUp;
+
+HeartPowerUp.prototype.update = function () {
+    var mainguy = this.game.entities[2];
+
+    if (powerUpCollide(this, mainguy)) {
+        gameEngine.removePowerUp(this);    
+        console.log("health picked up");
+
+        if (mainguy.health < 5) {
+            mainguy.health++;
+        }
+    }
+}
+
+HeartPowerUp.prototype.draw = function () {
+    this.animation.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY, .75);
+}
+
+//used for testing if hero collides with
+//any of the powerups
+function powerUpCollide(powerup, hero) {
+    var rect1 = {x: powerup.x, y: powerup.y, width: powerup.width, height: powerup.height}
+    var rect2 = {x: hero.x, y: hero.y, width: hero.width, height: hero.height}
     if (rect1.x < rect2.x + rect2.width
     && rect1.x + rect1.width > rect2.x
     && rect1.y < rect2.y + rect2.height
     && rect1.height + rect1.y > rect2.y) {
         return true;
     }
-};
-
+}
 
 
 var map = map1;
@@ -383,6 +417,12 @@ function Hero(game, heroSprites,speed, ground, health, lives) {
     this.flameBack45DownRun = new Animation(heroSprites[39], this.x, this.y, 214, 180, 3, 0.1, 8, true);
     this.flameBack45Down = new Animation(heroSprites[40], this.x, this.y, 214, 180, 2, 0.1, 6, true);
     this.flameFront45Down = new Animation(heroSprites[41], this.x, this.y, 214, 180, 2, 0.1, 6, true);
+    this.flameFrontCrouchHero = new Animation(heroSprites[42], this.x, this.y, 130, 91, 2, 0.1, 6, true);
+    this.flameBackCrouchHero = new Animation(heroSprites[43], this.x, this.y, 130, 91, 2, 0.1, 6, true);
+    this.flameFrontUp90Hero = new Animation(heroSprites[44], this.x, this.y, 130, 111, 2, 0.1, 6, true);
+    this.flameBackUp90Hero = new Animation(heroSprites[45], this.x, this.y, 130, 111, 2, 0.1, 6, true);
+    this.flameFrontDown90Hero = new Animation(heroSprites[46], this.x, this.y, 130, 111, 2, 0.1, 6, true);
+    this.flameBackDown90Hero = new Animation(heroSprites[47], this.x, this.y, 130, 111, 2, 0.1, 6, true);
 
 
     this.jumping = false;
@@ -703,24 +743,48 @@ Hero.prototype.update = function () {
                 }
                 else {
                     if (this.firingStance === 2) {
-                        this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 92, this.y + 31))
-                        this.game.addEntity(new Bullet(this.game, this.x + 110, this.y + 35, this.standForward
-                            ,this.firingStance, true, false, this.unitType, 300));
+                        if (!this.powerUpFire) {
+                            this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 92, this.y + 31))
+                            this.game.addEntity(new Bullet(this.game, this.x + 110, this.y + 35, this.standForward
+                                ,this.firingStance, true, false, this.unitType, 300));
+                        } else {
+                            this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 102, this.y + 33))
+                            this.game.addEntity(new Bullet(this.game, this.x + 120, this.y + 37, this.standForward
+                                ,this.firingStance, true, false, this.unitType, 300));
+                        }
                     }
                     else if (this.firingStance === 3) {
-                        this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 70, this.y + 3))
-                        this.game.addEntity(new Bullet(this.game, this.x + 100, this.y - 10, this.standForward
-                            ,this.firingStance, true, false, this.unitType, 300));
+                        if (!this.powerUpFire) {
+                            this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 70, this.y + 3))
+                            this.game.addEntity(new Bullet(this.game, this.x + 100, this.y - 10, this.standForward
+                               ,this.firingStance, true, false, this.unitType, 300));
+                        } else {
+                            this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 95, this.y -5))
+                            this.game.addEntity(new Bullet(this.game, this.x + 122, this.y - 10, this.standForward
+                               ,this.firingStance, true, false, this.unitType, 300));
+                        }
                     }
                     else if (this.firingStance === 1) {
-                        this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 71, this.y + 73))
-                        this.game.addEntity(new Bullet(this.game, this.x + 95, this.y + 90, this.standForward
-                            ,this.firingStance, true, false,this.unitType, 300));
+                        if (!this.powerUpFire) {
+                            this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 71, this.y + 73))
+                            this.game.addEntity(new Bullet(this.game, this.x + 95, this.y + 90, this.standForward
+                                ,this.firingStance, true, false,this.unitType, 300));
+                        } else {
+                            this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 95, this.y + 70))
+                            this.game.addEntity(new Bullet(this.game, this.x + 120, this.y + 87, this.standForward
+                                ,this.firingStance, true, false,this.unitType, 300));
+                        }
                     }
                     else if (this.firingStance === 4) {
-                        this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 30, this.y - 7))
-                        this.game.addEntity(new Bullet(this.game, this.x + 35, this.y - 15, this.standForward
-                            ,this.firingStance, true, false, this.unitType, 300));
+                        if (!this.powerUpFire) {
+                            this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 30, this.y - 7))
+                            this.game.addEntity(new Bullet(this.game, this.x + 35, this.y - 15, this.standForward
+                                ,this.firingStance, true, false, this.unitType, 300));
+                        } else {
+                            this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 50, this.y - 7))
+                            this.game.addEntity(new Bullet(this.game, this.x + 55, this.y - 15, this.standForward
+                                ,this.firingStance, true, false, this.unitType, 300));
+                        }
                     }
 
                 }
@@ -750,24 +814,48 @@ Hero.prototype.update = function () {
                 }
                 else {
                     if (this.firingStance === 2) {
-                        this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x - 2, this.y + 30))
-                        this.game.addEntity(new Bullet(this.game, this.x - 15, this.y + 35, this.standForward
-                            ,this.firingStance, true, false, this.unitType, 300));
+                        if (!this.powerUpFire) {
+                            this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x - 2, this.y + 30))
+                            this.game.addEntity(new Bullet(this.game, this.x - 15, this.y + 35, this.standForward
+                                ,this.firingStance, true, false, this.unitType, 300));
+                        } else {
+                            this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 15, this.y + 33))
+                            this.game.addEntity(new Bullet(this.game, this.x - 8 , this.y + 38, this.standForward
+                                ,this.firingStance, true, false, this.unitType, 300));
+                        }
                     }
                     else if (this.firingStance === 3) {
-                        this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 10, this.y + 3))
-                        this.game.addEntity(new Bullet(this.game, this.x , this.y - 10, this.standForward
-                            ,this.firingStance, true, false, this.unitType, 300));
+                        if (!this.powerUpFire) {
+                            this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 10, this.y + 3))
+                            this.game.addEntity(new Bullet(this.game, this.x , this.y - 10, this.standForward
+                                ,this.firingStance, true, false, this.unitType, 300));
+                        } else {
+                            this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 28, this.y -9))
+                            this.game.addEntity(new Bullet(this.game, this.x + 18 , this.y - 22, this.standForward
+                                ,this.firingStance, true, false, this.unitType, 300));
+                        }
                     }
                     else if (this.firingStance === 1) {
-                        this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 6, this.y + 74))
-                        this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 95, this.standForward
-                            ,this.firingStance, true, false, this.unitType, 300));
+                        if (!this.powerUpFire) {
+                            this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 6, this.y + 74))
+                            this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 95, this.standForward
+                                ,this.firingStance, true, false, this.unitType, 300));
+                        } else {
+                            this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x , this.y + 74))
+                            this.game.addEntity(new Bullet(this.game, this.x - 8 , this.y + 95, this.standForward
+                                ,this.firingStance, true, false, this.unitType, 300));
+                        }
                     }
                     else if (this.firingStance === 4) {
-                        this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 50, this.y - 5))
-                        this.game.addEntity(new Bullet(this.game, this.x + 55, this.y - 15, this.standForward
-                            ,this.firingStance, true, false, this.unitType, 300));
+                        if (!this.powerUpFire) {
+                            this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 50, this.y - 5))
+                            this.game.addEntity(new Bullet(this.game, this.x + 55, this.y - 15, this.standForward
+                                ,this.firingStance, true, false, this.unitType, 300));
+                        } else {
+                            this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 70, this.y - 5))
+                            this.game.addEntity(new Bullet(this.game, this.x + 75, this.y - 15, this.standForward
+                                ,this.firingStance, true, false, this.unitType, 300));
+                        }
                     }
 
                 }
@@ -810,10 +898,18 @@ Hero.prototype.draw = function () {
         }
     }
     else if (this.standingStance === 1 && this.standForward) {
-        this.frontCrouchHero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY + 20);
+        if (!this.powerUpFire) {
+            this.frontCrouchHero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY + 20);
+        } else {
+            this.flameFrontCrouchHero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY + 10);
+        }
     }
     else if (this.standingStance === 1 && !this.standForward) {
-        this.backCrouchHero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY + 20);
+        if (!this.powerUpFire) {
+            this.backCrouchHero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY + 20);
+        } else {
+            this.flameBackCrouchHero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY + 10);
+        }
     }
     else if (this.standingStance === 0 && !this.standForward) {
         if (!this.powerUpFire) {
@@ -914,18 +1010,34 @@ Hero.prototype.draw = function () {
     }
     else if (this.firingStance === 0) {
         if (this.standForward) {
-            this.frontDown90Hero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+            if (!this.powerUpFire) {
+                this.frontDown90Hero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+            } else {
+                this.flameFrontDown90Hero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY -10);
+            }
         }
         else {
-            this.backDown90Hero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+            if (!this.powerUpFire) {
+                this.backDown90Hero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+            } else {
+                this.flameBackDown90Hero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY -10);
+            }
         }
     }
     else if (this.firingStance === 4) {
         if (this.standForward) {
-            this.frontUp90Hero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+            if (!this.powerUpFire) {
+                this.frontUp90Hero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+            } else {
+                this.flameFrontUp90Hero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY -10);
+            }
         }
         else {
-            this.backUp90Hero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+            if (!this.powerUpFire) {
+                this.backUp90Hero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+            } else {
+                this.flameBackUp90Hero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY -10);
+            }
         }
     }
     Entity.prototype.draw.call(this);
@@ -974,10 +1086,13 @@ EnemySoldier.prototype.update = function () {
         //Change the '* 1' inside the Math.random//
         /// to '* 10' to make it a 1/10th chance //
         ///////////////////////////////////////////
-        var powerUpChance = Math.floor(Math.random() * 1)+1 ; //Generates a random number between 1-10
+        var powerUpChance = Math.floor(Math.random() * 2)+1 ; //Generates a random number between 1-10
         if (powerUpChance === 1) {
             gameEngine.addPowerUp(new FirePowerUp(gameEngine,
                 AM.getAsset("./img/firepowerup.png"), this.x, this.y + 35 ));
+        } else if (powerUpChance === 2) {
+            gameEngine.addPowerUp(new HeartPowerUp(gameEngine,
+                AM.getAsset("./img/heart.png"), this.x, this.y + 35 ));
         }
     }
     for (var i = 0; i < this.game.entities.length; i++) {
@@ -1133,10 +1248,13 @@ Robot.prototype.update = function () {
             //Change the '* 1' inside the Math.random//
             /// to '* 10' to make it a 1/10th chance //
             ///////////////////////////////////////////
-            var powerUpChance = Math.floor(Math.random() * 1)+1 ; //Generates a random number between 1-10
+            var powerUpChance = Math.floor(Math.random() * 2)+1 ; //Generates a random number between 1-10
             if (powerUpChance === 1) {
                 gameEngine.addPowerUp(new FirePowerUp(gameEngine,
                     AM.getAsset("./img/firepowerup.png"), this.x, this.y -15 ));
+            } else if (powerUpChance === 2) {
+                gameEngine.addPowerUp(new HeartPowerUp(gameEngine,
+                    AM.getAsset("./img/heart.png"), this.x, this.y -15 ));
             }
         }
 
@@ -1600,7 +1718,11 @@ Bullet.prototype.update = function () {
 
 Bullet.prototype.draw = function () {
     if (this.unitType === "giantRobot") {
+<<<<<<< HEAD
         this.ctx.fillStyle = "Yellow"; //Made it easier to see
+=======
+        this.ctx.fillStyle = "rgb(0,255,0)";
+>>>>>>> origin/master
         this.ctx.beginPath();
         this.ctx.arc(this.x - cameraX,this.y + cameraY ,10,0,8*Math.PI); //this might be wrong
         this.ctx.closePath();
@@ -1608,7 +1730,11 @@ Bullet.prototype.draw = function () {
 
     }
     else {
+<<<<<<< HEAD
         this.ctx.fillStyle = "Red"; //Made it easier to see
+=======
+        this.ctx.fillStyle = "rgb(0,255,0)";
+>>>>>>> origin/master
         this.ctx.beginPath();
         this.ctx.arc(this.x - cameraX,this.y + cameraY ,4,0,2*Math.PI); //this might be wrong
         this.ctx.closePath();
@@ -1761,6 +1887,14 @@ AM.queueDownload("./img/FlameRunShootFD.png");
 AM.queueDownload("./img/FlameRunShootBD.png");
 AM.queueDownload("./img/FlameStandShootBD.png");
 AM.queueDownload("./img/FlameStandShootFD.png");
+AM.queueDownload("./img/flameCrouchF.png");
+AM.queueDownload("./img/flameCrouchB.png");
+AM.queueDownload("./img/flameStandShootUpF.png");
+AM.queueDownload("./img/flameStandShootUpB.png");
+AM.queueDownload("./img/flameStandShootDownF.png");
+AM.queueDownload("./img/flameStandShootDownB.png");
+AM.queueDownload("./img/heart.png");
+
 
 AM.downloadAll(function () {
     var canvas = document.getElementById("gameWorld");
@@ -1784,7 +1918,9 @@ AM.downloadAll(function () {
     , AM.getAsset("./img/flameJumpF.png"), AM.getAsset("./img/flameJumpB.png"), AM.getAsset("./img/FlameStandShootFU.png")
     , AM.getAsset("./img/FlameStandShootBU.png"), AM.getAsset("./img/FlameRunShootFU.png"), AM.getAsset("./img/FlameRunShootBU.png")
     , AM.getAsset("./img/FlameRunShootFD.png"), AM.getAsset("./img/FlameRunShootBD.png"), AM.getAsset("./img/FlameStandShootBD.png")
-    , AM.getAsset("./img/FlameStandShootFD.png")];
+    , AM.getAsset("./img/FlameStandShootFD.png"), AM.getAsset("./img/flameCrouchF.png"), AM.getAsset("./img/flameCrouchB.png")
+    , AM.getAsset("./img/flameStandShootUpF.png"), AM.getAsset("./img/flameStandShootUpB.png"), AM.getAsset("./img/flameStandShootDownF.png")
+    , AM.getAsset("./img/flameStandShootDownB.png")];
 
 
     gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/backgroundtrees.jpg")));
@@ -1829,8 +1965,8 @@ AM.downloadAll(function () {
     , AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
     , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 2500, 525, 200, 3));
 
-    gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
-    , AM.getAsset("./img/flyingRobot_Forward.png"), 400, 100, 60, 2));
+    //gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
+    //, AM.getAsset("./img/flyingRobot_Forward.png"), 400, 100, 60, 2));
 
     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
     , AM.getAsset("./img/flyingRobot_Forward.png"), 1000, 300, 60, 2));
@@ -1849,6 +1985,7 @@ AM.downloadAll(function () {
 
     gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),200,610, 5));
 
+<<<<<<< HEAD
     gameEngine.addPowerUp(new FirePowerUp(gameEngine, AM.getAsset("./img/firepowerup.png")));
 
   } else if (map = map2) {
@@ -1894,6 +2031,9 @@ AM.downloadAll(function () {
     //-----------------------
 
     //playaudio(gameEngine, "./music/Top5Songs.mp3")
+=======
+    playaudio(gameEngine, "./music/Top5Songs.mp3")
+>>>>>>> origin/master
 
         console.log("All Done!");
 });
