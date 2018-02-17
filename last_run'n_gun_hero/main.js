@@ -123,6 +123,7 @@ function FirePowerUp(game, spritesheet, xLocation, yLocation) {
     this.height = 60;
     this.width = 64;
     this.speed = 0;
+    this.falling = false;
     this.ctx = game.ctx;
     PowerUp.call(this, game, xLocation, yLocation);
 }
@@ -143,6 +144,29 @@ FirePowerUp.prototype.update = function () {
             console.log("fired down");
             }, 10000);
     }
+
+    var groundX = Math.round(this.x/25) +1;
+    var groundY = Math.round(this.y/25);
+
+    //if in the air, fall
+    if (!(map.layer[groundY+1][groundX] == 'v'
+            || map.layer[groundY+1][groundX] == 'a'
+            || map.layer[groundY+1][groundX] == 'd')) {
+          this.falling = true;
+        }
+
+    if (this.falling) {
+          if (map.layer[groundY+1][groundX] == 'v'
+              || map.layer[groundY+1][groundX] == 'a'
+              || map.layer[groundY+1][groundX] == 'd') {
+               this.falling = false;
+          } else {
+            if (this.falling) {
+              this.y += 3;
+            }
+          }
+        }
+
 }
 
 FirePowerUp.prototype.draw = function () {
@@ -177,6 +201,28 @@ HeartPowerUp.prototype.update = function () {
             mainguy.health++;
         }
     }
+
+    var groundX = Math.round(this.x/25) +1;
+    var groundY = Math.round(this.y/25);
+
+    //if in the air, fall
+    if (!(map.layer[groundY+1][groundX] == 'v'
+            || map.layer[groundY+1][groundX] == 'a'
+            || map.layer[groundY+1][groundX] == 'd')) {
+          this.falling = true;
+        }
+
+    if (this.falling) {
+          if (map.layer[groundY+1][groundX] == 'v'
+              || map.layer[groundY+1][groundX] == 'a'
+              || map.layer[groundY+1][groundX] == 'd') {
+               this.falling = false;
+          } else {
+            if (this.falling) {
+              this.y += 3;
+            }
+          }
+        }
 }
 
 HeartPowerUp.prototype.draw = function () {
@@ -1075,13 +1121,13 @@ EnemySoldier.prototype.update = function () {
         //Change the '* 1' inside the Math.random//
         /// to '* 10' to make it a 1/10th chance //
         ///////////////////////////////////////////
-        var powerUpChance = Math.floor(Math.random() * 2)+1 ; //Generates a random number between 1-10
+        var powerUpChance = Math.floor(Math.random() * 6) +1 ; //Generates a random number between 1-10
         if (powerUpChance === 1) {
             gameEngine.addPowerUp(new FirePowerUp(gameEngine,
-                AM.getAsset("./img/firepowerup.png"), this.x, this.y + 35 ));
+                AM.getAsset("./img/firepowerup.png"), this.x, this.y - 50));
         } else if (powerUpChance === 2) {
             gameEngine.addPowerUp(new HeartPowerUp(gameEngine,
-                AM.getAsset("./img/heart.png"), this.x, this.y + 35 ));
+                AM.getAsset("./img/heart.png"), this.x, this.y -50));
         }
     }
     for (var i = 0; i < this.game.entities.length; i++) {
@@ -1237,13 +1283,13 @@ Robot.prototype.update = function () {
             //Change the '* 1' inside the Math.random//
             /// to '* 10' to make it a 1/10th chance //
             ///////////////////////////////////////////
-            var powerUpChance = Math.floor(Math.random() * 2)+1 ; //Generates a random number between 1-10
+            var powerUpChance = Math.floor(Math.random() * 6) +1 ; //Generates a random number between 1-10
             if (powerUpChance === 1) {
                 gameEngine.addPowerUp(new FirePowerUp(gameEngine,
-                    AM.getAsset("./img/firepowerup.png"), this.x, this.y -15 ));
+                    AM.getAsset("./img/firepowerup.png"), this.x, this.y - 75));
             } else if (powerUpChance === 2) {
                 gameEngine.addPowerUp(new HeartPowerUp(gameEngine,
-                    AM.getAsset("./img/heart.png"), this.x, this.y -15 ));
+                    AM.getAsset("./img/heart.png"), this.x, this.y -75));
             }
         }
 
@@ -1453,7 +1499,25 @@ GunTurrent.prototype.update = function () {
     this.isCollide = false;
     this.collideForward = false;
     if (this.health <= 0) this.isDead = true;
-    if (this.isDead) this.removeFromWorld = true;
+    if (this.isDead) {
+        this.removeFromWorld = true;
+
+        ///////////////////////////////////////////
+        ///// Buff Drops everytime right now //////
+        ///////////////////////////////////////////
+        //Change the '* 1' inside the Math.random//
+        /// to '* 10' to make it a 1/10th chance //
+        ///////////////////////////////////////////
+        var powerUpChance = Math.floor(Math.random() * 6) +1 ; //Generates a random number between 1-10
+
+            if (powerUpChance === 1) {
+                gameEngine.addPowerUp(new FirePowerUp(gameEngine,
+                    AM.getAsset("./img/firepowerup.png"), this.x, this.y - 75));
+            } else if (powerUpChance === 2) {
+                gameEngine.addPowerUp(new HeartPowerUp(gameEngine,
+                    AM.getAsset("./img/heart.png"), this.x, this.y -75));
+            }
+    }
     for (var i = 0; i < this.game.entities.length; i++) {
         var ent = this.game.entities[i];
         if (ent !== this && collide(this, ent)) {
@@ -1511,7 +1575,17 @@ GiantRobot.prototype.update = function () {
     this.isCollide = false;
     this.collideForward = false;
     if (this.health <= 0) this.isDead = true;
-    if (this.isDead) this.removeFromWorld = true;
+    if (this.isDead) {
+        this.removeFromWorld = true;
+
+        //drops 3 lives when killed
+        gameEngine.addPowerUp(new HeartPowerUp(gameEngine,
+            AM.getAsset("./img/heart.png"), this.x, this.y));
+        gameEngine.addPowerUp(new HeartPowerUp(gameEngine,
+            AM.getAsset("./img/heart.png"), this.x - 60 , this.y));
+        gameEngine.addPowerUp(new HeartPowerUp(gameEngine,
+            AM.getAsset("./img/heart.png"), this.x + 60 , this.y));  
+    }
     for (var i = 0; i < this.game.entities.length; i++) {
         var ent = this.game.entities[i];
         if (ent !== this && collide(this, ent)) {
@@ -1574,7 +1648,24 @@ FlyingRobot.prototype.update = function () {
     if (this.health <= 0) {
         this.isDead = true;
     }
-    if (this.isDead) this.removeFromWorld = true;
+    if (this.isDead) {
+        this.removeFromWorld = true;
+
+        ///////////////////////////////////////////
+        ///// Buff Drops everytime right now //////
+        ///////////////////////////////////////////
+        //Change the '* 1' inside the Math.random//
+        /// to '* 10' to make it a 1/10th chance //
+        ///////////////////////////////////////////
+        var powerUpChance = Math.floor(Math.random() * 6) +1 ; //Generates a random number between 1-10
+            if (powerUpChance === 1) {
+                gameEngine.addPowerUp(new FirePowerUp(gameEngine,
+                    AM.getAsset("./img/firepowerup.png"), this.x, this.y -15 ));
+            } else if (powerUpChance === 2) {
+                gameEngine.addPowerUp(new HeartPowerUp(gameEngine,
+                    AM.getAsset("./img/heart.png"), this.x, this.y -15 ));
+            }
+    }
     if ((Math.abs(this.game.entities[2].x - this.center) < 130)) this.heroInRange = true;
     else this.heroInRange = false;
     if ((Math.abs(this.x - this.game.entities[2].x) <= 200) && this.heroInRange) {
@@ -1895,8 +1986,8 @@ AM.downloadAll(function () {
     , AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
     , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 2500, 525, 200, 3));
 
-    //gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
-    //, AM.getAsset("./img/flyingRobot_Forward.png"), 400, 100, 60, 2));
+    gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
+    , AM.getAsset("./img/flyingRobot_Forward.png"), 400, 100, 60, 2));
 
     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
     , AM.getAsset("./img/flyingRobot_Forward.png"), 1000, 300, 60, 2));
@@ -1904,11 +1995,11 @@ AM.downloadAll(function () {
     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
     , AM.getAsset("./img/flyingRobot_Forward.png"), 1700, 100, 60, 2));
 
-    //gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
-    //, AM.getAsset("./img/flyingRobot_Forward.png"), 500, 200,60, 2));
+    gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
+    , AM.getAsset("./img/flyingRobot_Forward.png"), 500, 200,60, 2));
 
-    //gameEngine.addEntity(new GunTurrent(gameEngine, AM.getAsset("./img/firingGunTurrent.png")
-    //, AM.getAsset("./img/idleGunTurrent.png"),700, 565, 5));
+    gameEngine.addEntity(new GunTurrent(gameEngine, AM.getAsset("./img/firingGunTurrent.png")
+    , AM.getAsset("./img/idleGunTurrent.png"),700, 565, 5));
 
     gameEngine.addEntity(new GiantRobot(gameEngine, AM.getAsset("./img/giantRobotFiringFoward.png")
     , AM.getAsset("./img/giantRobotFoward.png"),2850,427, 8));
