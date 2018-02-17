@@ -88,6 +88,7 @@ Background.prototype.update = function () {
          && mainguy.firingStance != 4
          && mainguy.firingStance != 0
          && mainguy.standingStance != 0
+         && mainguy.wallCollide == false
          && mainguy.isCollide == false) {
 
         this.x += this.game.clockTick * this.speed;
@@ -99,6 +100,7 @@ Background.prototype.update = function () {
          && mainguy.firingStance != 4
          && mainguy.firingStance != 0
          && mainguy.standingStance != 0
+         && mainguy.wallCollide == false
          && mainguy.isCollide == false) {
 
         this.x -= this.game.clockTick * this.speed;
@@ -507,6 +509,7 @@ function Hero(game, heroSprites,speed, ground, health, lives) {
     this.spaceTime = 0;
     this.lookingRight = true;
     this.powerUpFire = false;
+    this.wallCollide = false;
 
     Entity.call(this, game, 100, 525);
 }
@@ -674,6 +677,10 @@ Hero.prototype.update = function () {
           }
         } // End of if falling statement
 
+        //variable used for passing to inline
+        //function for wall detection
+        var mainguy = this.game.entities[2];
+
         if (this.runFlag) {
           //If there is a wall right of the hero
           if (this.game.d) {
@@ -688,6 +695,14 @@ Hero.prototype.update = function () {
                 || map.layer[heroGroundY+1][heroGroundX+1] == 'z'
                 || map.layer[heroGroundY+1][heroGroundX+1] == 's') {
                   this.x -= this.game.clockTick * this.speed;
+
+                  //added in to keep background from moving when colliding with walls
+                  if (mainguy.wallCollide == false){
+                      mainguy.wallCollide = true;
+                    setTimeout(function removeFire() {
+                        mainguy.wallCollide = false;
+                        }, 300);
+                  }     
             }
             //Right of hero's legs
             if (map.layer[heroGroundY+2][heroGroundX+1] == 'a'
@@ -717,6 +732,14 @@ Hero.prototype.update = function () {
                 || map.layer[heroGroundY+1][heroGroundX-1] == 'x'
                 || map.layer[heroGroundY+1][heroGroundX-1] == 'f') {
                   this.x += this.game.clockTick * this.speed;
+
+                  //added in to keep background from moving when colliding with walls
+                  if (mainguy.wallCollide == false){
+                    mainguy.wallCollide = true;
+                  setTimeout(function removeFire() {
+                      mainguy.wallCollide = false;
+                      }, 300);
+                }
             }
             //Left of hero's legs
             if (map.layer[heroGroundY+2][heroGroundX-1] == 'd'
@@ -1898,20 +1921,20 @@ function NextLevel(game) {
   }
 }
 
-// //------- Music --------
+//------- Music --------
 
-// function playaudio(obj,audiofile) {
-//   if (obj.mp3) {
-//       if(obj.mp3.paused) obj.mp3.play();
-//       else obj.mp3.pause();
-//   } else {
-//       obj.mp3 = new Audio(audiofile);
-//       obj.mp3.play();
-//   }
-//   obj.innerHTML = (obj.mp3.paused) ? "Play" : "Pause";
-// }
+function playaudio(obj,audiofile) {
+  if (obj.mp3) {
+      if(obj.mp3.paused) obj.mp3.play();
+      else obj.mp3.pause();
+  } else {
+      obj.mp3 = new Audio(audiofile);
+      obj.mp3.play();
+  }
+  obj.innerHTML = (obj.mp3.paused) ? "Play" : "Pause";
+}
 
-// //----- End of Music ----
+//----- End of Music ----
 
 
 
@@ -2095,7 +2118,7 @@ AM.downloadAll(function () {
     gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),200,610, 5));
 
 //<<<<<<< HEAD
-    //gameEngine.addPowerUp(new FirePowerUp(gameEngine, AM.getAsset("./img/firepowerup.png")));
+    
 
   } else if (map = map2) {
 
