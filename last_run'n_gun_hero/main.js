@@ -1739,7 +1739,7 @@ GiantRobot.prototype.update = function () {
             this.enemyShoot = false;
             setTimeout(function(){
             enemyThat.enemyShoot = true;
-        }, 1100);
+        }, 1300);
         }
     }
     else this.active = false;
@@ -1818,7 +1818,7 @@ FlyingRobot.prototype.update = function () {
                 this.enemyShoot = false;
                 setTimeout(function(){
                 enemyThat.enemyShoot = true;
-            }, 500);
+            }, 750);
             }
         }
         else if (this.x - this.game.entities[2].x > 10) {
