@@ -1,27 +1,109 @@
-﻿<!DOCTYPE html>
-
+﻿
+<!DOCTYPE html>
 <html>
-
 <head>
-
     <meta charset="utf-8">
-
     <title>Game Project Shell</title>
-
     <script type="text/javascript" src="./gameengine.js"></script>
-
     <script type="text/javascript" src="./assetmanager.js"></script>
-
-    <script type="text/javascript" src="./maps.js"></script>
-
     <script type="text/javascript" src="./main.js"></script>
-
 </head>
 
 <body>
+    <div style="position: absolute; left: 300px; top: 50px; width: 400px; height: 30px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 24pt; color: olive; ">
+        Last Run 'n Gun Hero
+    </div>
+    <div id="lives" style="position: absolute; left: 700px; top: 10px; width: 100px; height: 30px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 24pt; color: silver; ">
+        Lives: 3
+    </div>
+	 <div id="gameState" style="position: absolute; left: 320px; top: 120px; width: 500px; height: 30px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 15pt; color: red; ">      
+    </div>
+	<div id="times" style="position: absolute; left: 375px; top: 10px; width: 150px; height: 30px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 24pt; color: silver; ">
+        Time: 60
+	</div>
+	<div id="scores" style="position: absolute; left: 15px; top: 10px; width: 400px; height: 30px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 24pt; color: silver; ">
+        Scores: 0
+	</div>
+	<div style="position: absolute; left: 150px; top: 690px; width: 200px; height: 50px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 18pt; color: black; ">
+        Control: 
+    </div>
+	<div style="position: absolute; left: 290px; top: 690px; width: 395px; height: 200px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 12pt; color: black; ">
+  
+	  <tr> 
+			<td>     'A' &nbsp &nbsp &nbsp MOVE LEFT     </td>  &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
+			<td>     'Up Arrow' &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp SHOOT UP 45  </td> &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
+	  </tr>
+	  
+	  <tr> 
+	        <td>     'S' &nbsp &nbsp &nbsp PRONE     </td>      &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
+		    <td>     'Down Arrow' &nbsp &nbsp &nbsp SHOOT DOWN 45    </td> &nbsp &nbsp &nbsp
+      </tr>
+	  
+	  <tr>
+		    <td>     'D' &nbsp &nbsp &nbsp MOVE RIGHT     </td> &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
+			<td>     'Left Arrow' &nbsp &nbsp &nbsp  &nbsp &nbsp SPECIAL     </td> &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
+	  </tr>
+	  
+	  <tr>   
+			<td>     'Space' &nbsp &nbsp &nbsp JUMP     </td>	&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
+			<td>     'Right Arrow' &nbsp &nbsp &nbsp SHOOT     </td> &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
+	  </tr>
+	  
+	  <tr> 
+			<td>     'P' &nbsp &nbsp &nbsp PAUSE     </td>
+	  </tr>
+	  
+    </div>
+	
+	<div>
+		<canvas id="gameWorld" tabindex="1" width="800" height="675" style="border: 1px solid brown; background: lightskyblue" style="z-index:1"></canvas>
 
-    <canvas id="gameWorld" tabindex="1" width="1000" height="698" style="border: 1px solid brown; background: lightskyblue"></canvas>
-
+		<button id="reference" style="position: absolute; top:705px; left:735px;">Reference</button>
+		<p id="demo1" style="position: absolute; left: 850px; top: 10px; width: 500px; height: 10px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 8pt; color: black; "></p>
+		<p id="demo2" style="position: absolute; left: 850px; top: 50px; width: 500px; height: 10px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 8pt; color: black; "></p>	
+		<p id="demo3" style="position: absolute; left: 850px; top: 90px; width: 500px; height: 10px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 8pt; color: black; "></p>
+		<p id="demo4" style="position: absolute; left: 850px; top: 130px; width: 500px; height: 10px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 8pt; color: black; "></p>
+		<p id="demo5" style="position: absolute; left: 850px; top: 170px; width: 500px; height: 10px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 8pt; color: black; "></p>
+		<p id="demo6" style="position: absolute; left: 850px; top: 210px; width: 500px; height: 10px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 8pt; color: black; "></p>	
+		<p id="demo7" style="position: absolute; left: 850px; top: 250px; width: 500px; height: 10px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 8pt; color: black; "></p>
+		<p id="demo8" style="position: absolute; left: 850px; top: 290px; width: 500px; height: 10px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 8pt; color: black; "></p>
+		<p id="demo9" style="position: absolute; left: 850px; top: 330px; width: 500px; height: 10px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 8pt; color: black; "></p>
+				 <script>
+						document.getElementById("reference").addEventListener("click", function(){
+								var reference = "";
+    
+								reference += "Enemy soldier - shoots at hero on sight";
+								document.getElementById("demo1").innerHTML = reference;
+    
+								reference += "Giant robot - shoots three giant bullet spread shot bottom bullet rolls on ground at hero";
+								document.getElementById("demo2").innerHTML = reference;
+								
+								reference += "Flying robot - follows hero and fires down at hero while hero in range of flight patrol";
+								document.getElementById("demo3").innerHTML = reference;
+								
+								reference += "Red robot - explodes upon death hurting everything around it in range of explosion ";
+								document.getElementById("demo4").innerHTML = reference;
+								
+								reference += "Blue robot - immune to danger must be avoided ";
+								document.getElementById("demo5").innerHTML = reference;
+								
+								reference += "Green robot - jumps up if hero tries to jump over";
+								document.getElementById("demo6").innerHTML = reference;
+								
+								reference += "Yellow robot - shoots electrical attack that removes hero’s upgrade";
+								document.getElementById("demo7").innerHTML = reference;
+								
+								reference += "Landmine - explodes when walked on";
+								document.getElementById("demo8").innerHTML = reference;
+								
+								reference += "Torrent- fires at hero when hero is in range in front";
+								document.getElementById("demo9").innerHTML = reference;
+								
+								
+						});
+				</script>
+			
+	</div>
+	
 </body>
-
 </html>
