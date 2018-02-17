@@ -1692,7 +1692,7 @@ function Robot(game, backRunSprite, frontRunSprite, xCord, yCord, unitSpeed, hea
     this.width = 40;
     this.unitType = unitType;
     this.enemy = true;
-    this.height = 35;
+    this.height = 36;
     this.forward = true;
     this.center = xCord;
 	this.scores = scores;
