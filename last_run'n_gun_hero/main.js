@@ -122,7 +122,6 @@ Background.prototype.draw = function () {
  */
 function FirePowerUp(game, spritesheet, xLocation, yLocation) {
     this.animation = new Animation(spritesheet, this.x, this.y, 214, 207, 2, 0.10, 6, true);
-    this.isFirePowerUp = true;
     this.height = 60;
     this.width = 64;
     this.speed = 0;
@@ -147,7 +146,7 @@ FirePowerUp.prototype.update = function () {
             mainguy.powerUpFire = false;
             mainguy.immune = false;
             //console.log("fired down");
-            }, 10000);
+            }, 7000);
     }
 
     var groundX = Math.round(this.x/25) +1;
@@ -171,7 +170,6 @@ FirePowerUp.prototype.update = function () {
             }
           }
         }
-
 }
 
 FirePowerUp.prototype.draw = function () {
@@ -184,10 +182,10 @@ FirePowerUp.prototype.draw = function () {
  */
 function HeartPowerUp(game, spritesheet, xLocation, yLocation) {
     this.animation = new Animation(spritesheet, this.x, this.y, 100, 80, 6, 0.10, 6, true);
-    this.isFirePowerUp = true;
     this.height = 60;
     this.width = 75;
     this.speed = 0;
+    this.falling = false;
     this.ctx = game.ctx;
     PowerUp.call(this, game, xLocation, yLocation);
 }
@@ -232,6 +230,61 @@ HeartPowerUp.prototype.update = function () {
 
 HeartPowerUp.prototype.draw = function () {
     this.animation.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY, .75);
+}
+
+/*
+* Rapid Fire Powerup
+*/
+function RapidFirePowerUp(game, spritesheet, xLocation, yLocation) {
+    this.animation = new Animation(spritesheet, this.x, this.y, 519, 139, 2, 0.10, 2, true);
+    this.height = 25;
+    this.width = 100;
+    this.speed = 0;
+    this.falling = false;
+    this.ctx = game.ctx;
+    PowerUp.call(this, game, xLocation, yLocation);
+}
+
+RapidFirePowerUp.prototype = new PowerUp();
+RapidFirePowerUp.prototype.constructor = RapidFirePowerUp;
+
+RapidFirePowerUp.prototype.update = function () {
+    var mainguy = this.game.entities[2];
+
+    if (powerUpCollide(this, mainguy)) {
+        gameEngine.removePowerUp(this);
+        mainguy.powerUpRapidFire = true;
+
+        setTimeout(function removeFire() {
+            mainguy.powerUpRapidFire = false;
+            }, 7000);
+    }
+
+    var groundX = Math.round(this.x/25) +1;
+    var groundY = Math.round(this.y/25);
+
+    //if in the air, fall
+    if (!(map.layer[groundY+1][groundX] == 'v'
+            || map.layer[groundY+1][groundX] == 'a'
+            || map.layer[groundY+1][groundX] == 'd')) {
+          this.falling = true;
+        }
+
+    if (this.falling) {
+          if (map.layer[groundY+1][groundX] == 'v'
+              || map.layer[groundY+1][groundX] == 'a'
+              || map.layer[groundY+1][groundX] == 'd') {
+               this.falling = false;
+          } else {
+            if (this.falling) {
+              this.y += 3;
+            }
+          }
+        }
+}
+
+RapidFirePowerUp.prototype.draw = function () {
+    this.animation.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY, .3);
 }
 
 //used for testing if hero collides with
@@ -511,6 +564,7 @@ function Hero(game, heroSprites,speed, ground, health, lives) {
     this.spaceTime = 0;
     this.lookingRight = true;
     this.powerUpFire = false;
+    this.powerUpRapidFire = false;
     this.wallCollide = false;
 
     Entity.call(this, game, 100, 525);
@@ -953,9 +1007,15 @@ Hero.prototype.update = function () {
                 }
             }
             this.CanShoot = false;
-            setTimeout(function(){
-            that.CanShoot = true;
-        }, 500);
+            if (!this.powerUpRapidFire) {
+                    setTimeout(function(){
+                    that.CanShoot = true;
+                    }, 500);
+            } else {
+                setTimeout(function(){
+                    that.CanShoot = true;
+                    }, 250);
+            }
         }
     }
     Entity.prototype.update.call(this);
@@ -1184,6 +1244,9 @@ EnemySoldier.prototype.update = function () {
         } else if (powerUpChance === 2) {
             gameEngine.addPowerUp(new HeartPowerUp(gameEngine,
                 AM.getAsset("./img/heart.png"), this.x, this.y -50));
+        } else if (powerUpChance === 3) {
+            gameEngine.addPowerUp(new RapidFirePowerUp(gameEngine,
+                AM.getAsset("./img/gattling.png"), this.x, this.y -50));
         }
     }
     for (var i = 0; i < this.game.entities.length; i++) {
@@ -1345,9 +1408,11 @@ Robot.prototype.update = function () {
             } else if (powerUpChance === 2) {
                 gameEngine.addPowerUp(new HeartPowerUp(gameEngine,
                     AM.getAsset("./img/heart.png"), this.x, this.y -75));
+            } else if (powerUpChance === 3) {
+                gameEngine.addPowerUp(new RapidFirePowerUp(gameEngine,
+                    AM.getAsset("./img/gattling.png"), this.x, this.y -50));
             }
         }
-
     }
     for (var i = 0; i < this.game.entities.length; i++) {
         var ent = this.game.entities[i];
@@ -1571,6 +1636,9 @@ GunTurrent.prototype.update = function () {
             } else if (powerUpChance === 2) {
                 gameEngine.addPowerUp(new HeartPowerUp(gameEngine,
                     AM.getAsset("./img/heart.png"), this.x, this.y -75));
+            } else if (powerUpChance === 3) {
+                gameEngine.addPowerUp(new RapidFirePowerUp(gameEngine,
+                    AM.getAsset("./img/gattling.png"), this.x, this.y -50));
             }
     }
     for (var i = 0; i < this.game.entities.length; i++) {
@@ -1719,6 +1787,9 @@ FlyingRobot.prototype.update = function () {
             } else if (powerUpChance === 2) {
                 gameEngine.addPowerUp(new HeartPowerUp(gameEngine,
                     AM.getAsset("./img/heart.png"), this.x, this.y -15 ));
+            } else if (powerUpChance === 3) {
+                gameEngine.addPowerUp(new RapidFirePowerUp(gameEngine,
+                    AM.getAsset("./img/gattling.png"), this.x, this.y -50));
             }
     }
     if ((Math.abs(this.game.entities[2].x - this.center) < 130)) this.heroInRange = true;
@@ -2028,6 +2099,7 @@ AM.queueDownload("./img/flameStandShootUpB.png");
 AM.queueDownload("./img/flameStandShootDownF.png");
 AM.queueDownload("./img/flameStandShootDownB.png");
 AM.queueDownload("./img/heart.png");
+AM.queueDownload("./img/gattling.png");
 
 
 AM.downloadAll(function () {
