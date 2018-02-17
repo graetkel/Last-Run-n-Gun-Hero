@@ -604,7 +604,7 @@ function powerUpCollide(powerup, hero) {
 
 
 
-var map = map1;
+var map = map2;
 
 
 
@@ -1156,7 +1156,7 @@ Hero.prototype.constructor = Hero;
 
 Hero.prototype.update = function () {
 
-    console.log(this.x);
+    //console.log(this.x);
 
     //---- Next level --------
 
@@ -1165,11 +1165,6 @@ Hero.prototype.update = function () {
       NextLevel(this.game);
 
     }
-
-    //console.log(this.game.entities[2].x);
-
-
-
     this.isCollide = false;
 
     for (var i = 0; i < this.game.entities.length; i++) {
@@ -1372,8 +1367,15 @@ Hero.prototype.update = function () {
 
     }
 
-
-
+      //If Hero goes to far up or down this statement will kill the hero
+      if (this.y <= 15 || (this.y + 75) >= 675) {
+        this.y = 400;
+        this.x = 100;
+        this.jumping = false;
+        this.falling = true;
+        //Thu can you add some code that takes a live from the hero and sets the
+        //heros health back to 100%
+      }
 
 
         if (this.jumping || this.falling) {
@@ -1381,7 +1383,6 @@ Hero.prototype.update = function () {
           this.frontJump.elapsedTime = 0;
 
           this.backJump.elapsedTime = 0;
-
         }
 
         //### Start ##############################################################
@@ -1444,7 +1445,7 @@ Hero.prototype.update = function () {
 
           //If there is a floor below the hero make it that the hero is not falling or jumping
 
-          
+
 
           if (map.layer[heroGroundY+3][heroGroundX] == 'v'
 
@@ -1526,7 +1527,7 @@ Hero.prototype.update = function () {
 
                         }, 300);
 
-                  }     
+                  }
 
             }
 
@@ -1660,7 +1661,7 @@ Hero.prototype.update = function () {
 
                     else this.x += 5;
 
-                } 
+                }
 
                 else {
 
@@ -2415,7 +2416,6 @@ Hero.prototype.draw = function () {
 
 
 
-
 function EnemySoldier(game, backRunSprite, frontRunSprite, backStandSprite, frontStandSprite
 
     , frontCrouchSprite, backCrouchSprite,  xCord, yCord, unitSpeed, health) {
@@ -2528,7 +2528,7 @@ EnemySoldier.prototype.update = function () {
 
             this.isCollide = true;
 
-            
+
 
             if (this.x < ent.x) this.collideForward = true;
 
@@ -3452,7 +3452,7 @@ GiantRobot.prototype.update = function () {
 
         gameEngine.addPowerUp(new HeartPowerUp(gameEngine,
 
-            AM.getAsset("./img/heart.png"), this.x + 60 , this.y));  
+            AM.getAsset("./img/heart.png"), this.x + 60 , this.y));
 
     }
 
@@ -4448,13 +4448,13 @@ AM.downloadAll(function () {
 
 
 
-        gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),400,610, 1)); 
+        gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),400,610, 1));
 
-        gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),1260,510, 1)); 
+        gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),1260,510, 1));
 
-        gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),1620,410, 1)); 
+        gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),1620,410, 1));
 
-        gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),2081,610, 1)); 
+        gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),2081,610, 1));
 
 
 
