@@ -878,7 +878,7 @@ Hero.prototype.update = function () {
 			}
 		}
 		if (this.game.aimDown && !this.jumping && this.standingStance === 2) {
-			if (this.firingStance > 0) {
+			if (this.firingStance > 1) {
 				this.firingStance -= 1;
 			}
 		}
