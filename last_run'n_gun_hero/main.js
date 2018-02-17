@@ -588,7 +588,8 @@ Hero.prototype.update = function () {
     for (var i = 0; i < this.game.entities.length; i++) {
         var ent = this.game.entities[i];
         if (ent !== this && collide(this, ent)) {
-            this.isCollide = true;
+
+            if (!ent.isBullet) this.isCollide = true;
             if (this.x < ent.x) this.collideForward = true;
         }
     }
@@ -720,6 +721,7 @@ Hero.prototype.update = function () {
         //If hero is falling
         if (this.falling) {
           //If there is a floor below the hero make it that the hero is not falling or jumping
+          
           if (map.layer[heroGroundY+3][heroGroundX] == 'v'
               || map.layer[heroGroundY+3][heroGroundX] == 'a'
               || map.layer[heroGroundY+3][heroGroundX] == 'd') {
@@ -814,7 +816,12 @@ Hero.prototype.update = function () {
             }
           }
         }
-    
+    if (this.immune) {
+        if (this.isCollide) {
+            if (this.collideForward) this.x -= 5;
+            else this.x += 5;
+        }
+    }
     if (this.hurt) {
         if (this.hurtCount > 0) {
 
@@ -827,6 +834,9 @@ Hero.prototype.update = function () {
                     if (this.collideForward) this.x -= 5;
                     else this.x += 5;
                 }
+            }
+            else {
+                this.x -= 5;
             }
             this.hurtCount -= 1;
         }
