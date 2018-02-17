@@ -1629,7 +1629,7 @@ EnemySoldier.prototype.update = function () {
             this.enemyShoot = false;
             setTimeout(function(){
             enemyThat.enemyShoot = true;
-        }, 500);
+        }, 900);
         }
     }
     else if (this.forward && (this.x - this.center < 100)){
@@ -2210,7 +2210,7 @@ FlyingRobot.prototype.update = function () {
                 this.enemyShoot = false;
                 setTimeout(function(){
                 enemyThat.enemyShoot = true;
-            }, 750);
+            }, 900);
             }
         }
         else if (this.x - this.game.entities[2].x > 10) {
