@@ -604,7 +604,7 @@ function powerUpCollide(powerup, hero) {
 
 
 
-var map = map2;
+var map = map1;
 
 
 
