@@ -1778,7 +1778,7 @@ Robot.prototype.update = function () {
         if (this.collideForward) this.forward = false;
         else this.forward = true;
     }
-    if (this.forward && (this.x - this.center < 100))
+    if (this.forward && (this.x - this.center < 200))
         if (!this.isCollide) {
             this.x += this.game.clockTick * this.speed;
         }
@@ -1787,7 +1787,7 @@ Robot.prototype.update = function () {
                 this.x += this.game.clockTick * this.speed;
             }
         }
-    else if (((this.x - this.center) >= 100) && this.forward) {
+    else if (((this.x - this.center) >= 200) && this.forward) {
         if (!this.isCollide) {
             this.x -= this.game.clockTick * this.speed;
         }
@@ -1798,7 +1798,7 @@ Robot.prototype.update = function () {
         }
         this.forward = false;
     }
-    else if (!this.forward && (this.x - this.center > -100)) {
+    else if (!this.forward && (this.x - this.center > -200)) {
         if (!this.isCollide) {
             this.x -= this.game.clockTick * this.speed;
         }
@@ -1808,7 +1808,7 @@ Robot.prototype.update = function () {
             }
         }
     }
-    else if (((this.x - this.center) <= -100) && !this.forward && !this.isCollide) {
+    else if (((this.x - this.center) <= -200) && !this.forward && !this.isCollide) {
         if (!this.isCollide) {
             this.x += this.game.clockTick * this.speed;
         }
@@ -2558,11 +2558,11 @@ AM.downloadAll(function () {
 
         gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 850, 575, 60, 1, "redRobot", 5000));
 
-        gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 900, 575, 60, 1, "blueRobot", 1200));
+        gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 900, 575, 30, 1, "blueRobot", 1200));
 
         gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 1800, 575, 60, 1, "redRobot", 1500));
 
-        gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 2300, 575, 60, 1, "blueRobot", 2000));
+        gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 2300, 575, 30, 1, "blueRobot", 2000));
 
         gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
         , AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
