@@ -1882,16 +1882,16 @@ function NextLevel(game) {
 
 // //------- Music --------
 
-function playaudio(obj,audiofile) {
-  if (obj.mp3) {
-      if(obj.mp3.paused) obj.mp3.play();
-      else obj.mp3.pause();
-  } else {
-      obj.mp3 = new Audio(audiofile);
-      obj.mp3.play();
-  }
-  obj.innerHTML = (obj.mp3.paused) ? "Play" : "Pause";
-}
+// function playaudio(obj,audiofile) {
+//   if (obj.mp3) {
+//       if(obj.mp3.paused) obj.mp3.play();
+//       else obj.mp3.pause();
+//   } else {
+//       obj.mp3 = new Audio(audiofile);
+//       obj.mp3.play();
+//   }
+//   obj.innerHTML = (obj.mp3.paused) ? "Play" : "Pause";
+// }
 
 // //----- End of Music ----
 
@@ -2077,7 +2077,7 @@ AM.downloadAll(function () {
     gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),200,610, 5));
 
 //<<<<<<< HEAD
-    gameEngine.addPowerUp(new FirePowerUp(gameEngine, AM.getAsset("./img/firepowerup.png")));
+    //gameEngine.addPowerUp(new FirePowerUp(gameEngine, AM.getAsset("./img/firepowerup.png")));
 
   } else if (map = map2) {
 
