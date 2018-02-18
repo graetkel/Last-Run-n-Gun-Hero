@@ -686,7 +686,7 @@ Hero.prototype.reset = function () {			// THU add
 	this.y = 525;
     this.jumping = false;
 	this.hero = true;
-	this.times = 60;
+	this.times = 300;
 	this.health = this.box;
 	this.dead = false;
     this.lives--;
