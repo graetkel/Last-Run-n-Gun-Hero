@@ -642,7 +642,7 @@ function Hero(game, heroSprites,speed, ground, health, lives) {
     this.hero = true;
 
 	this.scores = 0;
-	this.times = 60;
+	this.times = 300;
     this.lives = lives;
 	this.dead = false;
 	this.box = health;
