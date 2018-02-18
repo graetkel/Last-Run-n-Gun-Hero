@@ -704,7 +704,7 @@ Hero.prototype.reset = function () {			// THU add
 
 Hero.prototype.update = function () {
 	if (this.game.running) {
-		console.log(this.x);
+		//console.log(this.x);
 		//---- Next level --------
 		if (this.x >= 3200) {
 		  NextLevel(this.game);
@@ -727,7 +727,7 @@ Hero.prototype.update = function () {
 				this.game.times.innerHTML = "Time: " + this.times;
 				this.game.running = false;
 			}
-			console.log(this.game.entities[1].x);
+			//console.log(this.game.entities[1].x);
 			if (this.x > 3200) {
 				this.game.gameState.innerHTML = "Well Done, Level Complete!";
 				if (this.times > 0) {
@@ -2397,7 +2397,6 @@ AM.downloadAll(function () {
 	var gamestatus = document.getElementById('gameState');
 
     var ctx = canvas.getContext("2d");
-    var gameEngine = new GameEngine();
 
 	gameEngine.lives = lives;			// Thu add
 	gameEngine.times = times;
