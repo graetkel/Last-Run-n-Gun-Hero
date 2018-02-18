@@ -1751,7 +1751,7 @@ robotFlash.prototype.update = function () {
     enemyThat = this;
     if (this.isDead) this.removeFromWorld = true;
     setTimeout(function(){
-        enemyThat.enemyShoot = true;
+        enemyThat.isDead = true;
     }, 500);
     Entity.prototype.update.call(this);
 }
@@ -1833,7 +1833,7 @@ landMineFlash.prototype.update = function () {
     enemyThat = this;
     if (this.isDead) this.removeFromWorld = true;
     setTimeout(function(){
-        enemyThat.enemyShoot = true;
+        enemyThat.isDead = true;
     }, 500);
     Entity.prototype.update.call(this);
 }
@@ -1864,7 +1864,7 @@ bulletFlash.prototype.update = function () {
     enemyThat = this;
     if (this.isDead) this.removeFromWorld = true;
     setTimeout(function(){
-        enemyThat.enemyShoot = true;
+        enemyThat.isDead = true;
     }, 500);
     Entity.prototype.update.call(this);
 }
