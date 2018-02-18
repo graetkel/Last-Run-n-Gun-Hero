@@ -548,7 +548,9 @@ function collide(thisUnit, otherUnit) {
 
                 }
                 else {
-                    if (otherUnit.unitType !== "blueRobot") otherUnit.health -= 1;
+                    if (otherUnit.unitType !== "blueRobot") {
+                        if (!otherUnit.immune) otherUnit.health -= 1;
+                    }
                     if (otherUnit.hero && !otherUnit.immune) {
                         otherUnit.hurt = true;
                     }
@@ -556,8 +558,8 @@ function collide(thisUnit, otherUnit) {
                 }
             }
             if (thisUnit.hero) {
-                if (otherUnit.landMine) {
-                    thisUnit.health -= 10;
+                if (otherUnit.landMine && !thisUnit.immune) {
+                    thisUnit.health -= 4;
                     thisUnit.hurt = true;
                     otherUnit.health = 0;
                 }
@@ -684,18 +686,27 @@ Hero.prototype.reset = function () {			// THU add
 	this.y = 525;
     this.jumping = false;
 	this.hero = true;
-    this.runFlag = false;
-	this.firing = false;
-	this.CanShoot = true;
-    this.jumpForward = true;
-    this.standForward = true;
 	this.times = 60;
 	this.health = this.box;
 	this.dead = false;
-	this.crouch = false;
     this.lives--;
+    this.hurt = false;
+    this.runFlag = false;
+    this.firing = false;
+    this.immuneCount = 20;
+    this.CanShoot = true;
+    this.jumpForward = true;
+    this.standForward = true;
+    this.crouch = false;
+    this.immune = false;
+    this.falling = false;
+    this.spaceTime = 0;
+    this.lookingRight = true;
+    this.powerUpFire = false;
+    this.powerUpRapidFire = false;
+    this.wallCollide = false;
     this.standingStance = 2;
-    this.firingStance = 1;
+    this.firingStance = 2;
     if (this.lives < 0) this.lives = 0;
 	if (this.times < 0) this.times = 0;
     this.game.lives.innerHTML = "Lives: " + this.lives;
@@ -985,8 +996,8 @@ Hero.prototype.update = function () {
 			}
 		}
 		if (this.hurt) {
+            this.immune = true;
 			if (this.hurtCount > 0) {
-
 				if (!this.isCollide) {
 					if (this.standForward){
 						if (this.collideForward) this.x -= 5;
@@ -1004,7 +1015,6 @@ Hero.prototype.update = function () {
 			}
 			else {
 				this.hurtCount = 6;
-				this.immune = true;
 				this.hurt = false;
 			}
 		}
@@ -1216,7 +1226,11 @@ Hero.prototype.draw = function () {
 	}
 
     //Keldon - added && this.standForward
-    if ((this.jumping || this.falling) && this.standForward) { //&& this.jumpForward
+    if (this.hurt) {
+        if (this.standForward) this.frontDamageHero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX , this.y + cameraY);
+        else this.backDamageHero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX , this.y + cameraY);
+    }
+    else if ((this.jumping || this.falling) && this.standForward) { //&& this.jumpForward
         if (!this.powerUpFire) {
             this.frontJump.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
         } else {
