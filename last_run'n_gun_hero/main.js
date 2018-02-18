@@ -2270,6 +2270,7 @@ Bullet.prototype.draw = function () {
 
 function NextLevel(game) {
   if (map == map1) {
+    game.entities[2].powerup = false;
     game.entities[2].x = 100;
     game.entities[2].y = 525;
 
