@@ -545,6 +545,7 @@ function collide(thisUnit, otherUnit) {
         else if (!otherUnit.isBullet){
             if (thisUnit.isBullet) {
                 if (otherUnit.enemy && !(thisUnit.unitType === "hero")) {
+                    if (otherUnit.unitType === "blueRobot") thisUnit.removeFromWorld = true;
 
                 }
                 else {
@@ -1051,7 +1052,8 @@ Hero.prototype.update = function () {
 						if (this.jumpForward) {
 							this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 95, this.y + 38))
 							this.game.addEntity(new Bullet(this.game, this.x + 110, this.y + 42, this.jumpForward
-								,this.firingStance, false, false, this.unitType, 300));
+                                ,this.firingStance, false, false, this.unitType, 300));
+                                
 						}
 						else {
 							this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x - 10, this.y + 35))
@@ -1732,6 +1734,7 @@ Robot.prototype.draw = function () {
 
 function robotFlash(game, robotFlashSprite, xCord, yCord) {
     this.robotActiveFlash = new Animation(robotFlashSprite, this.x, this.y, 400, 400, 1, 0.3, 1, false);
+    isDead = false;
     this.ctx = game.ctx;
     Entity.call(this, game, xCord, yCord);
 }
@@ -1744,6 +1747,12 @@ robotFlash.prototype.reset = function () {
 }
 
 robotFlash.prototype.update = function () {
+    if (this.isDead) this.removeFromWorld = true;
+    enemyThat = this;
+    if (this.isDead) this.removeFromWorld = true;
+    setTimeout(function(){
+        enemyThat.enemyShoot = true;
+    }, 500);
     Entity.prototype.update.call(this);
 }
 
@@ -1820,6 +1829,12 @@ landMineFlash.prototype.reset = function () {
 }
 
 landMineFlash.prototype.update = function () {
+    if (this.isDead) this.removeFromWorld = true;
+    enemyThat = this;
+    if (this.isDead) this.removeFromWorld = true;
+    setTimeout(function(){
+        enemyThat.enemyShoot = true;
+    }, 500);
     Entity.prototype.update.call(this);
 }
 
@@ -1827,11 +1842,13 @@ landMineFlash.prototype.draw = function () {
 	if (!this.game.running) return;
     this.landMineFlashActive.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
     Entity.prototype.draw.call(this);
+    
 }
 
 function bulletFlash(game, bulletFlashSprite, xCord, yCord) {
     this.bulletFlashActive = new Animation(bulletFlashSprite, this.x, this.y, 11, 11, 1, 0.1, 1, false);
     this.ctx = game.ctx;
+    this.isDead = false;
     this.unitType = "flash";
     Entity.call(this, game, xCord, yCord);
 }
@@ -1844,6 +1861,11 @@ bulletFlash.prototype.reset = function () {
 
 
 bulletFlash.prototype.update = function () {
+    enemyThat = this;
+    if (this.isDead) this.removeFromWorld = true;
+    setTimeout(function(){
+        enemyThat.enemyShoot = true;
+    }, 500);
     Entity.prototype.update.call(this);
 }
 
