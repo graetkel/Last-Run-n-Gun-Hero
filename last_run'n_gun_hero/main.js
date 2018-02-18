@@ -715,6 +715,7 @@ Hero.prototype.reset = function () {			// THU add
 }
 
 Hero.prototype.update = function () {
+
 	if (this.game.running) {
 		//console.log(this.x);
 		//---- Next level --------
