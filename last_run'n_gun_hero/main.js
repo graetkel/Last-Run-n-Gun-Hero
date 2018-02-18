@@ -1922,7 +1922,7 @@ GunTurrent.prototype.update = function () {
         //Change the '* 1' inside the Math.random//
         /// to '* 10' to make it a 1/10th chance //
         ///////////////////////////////////////////
-        var powerUpChance = Math.floor(Math.random() * 1) +1 ; //Generates a random number between 1-10
+        var powerUpChance = Math.floor(Math.random() * 6) +1 ; //Generates a random number between 1-10
 
             if (powerUpChance === 1) {
                 gameEngine.addPowerUp(new FirePowerUp(gameEngine,
