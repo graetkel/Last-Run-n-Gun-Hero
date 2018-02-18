@@ -284,7 +284,7 @@ HeartPowerUp.prototype.update = function () {
         gameEngine.removePowerUp(this);
         //console.log("health picked up");
 
-        if (mainguy.health < 5) {
+        if (mainguy.health < 10) {
             mainguy.health++;
         }
     }
@@ -643,7 +643,7 @@ function Hero(game, heroSprites,speed, ground, health, lives) {
     this.hero = true;
 
 	this.scores = 0;
-	this.times = 60;
+	this.times = 300;
     this.lives = lives;
 	this.dead = false;
 	this.box = health;
@@ -687,7 +687,7 @@ Hero.prototype.reset = function () {			// THU add
 	this.y = 525;
     this.jumping = false;
 	this.hero = true;
-	this.times = 60;
+	this.times = 300;
 	this.health = this.box;
 	this.dead = false;
     this.lives--;
