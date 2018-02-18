@@ -718,7 +718,7 @@ Hero.prototype.update = function () {
 	if (this.game.running) {
 		//console.log(this.x);
 		//---- Next level --------
-		if (this.x >= 3200) {
+		if (this.x >= ((map.cols * 25) - 100) && map == map1) {
 		  NextLevel(this.game);
 		}
 		this.times -= this.game.clockTick;
@@ -1053,7 +1053,7 @@ Hero.prototype.update = function () {
 							this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 95, this.y + 38))
 							this.game.addEntity(new Bullet(this.game, this.x + 110, this.y + 42, this.jumpForward
                                 ,this.firingStance, false, false, this.unitType, 300));
-                                
+
 						}
 						else {
 							this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x - 10, this.y + 35))
@@ -1842,7 +1842,7 @@ landMineFlash.prototype.draw = function () {
 	if (!this.game.running) return;
     this.landMineFlashActive.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
     Entity.prototype.draw.call(this);
-    
+
 }
 
 function bulletFlash(game, bulletFlashSprite, xCord, yCord) {
