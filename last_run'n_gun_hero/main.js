@@ -2250,7 +2250,7 @@ Bullet.prototype.update = function () {
 Bullet.prototype.draw = function () {
 	if (!this.game.running) return;
     if (this.unitType === "giantRobot") {
-        this.ctx.fillStyle = "Yellow"; //Made it easier to see
+        this.ctx.fillStyle = "White"; //Made it easier to see
         this.ctx.fillStyle = "rgb(0,255,0)";
         this.ctx.beginPath();
         this.ctx.arc(this.x - cameraX,this.y + cameraY ,10,0,8*Math.PI); //this might be wrong
@@ -2259,7 +2259,7 @@ Bullet.prototype.draw = function () {
 
     }
     else {
-        this.ctx.fillStyle = "Red"; //Made it easier to see
+        this.ctx.fillStyle = "White"; //Made it easier to see
         this.ctx.fillStyle = "rgb(0,255,0)";
         this.ctx.beginPath();
         this.ctx.arc(this.x - cameraX,this.y + cameraY ,4,0,2*Math.PI); //this might be wrong
