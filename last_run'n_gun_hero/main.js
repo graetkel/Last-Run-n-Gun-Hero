@@ -1051,13 +1051,13 @@ Hero.prototype.update = function () {
 				if (this.standForward) {
 					if (this.jumping) {
 						if (this.jumpForward) {
-							this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 95, this.y + 38))
+							//this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 95, this.y + 38))
 							this.game.addEntity(new Bullet(this.game, this.x + 110, this.y + 42, this.jumpForward
                                 ,this.firingStance, false, false, this.unitType, 300));
 
 						}
 						else {
-							this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x - 10, this.y + 35))
+							//this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x - 10, this.y + 35))
 							this.game.addEntity(new Bullet(this.game, this.x - 10 , this.y + 35, this.jumpForward
 								,this.firingStance, false, false, this.unitType, 300));
 						}
@@ -2250,7 +2250,6 @@ Bullet.prototype.update = function () {
 Bullet.prototype.draw = function () {
 	if (!this.game.running) return;
     if (this.unitType === "giantRobot") {
-        this.ctx.fillStyle = "White"; //Made it easier to see
         this.ctx.fillStyle = "rgb(0,255,0)";
         this.ctx.beginPath();
         this.ctx.arc(this.x - cameraX,this.y + cameraY ,10,0,8*Math.PI); //this might be wrong
@@ -2259,14 +2258,13 @@ Bullet.prototype.draw = function () {
 
     }
     else {
-        this.ctx.fillStyle = "White"; //Made it easier to see
         this.ctx.fillStyle = "rgb(0,255,0)";
         this.ctx.beginPath();
         this.ctx.arc(this.x - cameraX,this.y + cameraY ,4,0,2*Math.PI); //this might be wrong
         this.ctx.closePath();
         this.ctx.fill();
     }
-    Entity.prototype.draw.call(this);
+    //Entity.prototype.draw.call(this);
 }
 
 function NextLevel(game) {
