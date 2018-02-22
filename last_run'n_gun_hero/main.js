@@ -516,7 +516,7 @@ var cameraY = 0;
 Camera.prototype.update = function() {
 
   var mapWidth = map.cols * 25;
-  cameraMid = this.game.ctx.canvas.width / 2;
+  cameraMid = (this.game.ctx.canvas.width / 3);
   if (this.game.entities[2].x < cameraMid) {
     cameraX = 0;
   } else if (this.game.entities[2].x > mapWidth - cameraMid) {
