@@ -2618,7 +2618,7 @@ AM.downloadAll(function () {
     gameEngine.addEntity(new HeroIcon(gameEngine, AM.getAsset("./img/hero.png")));
     var pg = new PlayGame(gameEngine, 370, 180);
     gameEngine.addEntity(pg);
-    //playaudio(gameEngine, "./music/Top5Songs.mp3")
+    playaudio(gameEngine, "./music/Top5Songs.mp3")
 
 
         console.log("All Done!");
