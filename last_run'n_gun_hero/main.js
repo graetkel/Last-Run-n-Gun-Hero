@@ -232,6 +232,10 @@ FirePowerUp.prototype.update = function () {
     var groundX = Math.round(this.x/25) +1;
     var groundY = Math.round(this.y/25);
 
+    if (this.y <= 15 || (this.y + 75) >= 675) {
+      gameEngine.removePowerUp(this);
+    }
+
     //if in the air, fall
     if (!(map.layer[groundY+1][groundX] == 'v'
             || map.layer[groundY+1][groundX] == 'a'
@@ -291,6 +295,10 @@ HeartPowerUp.prototype.update = function () {
 
     var groundX = Math.round(this.x/25) +1;
     var groundY = Math.round(this.y/25);
+
+    if (this.y <= 15 || (this.y + 75) >= 675) {
+      gameEngine.removePowerUp(this);
+    }
 
     //if in the air, fall
     if (!(map.layer[groundY+1][groundX] == 'v'
@@ -352,6 +360,10 @@ RapidFirePowerUp.prototype.update = function () {
     var groundX = Math.round(this.x/25) +1;
     var groundY = Math.round(this.y/25);
 
+    if (this.y <= 15 || (this.y + 75) >= 675) {
+      gameEngine.removePowerUp(this);
+    }
+
     //if in the air, fall
     if (!(map.layer[groundY+1][groundX] == 'v'
             || map.layer[groundY+1][groundX] == 'a'
@@ -390,7 +402,7 @@ function powerUpCollide(powerup, hero) {
 }
 
 
-var map = map1;
+var map = map2;
 
 // no inheritance
 function Platform(game) {
@@ -684,7 +696,7 @@ Hero.prototype.constructor = Hero;
 
 Hero.prototype.reset = function () {			// THU add
     this.x = 100;
-	this.y = 525;
+	this.y = 500;
     this.jumping = false;
 	this.hero = true;
 	this.times = 300;
@@ -861,6 +873,10 @@ Hero.prototype.update = function () {
 			var heroGroundY = Math.round(this.y/25);
 		}
 
+    //If Hero goes to far up or down this statement will kill the hero
+      if (this.y <= 15 || (this.y + 75) >= 675) {
+        this.game.reset();
+      }
 
 			if (this.jumping || this.falling) {
 			  this.frontJump.elapsedTime = 0;
@@ -2270,7 +2286,7 @@ Bullet.prototype.draw = function () {
 }
 
 function NextLevel(game) {
-    
+
   if (map == map1) {
     game.entities[2].powerup = false;
     game.entities[2].x = 100;
