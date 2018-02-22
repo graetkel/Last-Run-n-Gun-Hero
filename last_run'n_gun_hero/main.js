@@ -206,6 +206,7 @@ function FirePowerUp(game, spritesheet, xLocation, yLocation) {
     this.speed = 0;
     this.falling = false;
     this.ctx = game.ctx;
+    this.game = game;
     PowerUp.call(this, game, xLocation, yLocation);
 }
 
@@ -257,7 +258,9 @@ FirePowerUp.prototype.update = function () {
 }
 
 FirePowerUp.prototype.draw = function () {
-    this.animation.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY, .3);
+    if (this.game.running) {
+        this.animation.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY, .3);
+    }
 }
 
 
@@ -321,7 +324,9 @@ HeartPowerUp.prototype.update = function () {
 }
 
 HeartPowerUp.prototype.draw = function () {
-    this.animation.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY, .75);
+    if (this.game.running) {
+        this.animation.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY, .75);
+    }
 }
 
 /*
@@ -385,7 +390,9 @@ RapidFirePowerUp.prototype.update = function () {
 }
 
 RapidFirePowerUp.prototype.draw = function () {
-    this.animation.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY, .3);
+    if (this.game.running) {
+        this.animation.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY, .3);
+    }
 }
 
 //used for testing if hero collides with
@@ -402,7 +409,7 @@ function powerUpCollide(powerup, hero) {
 }
 
 
-var map = map2;
+var map = map1;
 
 // no inheritance
 function Platform(game) {
