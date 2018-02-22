@@ -1051,13 +1051,13 @@ Hero.prototype.update = function () {
 				if (this.standForward) {
 					if (this.jumping) {
 						if (this.jumpForward) {
-							//this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 95, this.y + 38))
+							this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 95, this.y + 38))
 							this.game.addEntity(new Bullet(this.game, this.x + 110, this.y + 42, this.jumpForward
                                 ,this.firingStance, false, false, this.unitType, 300));
 
 						}
 						else {
-							//this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x - 10, this.y + 35))
+							this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x - 10, this.y + 35))
 							this.game.addEntity(new Bullet(this.game, this.x - 10 , this.y + 35, this.jumpForward
 								,this.firingStance, false, false, this.unitType, 300));
 						}
@@ -1214,18 +1214,20 @@ Hero.prototype.draw = function () {
 	var i = 0;
 	var num = 0;
 	this.game.ctx.fillStyle = "red";
-	this.game.ctx.strokeStyle = "Black";
+	//this.game.ctx.strokeStyle = "Black";
 
 	for (i = 0; i < this.box; i++) {
+        this.game.ctx.strokeRect(50 + num, 635, 20, 20);
 		this.game.ctx.rect(50 + num, 635, 20, 20);
 		num += 20;
-        this.game.ctx.stroke();
+        //this.game.ctx.stroke();
 	}
 	num = 0;
 	for (i = 0; i < this.health; i++) {
+        this.game.ctx.strokeRect(50 + num, 635, 20, 20);
 		this.game.ctx.fillRect(50 + num, 635, 20, 20);
 		num += 20;
-		this.game.ctx.stroke();
+		//this.game.ctx.stroke();
 	}
 
     //Keldon - added && this.standForward
@@ -2262,7 +2264,7 @@ Bullet.prototype.draw = function () {
         this.ctx.beginPath();
         this.ctx.arc(this.x - cameraX,this.y + cameraY ,4,0,2*Math.PI); //this might be wrong
         this.ctx.closePath();
-        this.ctx.fill();
+        this.ctx.fill(); 
     }
     //Entity.prototype.draw.call(this);
 }
