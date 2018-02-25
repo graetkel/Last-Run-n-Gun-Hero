@@ -1735,11 +1735,13 @@ Robot.prototype.update = function () {
         //         this.y = this.ground - height;
         // }
         if (ent !== this && collide(this, ent)) {
-            this.isCollide = true;
-            if (this.x < ent.x) this.collideForward = true;
+            if (!ent.isBullet) {
+                this.isCollide = true;
+                if (this.x < ent.x) this.collideForward = true;
+            }
         }
     }
-    //}
+
     if (this.isCollide) {
         if (this.collideForward) this.forward = false;
         else this.forward = true;
