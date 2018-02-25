@@ -689,6 +689,7 @@ function Hero(game, heroSprites,speed, ground, health, lives) {
     this.immune = false;
     this.falling = false;
     this.spaceTime = 0;
+    this.standtemp = 2;
     this.lookingRight = true;
     this.powerUpFire = false;
     this.powerUpRapidFire = false;
@@ -728,6 +729,7 @@ Hero.prototype.reset = function () {			// THU add
     this.powerUpRapidFire = false;
     this.runshooting = false;
     this.wallCollide = false;
+    this.standtemp = 2;
     this.shootTemp = 2;
     this.standingStance = 2;
     this.firingStance = 2;
@@ -860,14 +862,30 @@ Hero.prototype.update = function () {
             this.runshooting = false;
         }
 		if (this.standingStance === 1) {
+
 			this.crouch = true;
 		}
 		else {
 			this.crouch = false;
-		}
+        }
+
+        if (this.standingStance !== 2 && this.runFlag) {
+            this.standtemp = this.standingStance;
+            this.standingStance = 2;
+            this.runCrouch = true;
+            this.crouch = false;
+        }
+        if (this.runCrouch && !this.runFlag) {
+            this.standingStance = this.standtemp;
+            if (this.standingStance === 1) {
+                this.crouch = true;
+            }
+            this.runCrouch = false;
+        }
 		var totalHeight = 200;
 		that = this;
-
+        console.log("crouch " + this.crouch);
+        console.log("stand " + this.standingStance);
 		if (this.immune && !this.powerUpFire) {
 			if (this.immuneCount > 0 ) {
 				this.immuneCount -= 1;
