@@ -685,6 +685,7 @@ function Hero(game, heroSprites,speed, ground, health, lives) {
     this.jumpForward = true;
     this.standForward = true;
     this.crouch = false;
+    this.runshooting = false;
     this.immune = false;
     this.falling = false;
     this.spaceTime = 0;
@@ -692,7 +693,7 @@ function Hero(game, heroSprites,speed, ground, health, lives) {
     this.powerUpFire = false;
     this.powerUpRapidFire = false;
     this.wallCollide = false;
-
+    this.shootTemp = 2;
 
 
     Entity.call(this, game, 100, 525);
@@ -712,6 +713,7 @@ Hero.prototype.reset = function () {			// THU add
     this.lives--;
     this.hurt = false;
     this.runFlag = false;
+    this.runshooting = false;
     this.firing = false;
     this.immuneCount = 20;
     this.CanShoot = true;
@@ -724,7 +726,9 @@ Hero.prototype.reset = function () {			// THU add
     this.lookingRight = true;
     this.powerUpFire = false;
     this.powerUpRapidFire = false;
+    this.runshooting = false;
     this.wallCollide = false;
+    this.shootTemp = 2;
     this.standingStance = 2;
     this.firingStance = 2;
     if (this.lives < 0) this.lives = 0;
@@ -844,10 +848,17 @@ Hero.prototype.update = function () {
 			this.spaceTime = this.game.timer.gameTime + 0.5;
 		  }
 		}
-	//---------
-		if (this.firingStance === 0 || this.firingStance === 4) {
-			this.runFlag = false;
-		}
+    //---------
+    
+		if ((this.firingStance === 0 || this.firingStance === 4) && this.runFlag) {
+            this.runshooting = true;
+            this.shootTemp = this.firingStance;
+            this.firingStance = 2;
+        }
+        if (this.runshooting && !this.runFlag) {
+            this.firingStance = this.shootTemp;
+            this.runshooting = false;
+        }
 		if (this.standingStance === 1) {
 			this.crouch = true;
 		}
