@@ -1679,10 +1679,10 @@ Robot.prototype.update = function () {
                 if (ent !== this && (Math.abs(this.x - ent.x) <= 200)) {
                     if (Math.abs(ent.y - this.y) <= 200 ) {
                         if (ent.hero && !ent.immune) {
-                            ent.health -= 10;
+                            ent.health -= 4;
                         }
                         else {
-                            ent.health -= 10;
+                            ent.health -= 4;
                         }
                         
                     }
@@ -2493,7 +2493,8 @@ AM.queueDownload("./img/heart.png");
 AM.queueDownload("./img/gattling.png");
 AM.queueDownload("./img/cover.png");
 AM.queueDownload("./img/hero.png");
-
+AM.queueDownload("./img/gernade.png");
+AM.queueDownload("./img/bomb_sprite.png");
 
 
 AM.downloadAll(function () {
