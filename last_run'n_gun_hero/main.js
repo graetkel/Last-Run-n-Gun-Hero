@@ -409,7 +409,7 @@ function powerUpCollide(powerup, hero) {
 }
 
 
-var map = map1;
+var map = map2;
 
 // no inheritance
 function Platform(game) {
@@ -492,7 +492,31 @@ Platform.prototype.draw = function () {
                 case 'd': // door
                     //tilePicker("SaddleBrown");
                     break;
-            }
+
+            }//End of switch
+
+            /*
+            //floor
+            AM.queueDownload("./img/eFloor.png");
+            AM.queueDownload("./img/midFloor.png");
+            AM.queueDownload("./img/neFloor.png");
+            AM.queueDownload("./img/nFloor.png");
+            AM.queueDownload("./img/nwFloor.png");
+            AM.queueDownload("./img/seFloor.png");
+            AM.queueDownload("./img/sFloor.png");
+            AM.queueDownload("./img/swFloor.png");
+            AM.queueDownload("./img/wFloor.png");
+            //-----
+            //green back
+            AM.queueDownload("./img/bigGreenLights.png");
+            AM.queueDownload("./img/bigRedLights.png");
+            AM.queueDownload("./img/green.png");
+            AM.queueDownload("./img/panel.png");
+            AM.queueDownload("./img/smallGreenLights.png");
+            AM.queueDownload("./img/smallRedLights.png");
+            AM.queueDownload("./img/vent.png");
+            //----
+            */
         }
     }
     Entity.prototype.draw.call(this);
@@ -851,7 +875,7 @@ Hero.prototype.update = function () {
 		  }
 		}
     //---------
-    
+
 		if ((this.firingStance === 0 || this.firingStance === 4) && this.runFlag) {
             this.runshooting = true;
             this.shootTemp = this.firingStance;
@@ -1684,7 +1708,7 @@ Robot.prototype.update = function () {
                         else {
                             ent.health -= 4;
                         }
-                        
+
                     }
                 }
             }
@@ -2332,7 +2356,7 @@ Bullet.prototype.draw = function () {
         this.ctx.beginPath();
         this.ctx.arc(this.x - cameraX,this.y + cameraY ,4,0,2*Math.PI); //this might be wrong
         this.ctx.closePath();
-        this.ctx.fill(); 
+        this.ctx.fill();
     }
     //Entity.prototype.draw.call(this);
 }
@@ -2495,6 +2519,26 @@ AM.queueDownload("./img/cover.png");
 AM.queueDownload("./img/hero.png");
 AM.queueDownload("./img/gernade.png");
 AM.queueDownload("./img/bomb_sprite.png");
+//floor
+AM.queueDownload("./img/eFloor.png");
+AM.queueDownload("./img/midFloor.png");
+AM.queueDownload("./img/neFloor.png");
+AM.queueDownload("./img/nFloor.png");
+AM.queueDownload("./img/nwFloor.png");
+AM.queueDownload("./img/seFloor.png");
+AM.queueDownload("./img/sFloor.png");
+AM.queueDownload("./img/swFloor.png");
+AM.queueDownload("./img/wFloor.png");
+//-----
+//green back
+AM.queueDownload("./img/bigGreenLights.png");
+AM.queueDownload("./img/bigRedLights.png");
+AM.queueDownload("./img/green.png");
+AM.queueDownload("./img/panel.png");
+AM.queueDownload("./img/smallGreenLights.png");
+AM.queueDownload("./img/smallRedLights.png");
+AM.queueDownload("./img/vent.png");
+//----
 
 
 AM.downloadAll(function () {
