@@ -4,6 +4,9 @@
 var AM = new AssetManager();
 var gameEngine = new GameEngine();
 
+var firePowerupTimer;
+var RapidFirePowerUpTimer;
+
 
 var map1 = new mapOne();
 var map2 = new mapTwo();
@@ -223,7 +226,11 @@ FirePowerUp.prototype.update = function () {
         mainguy.immune = true;
         //console.log("fired up!");
 
-        setTimeout(function removeFire() {
+        //if powerup is already active, clear the old timer
+        //and start a new one.
+        clearTimeout(firePowerupTimer);
+
+        firePowerupTimer = setTimeout(function removeFire() {
             mainguy.powerUpFire = false;
             mainguy.immune = false;
             //console.log("fired down");
@@ -357,7 +364,11 @@ RapidFirePowerUp.prototype.update = function () {
         gameEngine.removePowerUp(this);
         mainguy.powerUpRapidFire = true;
 
-        setTimeout(function removeFire() {
+        //if powerup is already active, clear the old timer
+        //and start a new one.
+        clearTimeout(RapidFirePowerUpTimer);
+
+        RapidFirePowerUpTimer = setTimeout(function removeRapidFire() {
             mainguy.powerUpRapidFire = false;
             }, 7000);
     }
@@ -1010,7 +1021,7 @@ Hero.prototype.update = function () {
 					  //added in to keep background from moving when colliding with walls
 					  if (mainguy.wallCollide == false){
 						  mainguy.wallCollide = true;
-						setTimeout(function removeFire() {
+						setTimeout(function stallWallColide() {
 							mainguy.wallCollide = false;
 							}, 300);
 					  }
@@ -1024,7 +1035,7 @@ Hero.prototype.update = function () {
                         //added in to keep background from moving when colliding with walls
 					  if (mainguy.wallCollide == false){
                         mainguy.wallCollide = true;
-                      setTimeout(function removeFire() {
+                      setTimeout(function stallWallColide() {
                           mainguy.wallCollide = false;
                           }, 300);
                     }
