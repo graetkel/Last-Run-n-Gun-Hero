@@ -1927,6 +1927,9 @@ Robot.prototype.update = function () {
             } else if (powerUpChance === 3) {
                 gameEngine.addPowerUp(new RapidFirePowerUp(gameEngine,
                     AM.getAsset("./img/gattling.png"), this.x, this.y -50));
+            } else if (powerUpChance === 4) {
+                gameEngine.addPowerUp(new lightningPowerUp(gameEngine,
+                    AM.getAsset("./img/LightningOrbs.png"), this.x, this.y -50));
             }
         }
     }
@@ -2218,6 +2221,9 @@ GunTurrent.prototype.update = function () {
             } else if (powerUpChance === 3) {
                 gameEngine.addPowerUp(new RapidFirePowerUp(gameEngine,
                     AM.getAsset("./img/gattling.png"), this.x, this.y -50));
+            } else if (powerUpChance === 4) {
+                gameEngine.addPowerUp(new lightningPowerUp(gameEngine,
+                    AM.getAsset("./img/LightningOrbs.png"), this.x, this.y -50));
             }
     }
     for (var i = 0; i < this.game.entities.length; i++) {
@@ -2397,6 +2403,9 @@ FlyingRobot.prototype.update = function () {
             } else if (powerUpChance === 3) {
                 gameEngine.addPowerUp(new RapidFirePowerUp(gameEngine,
                     AM.getAsset("./img/gattling.png"), this.x, this.y -50));
+            } else if (powerUpChance === 4) {
+                gameEngine.addPowerUp(new lightningPowerUp(gameEngine,
+                    AM.getAsset("./img/LightningOrbs.png"), this.x, this.y -50));
             }
     }
     if ((Math.abs(this.game.entities[2].x - this.center) < 130)) this.heroInRange = true;
