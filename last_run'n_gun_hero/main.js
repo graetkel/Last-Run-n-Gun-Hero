@@ -5,10 +5,17 @@ var AM = new AssetManager();
 var gameEngine = new GameEngine();
 
 
+var firePowerupTimer;
+var rapidFirePowerUpTimer;
+var lightningPowerUpTimer;
+
+
 var map1 = new mapOne();
 var map2 = new mapTwo();
 var map3 = new mapThree();
 var map4 = new mapFour();
+
+var map = map1;
 
 
 //In order to get the camera feature to work make sure every
@@ -224,7 +231,11 @@ FirePowerUp.prototype.update = function () {
         mainguy.immune = true;
         //console.log("fired up!");
 
-        setTimeout(function removeFire() {
+        //if powerup is already active, clear the old timer
+        //and start a new one.
+        clearTimeout(firePowerupTimer);
+
+        firePowerupTimer = setTimeout(function removeFire() {
             mainguy.powerUpFire = false;
             mainguy.immune = false;
             //console.log("fired down");
@@ -358,7 +369,11 @@ RapidFirePowerUp.prototype.update = function () {
         gameEngine.removePowerUp(this);
         mainguy.powerUpRapidFire = true;
 
-        setTimeout(function removeFire() {
+        //if powerup is already active, clear the old timer
+        //and start a new one.
+        clearTimeout(rapidFirePowerUpTimer);
+
+        rapidFirePowerUpTimer = setTimeout(function removeRapidFire() {
             mainguy.powerUpRapidFire = false;
             }, 7000);
     }
@@ -396,6 +411,169 @@ RapidFirePowerUp.prototype.draw = function () {
     }
 }
 
+/*
+* Lightning Powerup
+*/
+function lightningPowerUp(game, spritesheet, xLocation, yLocation) {
+    this.animation = new Animation(spritesheet, this.x, this.y, 58.57, 58.28, 7, 0.10, 49, true);
+    this.height = 25;
+    this.width = 100;
+    this.speed = 0;
+    this.falling = false;
+    this.ctx = game.ctx;
+    PowerUp.call(this, game, xLocation, yLocation);
+}
+
+lightningPowerUp.prototype = new PowerUp();
+lightningPowerUp.prototype.constructor = lightningPowerUp;
+
+lightningPowerUp.prototype.reset = function () {
+	this.falling = false;
+}
+
+
+lightningPowerUp.prototype.update = function () {
+    var mainguy = this.game.entities[2];
+
+    if (powerUpCollide(this, mainguy)) {
+        gameEngine.removePowerUp(this);
+        mainguy.powerUpLightning = true;
+
+        //if powerup is already active, clear the old timer
+        //and start a new one.
+        clearTimeout(lightningPowerUpTimer);
+
+        lightningPowerUpTimer = setTimeout(function removeLightningPowerup() {
+            mainguy.powerUpLightning = false;
+            }, 7000);
+    }
+
+    var groundX = Math.round(this.x/25) +1;
+    var groundY = Math.round(this.y/25);
+
+    if (this.y <= 15 || (this.y + 75) >= 675) {
+      gameEngine.removePowerUp(this);
+    }
+
+    //if in the air, fall
+    if (!(map.layer[groundY+1][groundX] == 'v'
+            || map.layer[groundY+1][groundX] == 'a'
+            || map.layer[groundY+1][groundX] == 'd')) {
+          this.falling = true;
+        }
+
+    if (this.falling) {
+          if (map.layer[groundY+1][groundX] == 'v'
+              || map.layer[groundY+1][groundX] == 'a'
+              || map.layer[groundY+1][groundX] == 'd') {
+               this.falling = false;
+          } else {
+            if (this.falling) {
+              this.y += 3;
+            }
+          }
+        }
+}
+
+lightningPowerUp.prototype.draw = function () {
+    if (this.game.running) {
+        this.animation.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY, 1);
+    }
+}
+
+
+/*
+* Lightning object itself
+*/
+function Lightning(game, sX, sY, eX, eY, strikes) {
+    this.ctx = game.ctx;
+    this.x = sX;
+    this.y = sY;
+    this.endX = eX;
+    this.endY = eY;
+    this.fade = 1.0;
+    this.bolts = getDemBolts(this.x, this.y, this.endX, this.endY);
+    Entity.call(this, game, sX, sY);
+}
+
+Lightning.prototype = new Entity();
+Lightning.prototype.constructor = Lightning;
+
+Lightning.prototype.draw = function () {
+    this.color = "hsla(180, 80%, 80%, "+ this.fade +")";
+    this.ctx.shadowColor = this.color;
+    this.ctx.shadowBlur = 10;
+    //this.ctx.globalCompositeOperation = "lighter";
+    this.ctx.strokeStyle = this.color;
+    this.ctx.lineWidth = 3;
+
+    this.ctx.beginPath();
+    //this.ctx.moveTo(this.x, this.y);
+    //this.ctx.lineTo(this.endX, this.endY);
+    for (var i = 0; i < this.bolts.length; i++) {
+        this.ctx.lineTo(this.bolts[i].x, this.bolts[i].y);
+    }
+    this.ctx.stroke();
+}
+
+Lightning.prototype.update = function () {
+    this.fade -= 0.03;
+    //console.log(this.fade);
+    if (this.fade <= 0.0) {
+        this.game.removeEntity(this);
+    }
+}
+
+//called to turn the straight line between two points
+//into a 'lightning bolt'
+function getDemBolts(startX, startY, endX, endY) {
+    var bolts = [];
+    var minSegmentLength = 7;
+    var a = startX - endX;
+    var b = startY - endY;
+    var segmentLength = Math.ceil(Math.sqrt( a*a + b*b ));
+    var roughness = 1.4;
+    var currDiff = segmentLength / 10;
+
+    bolts.push({x: startX, y: startY});
+    bolts.push({x: endX, y: endY});
+
+    //will keep going until the segments are the minimum length
+    //pushing the new line pieces into a new array
+    while (segmentLength > minSegmentLength) {
+        var newSegments = [];
+        for (var i = 0; i < bolts.length - 1; i++) {
+            var start = bolts[i];
+            var end = bolts[i + 1];
+            var midX = (start.x + end.x) / 2;
+            var midY = (start.y + end.y) / 2;
+
+            var newX = midX + (Math.random() * 2 - 1) * currDiff;
+            var newY = midY + (Math.random() * 2 - 1) * currDiff;
+            newSegments.push(start, {x: newX, y: newY});
+
+        }
+        newSegments.push(bolts.pop());
+        bolts = newSegments;
+        currDiff /= roughness;
+        segmentLength /= 2;
+    }
+    return bolts;
+}
+
+//generate random lightning bolts
+// setInterval(function() {
+//     var sx2 = 710; //Math.floor(Math.random() * 700) +1 ;
+//     var sy2 = 40; //Math.floor(Math.random() * 700) +1 ;
+//     //var ex2 = 635;
+//     //var ey2 = 115;
+//     var ex2 = Math.floor(Math.random() * 700) +1 ;
+//     var ey2 = Math.floor(Math.random() * 700) +1 ;
+//     gameEngine.addEntity(new Lightning(gameEngine, sx2, sy2, ex2, ey2));
+// }, 2000)
+
+
+
 //used for testing if hero collides with
 //any of the powerups
 function powerUpCollide(powerup, hero) {
@@ -410,8 +588,11 @@ function powerUpCollide(powerup, hero) {
 }
 
 
+<<<<<<< HEAD
 var map = map1;
 
+=======
+>>>>>>> origin/master
 // no inheritance
 function Platform(game) {
     this.x = 0;
@@ -827,6 +1008,7 @@ function Hero(game, heroSprites,speed, ground, health, lives) {
     this.flameBackUp90Hero = new Animation(heroSprites[45], this.x, this.y, 130, 111, 2, 0.1, 6, true);
     this.flameFrontDown90Hero = new Animation(heroSprites[46], this.x, this.y, 130, 111, 2, 0.1, 6, true);
     this.flameBackDown90Hero = new Animation(heroSprites[47], this.x, this.y, 130, 111, 2, 0.1, 6, true);
+    this.lightningOrb = new Animation(heroSprites[48], this.x, this.y, 58.57, 58.28, 7, 0.10, 49, true);
 
 
     this.jumping = false;
@@ -866,6 +1048,7 @@ function Hero(game, heroSprites,speed, ground, health, lives) {
     this.lookingRight = true;
     this.powerUpFire = false;
     this.powerUpRapidFire = false;
+    this.powerUpLightning = false;
     this.wallCollide = false;
     this.shootTemp = 2;
 
@@ -900,6 +1083,7 @@ Hero.prototype.reset = function () {			// THU add
     this.lookingRight = true;
     this.powerUpFire = false;
     this.powerUpRapidFire = false;
+    this.powerUpLightning = false;
     this.runshooting = false;
     this.wallCollide = false;
     this.standtemp = 2;
@@ -1059,8 +1243,8 @@ Hero.prototype.update = function () {
         }
 		var totalHeight = 200;
 		that = this;
-        console.log("crouch " + this.crouch);
-        console.log("stand " + this.standingStance);
+        //console.log("crouch " + this.crouch);
+        //console.log("stand " + this.standingStance);
 		if (this.immune && !this.powerUpFire) {
 			if (this.immuneCount > 0 ) {
 				this.immuneCount -= 1;
@@ -1161,7 +1345,7 @@ Hero.prototype.update = function () {
 					  //added in to keep background from moving when colliding with walls
 					  if (mainguy.wallCollide == false){
 						  mainguy.wallCollide = true;
-						setTimeout(function removeFire() {
+						setTimeout(function stallWallColide() {
 							mainguy.wallCollide = false;
 							}, 300);
 					  }
@@ -1170,7 +1354,15 @@ Hero.prototype.update = function () {
 				if (map.layer[heroGroundY+2][heroGroundX+1] == 'a'
 					|| map.layer[heroGroundY+2][heroGroundX+1] == 'z'
 					|| map.layer[heroGroundY+2][heroGroundX+1] == 's') {
-						if (!this.hurt) this.x -= this.game.clockTick * this.speed;
+                        if (!this.hurt) this.x -= this.game.clockTick * this.speed;
+
+                        //added in to keep background from moving when colliding with walls
+					  if (mainguy.wallCollide == false){
+                        mainguy.wallCollide = true;
+                      setTimeout(function stallWallColide() {
+                          mainguy.wallCollide = false;
+                          }, 300);
+                    }
 				}
 				//Right of the ground below hero (Need this for special cases)
 				if ((map.layer[heroGroundY+3][heroGroundX+1] == 'a'
@@ -1426,7 +1618,7 @@ Hero.prototype.update = function () {
 				} else {
 					setTimeout(function(){
 						that.CanShoot = true;
-						}, 250);
+						}, 175);
 				}
 			}
 		}
@@ -1457,7 +1649,11 @@ Hero.prototype.draw = function () {
 		//this.game.ctx.stroke();
 	}
 
-    //Keldon - added && this.standForward
+    //if lightning powerup is on draw the orb above head
+    if (this.powerUpLightning == true) {
+        this.lightningOrb.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX +25 , this.y + cameraY -50, .75);
+    }
+
     if (this.hurt) {
         if (this.standForward) this.frontDamageHero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX , this.y + cameraY);
         else this.backDamageHero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX , this.y + cameraY);
@@ -1469,7 +1665,6 @@ Hero.prototype.draw = function () {
             this.flameFrontJump.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY -15, .65);
         }
     }
-    //Keldon - added && !this.standForward
     else if ((this.jumping || this.falling) && !this.standForward) { // && !this.jumpForward
         if (!this.powerUpFire) {
             this.backJump.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
@@ -1698,6 +1893,9 @@ EnemySoldier.prototype.update = function () {
         } else if (powerUpChance === 3) {
             gameEngine.addPowerUp(new RapidFirePowerUp(gameEngine,
                 AM.getAsset("./img/gattling.png"), this.x, this.y -50));
+        } else if (powerUpChance === 4) {
+            gameEngine.addPowerUp(new lightningPowerUp(gameEngine,
+                AM.getAsset("./img/LightningOrbs.png"), this.x, this.y -50));
         }
     }
     for (var i = 0; i < this.game.entities.length; i++) {
@@ -1885,6 +2083,9 @@ Robot.prototype.update = function () {
             } else if (powerUpChance === 3) {
                 gameEngine.addPowerUp(new RapidFirePowerUp(gameEngine,
                     AM.getAsset("./img/gattling.png"), this.x, this.y -50));
+            } else if (powerUpChance === 4) {
+                gameEngine.addPowerUp(new lightningPowerUp(gameEngine,
+                    AM.getAsset("./img/LightningOrbs.png"), this.x, this.y -50));
             }
         }
     }
@@ -2176,6 +2377,9 @@ GunTurrent.prototype.update = function () {
             } else if (powerUpChance === 3) {
                 gameEngine.addPowerUp(new RapidFirePowerUp(gameEngine,
                     AM.getAsset("./img/gattling.png"), this.x, this.y -50));
+            } else if (powerUpChance === 4) {
+                gameEngine.addPowerUp(new lightningPowerUp(gameEngine,
+                    AM.getAsset("./img/LightningOrbs.png"), this.x, this.y -50));
             }
     }
     for (var i = 0; i < this.game.entities.length; i++) {
@@ -2355,6 +2559,9 @@ FlyingRobot.prototype.update = function () {
             } else if (powerUpChance === 3) {
                 gameEngine.addPowerUp(new RapidFirePowerUp(gameEngine,
                     AM.getAsset("./img/gattling.png"), this.x, this.y -50));
+            } else if (powerUpChance === 4) {
+                gameEngine.addPowerUp(new lightningPowerUp(gameEngine,
+                    AM.getAsset("./img/LightningOrbs.png"), this.x, this.y -50));
             }
     }
     if ((Math.abs(this.game.entities[2].x - this.center) < 130)) this.heroInRange = true;
@@ -2670,6 +2877,7 @@ AM.queueDownload("./img/cover.png");
 AM.queueDownload("./img/hero.png");
 AM.queueDownload("./img/gernade.png");
 AM.queueDownload("./img/bomb_sprite.png");
+AM.queueDownload("./img/LightningOrbs.png");
 //floor
 AM.queueDownload("./img/eFloor.png");
 AM.queueDownload("./img/midFloor.png");
@@ -2727,7 +2935,7 @@ AM.downloadAll(function () {
     , AM.getAsset("./img/FlameRunShootFD.png"), AM.getAsset("./img/FlameRunShootBD.png"), AM.getAsset("./img/FlameStandShootBD.png")
     , AM.getAsset("./img/FlameStandShootFD.png"), AM.getAsset("./img/flameCrouchF.png"), AM.getAsset("./img/flameCrouchB.png")
     , AM.getAsset("./img/flameStandShootUpF.png"), AM.getAsset("./img/flameStandShootUpB.png"), AM.getAsset("./img/flameStandShootDownF.png")
-    , AM.getAsset("./img/flameStandShootDownB.png")];
+    , AM.getAsset("./img/flameStandShootDownB.png"), AM.getAsset("./img/LightningOrbs.png")];
 
 
     gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/backgroundtrees.jpg")));
