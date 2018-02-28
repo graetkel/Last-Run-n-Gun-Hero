@@ -1294,7 +1294,7 @@ Hero.prototype.update = function () {
 				} else {
 					setTimeout(function(){
 						that.CanShoot = true;
-						}, 250);
+						}, 175);
 				}
 			}
 		}
