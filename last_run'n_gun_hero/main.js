@@ -409,7 +409,7 @@ function powerUpCollide(powerup, hero) {
 }
 
 
-var map = map2;
+var map = map1;
 
 // no inheritance
 function Platform(game) {
@@ -1019,7 +1019,15 @@ Hero.prototype.update = function () {
 				if (map.layer[heroGroundY+2][heroGroundX+1] == 'a'
 					|| map.layer[heroGroundY+2][heroGroundX+1] == 'z'
 					|| map.layer[heroGroundY+2][heroGroundX+1] == 's') {
-						if (!this.hurt) this.x -= this.game.clockTick * this.speed;
+                        if (!this.hurt) this.x -= this.game.clockTick * this.speed;
+                        
+                        //added in to keep background from moving when colliding with walls
+					  if (mainguy.wallCollide == false){
+                        mainguy.wallCollide = true;
+                      setTimeout(function removeFire() {
+                          mainguy.wallCollide = false;
+                          }, 300);
+                    }
 				}
 				//Right of the ground below hero (Need this for special cases)
 				if ((map.layer[heroGroundY+3][heroGroundX+1] == 'a'
@@ -2708,7 +2716,7 @@ AM.downloadAll(function () {
     gameEngine.addEntity(new HeroIcon(gameEngine, AM.getAsset("./img/hero.png")));
     var pg = new PlayGame(gameEngine, 370, 180);
     gameEngine.addEntity(pg);
-    playaudio(gameEngine, "./music/Top5Songs.mp3")
+    //playaudio(gameEngine, "./music/Top5Songs.mp3")
 
 
         console.log("All Done!");
