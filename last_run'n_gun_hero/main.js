@@ -1022,7 +1022,7 @@ Hero.prototype.update = function () {
                         gameEngine.addEntity(new Lightning(gameEngine, this.x - cameraX +40, this.y - 50,
                                                              this.game.entities[i].x -cameraX, this.game.entities[i].y));
                         this.game.entities[i].removeFromWorld = true;
-                    } 
+                    }
                 }
             }
         }
@@ -1172,8 +1172,7 @@ Hero.prototype.update = function () {
         }
 		var totalHeight = 200;
 		that = this;
-        //console.log("crouch " + this.crouch);
-        //console.log("stand " + this.standingStance);
+
 		if (this.immune && !this.powerUpFire) {
 			if (this.immuneCount > 0 ) {
 				this.immuneCount -= 1;
@@ -1198,8 +1197,12 @@ Hero.prototype.update = function () {
 		}
 
       //If Hero goes to far up or down this statement will kill the hero
-      if (this.y <= 15 || (this.y + 75) >= 675) {
+      if ((this.y + 75) >= 675) {
         this.game.reset();
+      }
+      if (this.y <= 20) {
+        this.jumping = false;
+        this.falling = true;
       }
 
 			if (this.jumping || this.falling) {
