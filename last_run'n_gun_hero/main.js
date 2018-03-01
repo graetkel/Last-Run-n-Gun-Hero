@@ -1155,7 +1155,6 @@ Hero.prototype.reset = function () {			// THU add
 }
 
 Hero.prototype.update = function () {
-    console.log(this.SpreadShotPowerUp);
     if (this.DoubleDamagePowerUp) {
         this.damage = 2;
     }
