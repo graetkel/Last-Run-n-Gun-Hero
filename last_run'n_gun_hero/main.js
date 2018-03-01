@@ -4,10 +4,20 @@
 var AM = new AssetManager();
 var gameEngine = new GameEngine();
 
+//used for reseting the powerup timers
+//if the same powerup is picked up when it
+//is already currently active on the hero
+var firePowerupTimer;
+var rapidFirePowerUpTimer;
+var lightningPowerUpTimer;
+
 
 var map1 = new mapOne();
 var map2 = new mapTwo();
 var map3 = new mapThree();
+var map4 = new mapFour();
+
+var map = map4;
 
 
 //In order to get the camera feature to work make sure every
@@ -223,7 +233,11 @@ FirePowerUp.prototype.update = function () {
         mainguy.immune = true;
         //console.log("fired up!");
 
-        setTimeout(function removeFire() {
+        //if powerup is already active, clear the old timer
+        //and start a new one.
+        clearTimeout(firePowerupTimer);
+
+        firePowerupTimer = setTimeout(function removeFire() {
             mainguy.powerUpFire = false;
             mainguy.immune = false;
             //console.log("fired down");
@@ -357,7 +371,11 @@ RapidFirePowerUp.prototype.update = function () {
         gameEngine.removePowerUp(this);
         mainguy.powerUpRapidFire = true;
 
-        setTimeout(function removeFire() {
+        //if powerup is already active, clear the old timer
+        //and start a new one.
+        clearTimeout(rapidFirePowerUpTimer);
+
+        rapidFirePowerUpTimer = setTimeout(function removeRapidFire() {
             mainguy.powerUpRapidFire = false;
             }, 7000);
     }
@@ -395,6 +413,169 @@ RapidFirePowerUp.prototype.draw = function () {
     }
 }
 
+/*
+* Lightning Powerup
+*/
+function lightningPowerUp(game, spritesheet, xLocation, yLocation) {
+    this.animation = new Animation(spritesheet, this.x, this.y, 58.57, 58.28, 7, 0.10, 49, true);
+    this.height = 25;
+    this.width = 100;
+    this.speed = 0;
+    this.falling = false;
+    this.ctx = game.ctx;
+    PowerUp.call(this, game, xLocation, yLocation);
+}
+
+lightningPowerUp.prototype = new PowerUp();
+lightningPowerUp.prototype.constructor = lightningPowerUp;
+
+lightningPowerUp.prototype.reset = function () {
+	this.falling = false;
+}
+
+
+lightningPowerUp.prototype.update = function () {
+    var mainguy = this.game.entities[2];
+
+    if (powerUpCollide(this, mainguy)) {
+        gameEngine.removePowerUp(this);
+        mainguy.powerUpLightning = true;
+
+        //if powerup is already active, clear the old timer
+        //and start a new one.
+        clearTimeout(lightningPowerUpTimer);
+
+        lightningPowerUpTimer = setTimeout(function removeLightningPowerup() {
+            mainguy.powerUpLightning = false;
+            }, 7000);
+    }
+
+    var groundX = Math.round(this.x/25) +1;
+    var groundY = Math.round(this.y/25);
+
+    if (this.y <= 15 || (this.y + 75) >= 675) {
+      gameEngine.removePowerUp(this);
+    }
+
+    //if in the air, fall
+    if (!(map.layer[groundY+1][groundX] == 'v'
+            || map.layer[groundY+1][groundX] == 'a'
+            || map.layer[groundY+1][groundX] == 'd')) {
+          this.falling = true;
+        }
+
+    if (this.falling) {
+          if (map.layer[groundY+1][groundX] == 'v'
+              || map.layer[groundY+1][groundX] == 'a'
+              || map.layer[groundY+1][groundX] == 'd') {
+               this.falling = false;
+          } else {
+            if (this.falling) {
+              this.y += 3;
+            }
+          }
+        }
+}
+
+lightningPowerUp.prototype.draw = function () {
+    if (this.game.running) {
+        this.animation.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY, 1);
+    }
+}
+
+
+/*
+* Lightning object itself
+*/
+function Lightning(game, sX, sY, eX, eY, strikes) {
+    this.ctx = game.ctx;
+    this.x = sX;
+    this.y = sY;
+    this.endX = eX;
+    this.endY = eY;
+    this.fade = 1.0;
+    this.bolts = getDemBolts(this.x, this.y, this.endX, this.endY);
+    Entity.call(this, game, sX, sY);
+}
+
+Lightning.prototype = new Entity();
+Lightning.prototype.constructor = Lightning;
+
+Lightning.prototype.draw = function () {
+    this.color = "hsla(180, 80%, 80%, "+ this.fade +")";
+    this.ctx.shadowColor = this.color;
+    this.ctx.shadowBlur = 10;
+    //this.ctx.globalCompositeOperation = "lighter";
+    this.ctx.strokeStyle = this.color;
+    this.ctx.lineWidth = 3;
+
+    this.ctx.beginPath();
+    //this.ctx.moveTo(this.x, this.y);
+    //this.ctx.lineTo(this.endX, this.endY);
+    for (var i = 0; i < this.bolts.length; i++) {
+        this.ctx.lineTo(this.bolts[i].x, this.bolts[i].y);
+    }
+    this.ctx.stroke();
+}
+
+Lightning.prototype.update = function () {
+    this.fade -= 0.03;
+    //console.log(this.fade);
+    if (this.fade <= 0.0) {
+        this.game.removeEntity(this);
+    }
+}
+
+//called to turn the straight line between two points
+//into a 'lightning bolt'
+function getDemBolts(startX, startY, endX, endY) {
+    var bolts = [];
+    var minSegmentLength = 7;
+    var a = startX - endX;
+    var b = startY - endY;
+    var segmentLength = Math.ceil(Math.sqrt( a*a + b*b ));
+    var roughness = 1.4;
+    var currDiff = segmentLength / 10;
+
+    bolts.push({x: startX, y: startY});
+    bolts.push({x: endX, y: endY});
+
+    //will keep going until the segments are the minimum length
+    //pushing the new line pieces into a new array
+    while (segmentLength > minSegmentLength) {
+        var newSegments = [];
+        for (var i = 0; i < bolts.length - 1; i++) {
+            var start = bolts[i];
+            var end = bolts[i + 1];
+            var midX = (start.x + end.x) / 2;
+            var midY = (start.y + end.y) / 2;
+
+            var newX = midX + (Math.random() * 2 - 1) * currDiff;
+            var newY = midY + (Math.random() * 2 - 1) * currDiff;
+            newSegments.push(start, {x: newX, y: newY});
+
+        }
+        newSegments.push(bolts.pop());
+        bolts = newSegments;
+        currDiff /= roughness;
+        segmentLength /= 2;
+    }
+    return bolts;
+}
+
+//generate random lightning bolts
+// setInterval(function() {
+//     var sx2 = 710; //Math.floor(Math.random() * 700) +1 ;
+//     var sy2 = 40; //Math.floor(Math.random() * 700) +1 ;
+//     //var ex2 = 635;
+//     //var ey2 = 115;
+//     var ex2 = Math.floor(Math.random() * 700) +1 ;
+//     var ey2 = Math.floor(Math.random() * 700) +1 ;
+//     gameEngine.addEntity(new Lightning(gameEngine, sx2, sy2, ex2, ey2));
+// }, 2000)
+
+
+
 //used for testing if hero collides with
 //any of the powerups
 function powerUpCollide(powerup, hero) {
@@ -409,7 +590,9 @@ function powerUpCollide(powerup, hero) {
 }
 
 
-var map = map1;
+
+
+
 
 // no inheritance
 function Platform(game) {
@@ -424,6 +607,8 @@ Platform.prototype.reset = function () {
     this.x = 0;
     this.y = 0;
 }
+
+
 Platform.prototype.draw = function () {
     var posX = this.x - cameraX;
     var sqFt = 25;
@@ -440,9 +625,79 @@ Platform.prototype.draw = function () {
 
             var xCoor = sqFt * xAxis - cameraX;
             var yCoor = 25 + sqFt * yAxis + cameraY;
+            if (map == map3) {
             switch (obstacle) {
                 case 'c': // middle ground
-                    this.ctx.drawImage(AM.getAsset("./img/ground1.png"), xCoor, yCoor, sqFt, sqFt);
+                      this.ctx.drawImage(AM.getAsset("./img/midFloor.png"), xCoor, yCoor, sqFt, sqFt);
+                    break;
+                case 'v': // top ground
+                    this.ctx.drawImage(AM.getAsset("./img/nFloor.png"), xCoor, yCoor, sqFt, sqFt);
+                    break;
+                case 'z': // west ground
+                    this.ctx.drawImage(AM.getAsset("./img/wFloor.png"), xCoor, yCoor, sqFt, sqFt);
+                    break;
+                case 'x': // east ground
+                    this.ctx.drawImage(AM.getAsset("./img/eFloor.png"), xCoor, yCoor, sqFt, sqFt);
+                    break;
+                case 'b': // bottom ground
+                    this.ctx.drawImage(AM.getAsset("./img/sFloor.png"), xCoor, yCoor, sqFt, sqFt);
+                    break;
+                case 'a': // NW Ground
+                    this.ctx.drawImage(AM.getAsset("./img/nwFloor.png"), xCoor, yCoor, sqFt, sqFt);
+                    break;
+                case 's': // SW Ground
+                    this.ctx.drawImage(AM.getAsset("./img/swFloor.png"), xCoor, yCoor, sqFt, sqFt);
+                    break;
+                case 'd': // NE Ground
+                    this.ctx.drawImage(AM.getAsset("./img/neFloor.png"), xCoor, yCoor, sqFt, sqFt);
+                    break;
+                case 'f': // SE Ground
+                    this.ctx.drawImage(AM.getAsset("./img/seFloor.png"), xCoor, yCoor, sqFt, sqFt);
+                    break;
+                    //---
+
+                case 'p': // SE Ground
+                    this.ctx.drawImage(AM.getAsset("./img/panel.png"), xCoor, yCoor, sqFt, sqFt);
+                    break;
+                case 'w': // SE Ground
+                    this.ctx.drawImage(AM.getAsset("./img/vent.png"), xCoor, yCoor, sqFt, sqFt);
+                    break;
+                case 'e': // SE Ground
+                    this.ctx.drawImage(AM.getAsset("./img/bigGreenLights.png"), xCoor, yCoor, sqFt, sqFt);
+                    break;
+                case 'r': // SE Ground
+                    this.ctx.drawImage(AM.getAsset("./img/bigRedLights.png"), xCoor, yCoor, sqFt, sqFt);
+                    break;
+                case 't': // SE Ground
+                    this.ctx.drawImage(AM.getAsset("./img/smallGreenLights.png"), xCoor, yCoor, sqFt, sqFt);
+                    break;
+                case 'y': // SE Ground
+                    this.ctx.drawImage(AM.getAsset("./img/smallRedLights.png"), xCoor, yCoor, sqFt, sqFt);
+                    break;
+                case 'g': // SE Ground
+                    this.ctx.drawImage(AM.getAsset("./img/green.png"), xCoor, yCoor, sqFt, sqFt);
+                    break;
+                case 'l': // SE Ground
+                    this.ctx.drawImage(AM.getAsset("./img/lava.png"), xCoor, yCoor, sqFt, sqFt);
+                    break;
+
+                    //green back
+                    // AM.queueDownload("./img/bigGreenLights.png");
+                    // AM.queueDownload("./img/bigRedLights.png");
+                    // AM.queueDownload("./img/green.png");
+                    // AM.queueDownload("./img/panel.png");
+                    // AM.queueDownload("./img/smallGreenLights.png");
+                    // AM.queueDownload("./img/smallRedLights.png");
+                    // AM.queueDownload("./img/vent.png");
+                    //----
+
+
+            }//End of switch
+          } else {
+
+            switch (obstacle) {
+                case 'c': // middle ground
+                      this.ctx.drawImage(AM.getAsset("./img/ground1.png"), xCoor, yCoor, sqFt, sqFt);
                     break;
                 case 'v': // top ground
                     this.ctx.drawImage(AM.getAsset("./img/ground2.png"), xCoor, yCoor, sqFt, sqFt);
@@ -494,29 +749,9 @@ Platform.prototype.draw = function () {
                     break;
 
             }//End of switch
+          }
 
-            /*
-            //floor
-            AM.queueDownload("./img/eFloor.png");
-            AM.queueDownload("./img/midFloor.png");
-            AM.queueDownload("./img/neFloor.png");
-            AM.queueDownload("./img/nFloor.png");
-            AM.queueDownload("./img/nwFloor.png");
-            AM.queueDownload("./img/seFloor.png");
-            AM.queueDownload("./img/sFloor.png");
-            AM.queueDownload("./img/swFloor.png");
-            AM.queueDownload("./img/wFloor.png");
-            //-----
-            //green back
-            AM.queueDownload("./img/bigGreenLights.png");
-            AM.queueDownload("./img/bigRedLights.png");
-            AM.queueDownload("./img/green.png");
-            AM.queueDownload("./img/panel.png");
-            AM.queueDownload("./img/smallGreenLights.png");
-            AM.queueDownload("./img/smallRedLights.png");
-            AM.queueDownload("./img/vent.png");
-            //----
-            */
+
         }
     }
     Entity.prototype.draw.call(this);
@@ -547,7 +782,7 @@ var cameraY = 0;
 Camera.prototype.update = function() {
 
   var mapWidth = map.cols * 25;
-  cameraMid = (this.game.ctx.canvas.width / 3);
+  cameraMid = (this.game.ctx.canvas.width / 2);
   if (this.game.entities[2].x < cameraMid) {
     cameraX = 0;
   } else if (this.game.entities[2].x > mapWidth - cameraMid) {
@@ -557,7 +792,7 @@ Camera.prototype.update = function() {
   }
 
   //The Y coordinates have been of this whole time.
-  cameraY = -1 * (this.game.ctx.canvas.width/map.rows) + 8;
+  cameraY = -1 * (this.game.ctx.canvas.width/map.rows);
 
 }
 
@@ -678,6 +913,7 @@ function Hero(game, heroSprites,speed, ground, health, lives) {
     this.flameBackUp90Hero = new Animation(heroSprites[45], this.x, this.y, 130, 111, 2, 0.1, 6, true);
     this.flameFrontDown90Hero = new Animation(heroSprites[46], this.x, this.y, 130, 111, 2, 0.1, 6, true);
     this.flameBackDown90Hero = new Animation(heroSprites[47], this.x, this.y, 130, 111, 2, 0.1, 6, true);
+    this.lightningOrb = new Animation(heroSprites[48], this.x, this.y, 58.57, 58.28, 7, 0.10, 49, true);
 
 
     this.jumping = false;
@@ -718,6 +954,7 @@ function Hero(game, heroSprites,speed, ground, health, lives) {
     this.lookingRight = true;
     this.powerUpFire = false;
     this.powerUpRapidFire = false;
+    this.powerUpLightning = false;
     this.wallCollide = false;
     this.shootTemp = 2;
     this.throwGernade = false;
@@ -754,6 +991,7 @@ Hero.prototype.reset = function () {			// THU add
     this.lookingRight = true;
     this.powerUpFire = false;
     this.powerUpRapidFire = false;
+    this.powerUpLightning = false;
     this.runshooting = false;
     this.wallCollide = false;
     this.standtemp = 2;
@@ -768,6 +1006,30 @@ Hero.prototype.reset = function () {			// THU add
 
 Hero.prototype.update = function () {
 	if (this.game.running) {
+
+        //used for cycling through the entities to shoot lightning at bullets
+        //thats come withing 250 pixels of the hero if lightning buff is on
+        if (this.powerUpLightning == true) {
+            for (var i = 0; i < this.game.entities.length; i ++) {
+                if (this.game.entities[i].isBullet == true && this.game.entities[i].heroShotIt == false) {
+
+                    //get distance from hero
+                    var a = this.x - this.game.entities[i].x;
+                    var b = this.y - this.game.entities[i].y;
+                    var bulletDistance = Math.ceil(Math.sqrt( a*a + b*b ));
+
+                    //makes the lightning strike and removes the bullet
+                    //if the bullet is within 250 pixels
+                    if (bulletDistance < 250) {
+                        gameEngine.addEntity(new Lightning(gameEngine, this.x - cameraX +40, this.y - 50,
+                                                             this.game.entities[i].x -cameraX, this.game.entities[i].y));
+                        this.game.entities[i].removeFromWorld = true;
+                    } 
+                }
+            }
+        }
+
+
 		//console.log(this.x);
 		//---- Next level --------
 		if (this.x >= ((map.cols * 25) - 100) && map == map1) {
@@ -792,7 +1054,9 @@ Hero.prototype.update = function () {
 				this.game.running = false;
 			}
 			//console.log(this.game.entities[1].x);
-			if (this.x > 3200) {
+      //You cant just have a hard coded value here!!!!!
+      var endPointOnMap = (map.cols * 25) - 100;
+			if (this.x > endPointOnMap) {
 				this.game.gameState.innerHTML = "Well Done, Level Complete!";
 				if (this.times > 0) {
 					while (this.times > 0) {
@@ -938,7 +1202,7 @@ Hero.prototype.update = function () {
 			var heroGroundY = Math.round(this.y/25);
 		}
 
-    //If Hero goes to far up or down this statement will kill the hero
+      //If Hero goes to far up or down this statement will kill the hero
       if (this.y <= 15 || (this.y + 75) >= 675) {
         this.game.reset();
       }
@@ -1015,7 +1279,7 @@ Hero.prototype.update = function () {
 					  //added in to keep background from moving when colliding with walls
 					  if (mainguy.wallCollide == false){
 						  mainguy.wallCollide = true;
-						setTimeout(function removeFire() {
+						setTimeout(function stallWallColide() {
 							mainguy.wallCollide = false;
 							}, 300);
 					  }
@@ -1024,7 +1288,15 @@ Hero.prototype.update = function () {
 				if (map.layer[heroGroundY+2][heroGroundX+1] == 'a'
 					|| map.layer[heroGroundY+2][heroGroundX+1] == 'z'
 					|| map.layer[heroGroundY+2][heroGroundX+1] == 's') {
-						if (!this.hurt) this.x -= this.game.clockTick * this.speed;
+                        if (!this.hurt) this.x -= this.game.clockTick * this.speed;
+
+                        //added in to keep background from moving when colliding with walls
+					  if (mainguy.wallCollide == false){
+                        mainguy.wallCollide = true;
+                      setTimeout(function stallWallColide() {
+                          mainguy.wallCollide = false;
+                          }, 300);
+                    }
 				}
 				//Right of the ground below hero (Need this for special cases)
 				if ((map.layer[heroGroundY+3][heroGroundX+1] == 'a'
@@ -1142,68 +1414,68 @@ Hero.prototype.update = function () {
 						if (this.jumpForward) {
 							this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 95, this.y + 38))
 							this.game.addEntity(new Bullet(this.game, this.x + 110, this.y + 42, this.jumpForward
-                                ,this.firingStance, false, false, this.unitType, 300));
+                                ,this.firingStance, false, false, this.unitType, 300, true));
 
 						}
 						else {
 							this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x - 10, this.y + 35))
 							this.game.addEntity(new Bullet(this.game, this.x - 10 , this.y + 35, this.jumpForward
-								,this.firingStance, false, false, this.unitType, 300));
+								,this.firingStance, false, false, this.unitType, 300, true));
 						}
 					}
 					else if (this.standingStance === 0) {
 						this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 130, this.y + 80))
 						this.game.addEntity(new Bullet(this.game, this.x + 145, this.y + 85, this.standForward
-							,this.firingStance, false, false, this.unitType, 300));
+							,this.firingStance, false, false, this.unitType, 300, true));
 					}
 					else if (this.standingStance === 1) {
 						this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 80, this.y + 56))
 						this.game.addEntity(new Bullet(this.game, this.x + 90, this.y + 61, this.standForward
-						 ,this.firingStance, false, false, this.unitType, 300));
+						 ,this.firingStance, false, false, this.unitType, 300, true));
 					}
 					else {
 						if (this.firingStance === 2) {
 							if (!this.powerUpFire) {
 								this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 92, this.y + 31))
 								this.game.addEntity(new Bullet(this.game, this.x + 110, this.y + 35, this.standForward
-									,this.firingStance, true, false, this.unitType, 300));
+									,this.firingStance, true, false, this.unitType, 300, true));
 							} else {
 								this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 102, this.y + 33))
 								this.game.addEntity(new Bullet(this.game, this.x + 120, this.y + 37, this.standForward
-									,this.firingStance, true, false, this.unitType, 300));
+									,this.firingStance, true, false, this.unitType, 300, true));
 							}
 						}
 						else if (this.firingStance === 3) {
 							if (!this.powerUpFire) {
 								this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 70, this.y + 3))
 								this.game.addEntity(new Bullet(this.game, this.x + 100, this.y - 10, this.standForward
-								   ,this.firingStance, true, false, this.unitType, 300));
+								   ,this.firingStance, true, false, this.unitType, 300, true));
 							} else {
 								this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 95, this.y -5))
 								this.game.addEntity(new Bullet(this.game, this.x + 122, this.y - 10, this.standForward
-								   ,this.firingStance, true, false, this.unitType, 300));
+								   ,this.firingStance, true, false, this.unitType, 300, true));
 							}
 						}
 						else if (this.firingStance === 1) {
 							if (!this.powerUpFire) {
 								this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 71, this.y + 73))
 								this.game.addEntity(new Bullet(this.game, this.x + 95, this.y + 90, this.standForward
-									,this.firingStance, true, false,this.unitType, 300));
+									,this.firingStance, true, false,this.unitType, 300, true));
 							} else {
 								this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 95, this.y + 70))
 								this.game.addEntity(new Bullet(this.game, this.x + 120, this.y + 87, this.standForward
-									,this.firingStance, true, false,this.unitType, 300));
+									,this.firingStance, true, false,this.unitType, 300, true));
 							}
 						}
 						else if (this.firingStance === 4) {
 							if (!this.powerUpFire) {
 								this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 30, this.y - 7))
 								this.game.addEntity(new Bullet(this.game, this.x + 35, this.y - 15, this.standForward
-									,this.firingStance, true, false, this.unitType, 300));
+									,this.firingStance, true, false, this.unitType, 300, true));
 							} else {
 								this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 50, this.y - 7))
 								this.game.addEntity(new Bullet(this.game, this.x + 55, this.y - 15, this.standForward
-									,this.firingStance, true, false, this.unitType, 300));
+									,this.firingStance, true, false, this.unitType, 300, true));
 							}
 						}
 
@@ -1214,67 +1486,67 @@ Hero.prototype.update = function () {
 						if (this.jumpForward ) {
 							this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 110, this.y + 35))
 							this.game.addEntity(new Bullet(this.game, this.x + 110, this.y + 35, this.jumpForward
-								,this.firingStance, false, false, this.unitType, 300));
+								,this.firingStance, false, false, this.unitType, 300, true));
 						}
 						else {
 							this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x - 10, this.y + 35))
 							this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 35, this.jumpForward
-								,this.firingStance, false, false, this.unitType, 300));
+								,this.firingStance, false, false, this.unitType, 300, true));
 						}
 					}
 					else if (this.standingStance === 0) {
 						this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x, this.y + 80))
 					   this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 85, this.standForward
-						,this.firingStance, false, false, this.unitType, 300));
+						,this.firingStance, false, false, this.unitType, 300, true));
 					}
 					else if (this.standingStance === 1) {
 						this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 3, this.y + 55))
 						this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 61, this.standForward
-						 ,this.firingStance, false, false, this.unitType, 300));
+						 ,this.firingStance, false, false, this.unitType, 300, true));
 					}
 					else {
 						if (this.firingStance === 2) {
 							if (!this.powerUpFire) {
 								this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x - 2, this.y + 30))
 								this.game.addEntity(new Bullet(this.game, this.x - 15, this.y + 35, this.standForward
-									,this.firingStance, true, false, this.unitType, 300));
+									,this.firingStance, true, false, this.unitType, 300, true));
 							} else {
 								this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 15, this.y + 33))
 								this.game.addEntity(new Bullet(this.game, this.x - 8 , this.y + 38, this.standForward
-									,this.firingStance, true, false, this.unitType, 300));
+									,this.firingStance, true, false, this.unitType, 300, true));
 							}
 						}
 						else if (this.firingStance === 3) {
 							if (!this.powerUpFire) {
 								this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 10, this.y + 3))
 								this.game.addEntity(new Bullet(this.game, this.x , this.y - 10, this.standForward
-									,this.firingStance, true, false, this.unitType, 300));
+									,this.firingStance, true, false, this.unitType, 300, true));
 							} else {
 								this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 28, this.y -9))
 								this.game.addEntity(new Bullet(this.game, this.x + 18 , this.y - 22, this.standForward
-									,this.firingStance, true, false, this.unitType, 300));
+									,this.firingStance, true, false, this.unitType, 300, true));
 							}
 						}
 						else if (this.firingStance === 1) {
 							if (!this.powerUpFire) {
 								this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 6, this.y + 74))
 								this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 95, this.standForward
-									,this.firingStance, true, false, this.unitType, 300));
+									,this.firingStance, true, false, this.unitType, 300, true));
 							} else {
 								this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x , this.y + 74))
 								this.game.addEntity(new Bullet(this.game, this.x - 8 , this.y + 95, this.standForward
-									,this.firingStance, true, false, this.unitType, 300));
+									,this.firingStance, true, false, this.unitType, 300, true));
 							}
 						}
 						else if (this.firingStance === 4) {
 							if (!this.powerUpFire) {
 								this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 50, this.y - 5))
 								this.game.addEntity(new Bullet(this.game, this.x + 55, this.y - 15, this.standForward
-									,this.firingStance, true, false, this.unitType, 300));
+									,this.firingStance, true, false, this.unitType, 300, true));
 							} else {
 								this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 70, this.y - 5))
 								this.game.addEntity(new Bullet(this.game, this.x + 75, this.y - 15, this.standForward
-									,this.firingStance, true, false, this.unitType, 300));
+									,this.firingStance, true, false, this.unitType, 300, true));
 							}
 						}
 
@@ -1288,7 +1560,7 @@ Hero.prototype.update = function () {
 				} else {
 					setTimeout(function(){
 						that.CanShoot = true;
-						}, 250);
+						}, 175);
 				}
 			}
 		}
@@ -1319,7 +1591,11 @@ Hero.prototype.draw = function () {
 		//this.game.ctx.stroke();
 	}
 
-    //Keldon - added && this.standForward
+    //if lightning powerup is on draw the orb above head
+    if (this.powerUpLightning == true) {
+        this.lightningOrb.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX +25 , this.y + cameraY -50, .75);
+    }
+
     if (this.hurt) {
         if (this.standForward) this.frontDamageHero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX , this.y + cameraY);
         else this.backDamageHero.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX , this.y + cameraY);
@@ -1331,7 +1607,6 @@ Hero.prototype.draw = function () {
             this.flameFrontJump.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY -15, .65);
         }
     }
-    //Keldon - added && !this.standForward
     else if ((this.jumping || this.falling) && !this.standForward) { // && !this.jumpForward
         if (!this.powerUpFire) {
             this.backJump.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
@@ -1560,6 +1835,9 @@ EnemySoldier.prototype.update = function () {
         } else if (powerUpChance === 3) {
             gameEngine.addPowerUp(new RapidFirePowerUp(gameEngine,
                 AM.getAsset("./img/gattling.png"), this.x, this.y -50));
+        } else if (powerUpChance === 4) {
+            gameEngine.addPowerUp(new lightningPowerUp(gameEngine,
+                AM.getAsset("./img/LightningOrbs.png"), this.x, this.y -50));
         }
     }
     for (var i = 0; i < this.game.entities.length; i++) {
@@ -1600,24 +1878,24 @@ EnemySoldier.prototype.update = function () {
                 if (this.crouch) {
                     this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 85, this.y + 55))
                     this.game.addEntity(new Bullet(this.game, this.x + 110, this.y + 60
-                        , this.forward,this.firingStance, false, false, this.unitType, 300));
+                        , this.forward,this.firingStance, false, false, this.unitType, 300, false));
                 }
                 else {
                     this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 85, this.y + 32))
                     this.game.addEntity(new Bullet(this.game, this.x + 110, this.y + 35, this.forward
-                        ,this.firingStance, false, false, this.unitType, 300));
+                        ,this.firingStance, false, false, this.unitType, 300, false));
                 }
             }
             else
                 if (this.crouch) {
                     this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 1, this.y + 55))
                     this.game.addEntity(new Bullet(this.game, this.x -15, this.y + 60, this.forward
-                        ,this.firingStance, false, false, this.unitType, 300));
+                        ,this.firingStance, false, false, this.unitType, 300, false));
                 }
                 else {
                     this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x - 1, this.y + 32))
                     this.game.addEntity(new Bullet(this.game, this.x - 15, this.y + 35, this.forward,this.firingStance, false
-                        , false, this.unitType, 300));
+                        , false, this.unitType, 300, false));
                 }
             this.enemyShoot = false;
             setTimeout(function(){
@@ -1749,6 +2027,9 @@ Robot.prototype.update = function () {
             } else if (powerUpChance === 3) {
                 gameEngine.addPowerUp(new RapidFirePowerUp(gameEngine,
                     AM.getAsset("./img/gattling.png"), this.x, this.y -50));
+            } else if (powerUpChance === 4) {
+                gameEngine.addPowerUp(new lightningPowerUp(gameEngine,
+                    AM.getAsset("./img/LightningOrbs.png"), this.x, this.y -50));
             }
         }
     }
@@ -2194,6 +2475,9 @@ GunTurrent.prototype.update = function () {
             } else if (powerUpChance === 3) {
                 gameEngine.addPowerUp(new RapidFirePowerUp(gameEngine,
                     AM.getAsset("./img/gattling.png"), this.x, this.y -50));
+            } else if (powerUpChance === 4) {
+                gameEngine.addPowerUp(new lightningPowerUp(gameEngine,
+                    AM.getAsset("./img/LightningOrbs.png"), this.x, this.y -50));
             }
     }
     for (var i = 0; i < this.game.entities.length; i++) {
@@ -2291,12 +2575,12 @@ GiantRobot.prototype.update = function () {
         else this.active = false;
         if (this.enemyShoot && this.active) {
             this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 80, this.forward
-                ,this.firingStance, false,false, this.unitType, 250));
+                ,this.firingStance, false,false, this.unitType, 250, false));
             this.game.addEntity(new landMineFlash(this.game, AM.getAsset("./img/landMineFlash.png"),  this.x - 12, this.y + 60));
             this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 80, this.forward
-                , 3, true,false, this.unitType, 300));
+                , 3, true,false, this.unitType, 300, false));
             this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 80, this.forward
-                , 1, true,false, this.unitType, 150));
+                , 1, true,false, this.unitType, 150, false));
             this.enemyShoot = false;
             setTimeout(function(){
             enemyThat.enemyShoot = true;
@@ -2373,6 +2657,9 @@ FlyingRobot.prototype.update = function () {
             } else if (powerUpChance === 3) {
                 gameEngine.addPowerUp(new RapidFirePowerUp(gameEngine,
                     AM.getAsset("./img/gattling.png"), this.x, this.y -50));
+            } else if (powerUpChance === 4) {
+                gameEngine.addPowerUp(new lightningPowerUp(gameEngine,
+                    AM.getAsset("./img/LightningOrbs.png"), this.x, this.y -50));
             }
     }
     if ((Math.abs(this.game.entities[2].x - this.center) < 130)) this.heroInRange = true;
@@ -2383,12 +2670,12 @@ FlyingRobot.prototype.update = function () {
                 if (this.forward) {
                     this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 25, this.y + 44))
                     this.game.addEntity(new Bullet(this.game, this.x + 30, this.y + 70, this.forward
-                        ,this.firingStance,true, false,this.unitType, 300));
+                        ,this.firingStance,true, false,this.unitType, 300, false));
                 }
                 else {
                     this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 15, this.y + 44))
                     this.game.addEntity(new Bullet(this.game, this.x + 20, this.y + 70, this.forward
-                        ,this.firingStance,true, false,this.unitType, 300));
+                        ,this.firingStance,true, false,this.unitType, 300, false));
                 }
                 this.enemyShoot = false;
                 setTimeout(function(){
@@ -2433,7 +2720,7 @@ FlyingRobot.prototype.draw = function () {
 
 }
 
-function Bullet(game, startX, startY, direction, firingStance, standing, unitFlying, unitType, speed) {
+function Bullet(game, startX, startY, direction, firingStance, standing, unitFlying, unitType, speed, heroShot) {
     this.isBullet = true;
     this.speed = speed;
     this.ctx = game.ctx;
@@ -2446,6 +2733,9 @@ function Bullet(game, startX, startY, direction, firingStance, standing, unitFly
     this.standing = standing;
     this.startX = startX;
     this.forward = direction;
+    //if hero shot bullet, changes this next variable
+    //to true, else is false
+    this.heroShotIt = heroShot;
     Entity.call(this, game, startX, startY);
 }
 
@@ -2530,53 +2820,53 @@ Bullet.prototype.draw = function () {
     //Entity.prototype.draw.call(this);
 }
 
-function NextLevel(game) {
-
-  if (map == map1) {
-    game.entities[2].powerup = false;
-    game.entities[2].x = 100;
-    game.entities[2].y = 525;
-
-    for (var i = 4; i < game.entities.length; i++) {
-      game.entities[i].removeFromWorld = true;
-    }
-    map = map2;
-
-    game.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 300, 575, 60, 1, "redRobot"));
-    game.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 1200, 376, 60, 1, "blueRobot"));
-    game.addEntity(new Robot(gameEngine, AM.getAsset("./img/orange_Robot.png"), AM.getAsset("./img/orange_Robot.png"), 1800, 575, 60, 1, "orangeRobot"));
-    game.addEntity(new Robot(gameEngine, AM.getAsset("./img/green_Robot.png"), AM.getAsset("./img/green_Robot.png"), 850, 476, 60, 1, "greenRobot"));
-    game.addEntity(new Robot(gameEngine, AM.getAsset("./img/green_Robot.png"), AM.getAsset("./img/green_Robot.png"), 950, 476, 60, 1, "greenRobot"));
-    game.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
-     , AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
-     , AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
-     , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 800, 524, 200, 3));
-    game.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
-     , AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
-     , AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
-     , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 2000, 524, 200, 3));
-    game.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
-     , AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
-     , AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
-     , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 2300, 524, 200, 3));
-    game.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
-     , AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
-     , AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
-     , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 2400, 524, 200, 3));
-    game.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
-     , AM.getAsset("./img/flyingRobot_Forward.png"), 1000, 125, 60, 2));
-    game.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
-     , AM.getAsset("./img/flyingRobot_Forward.png"), 900, 75, 60, 2));
-    game.addEntity(new GiantRobot(gameEngine, AM.getAsset("./img/giantRobotFiringFoward.png")
-     , AM.getAsset("./img/giantRobotFoward.png"),2450,175, 10));
-    game.addEntity(new GunTurrent(gameEngine, AM.getAsset("./img/firingGunTurrent.png")
-     , AM.getAsset("./img/idleGunTurrent.png"),1950, 365, 5));
-    game.addEntity(new GunTurrent(gameEngine, AM.getAsset("./img/firingGunTurrent.png")
-     , AM.getAsset("./img/idleGunTurrent.png"),4150, 415, 5));
-    game.addEntity(new GunTurrent(gameEngine, AM.getAsset("./img/firingGunTurrent.png")
-     , AM.getAsset("./img/idleGunTurrent.png"),4675, 90, 5));
-  }
-}
+// function NextLevel(game) {
+//
+//   if (map == map1) {
+//     game.entities[2].powerup = false;
+//     game.entities[2].x = 100;
+//     game.entities[2].y = 525;
+//
+//     for (var i = 4; i < game.entities.length; i++) {
+//       game.entities[i].removeFromWorld = true;
+//     }
+//     map = map2;
+//
+//     game.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 300, 575, 60, 1, "redRobot"));
+//     game.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 1200, 376, 60, 1, "blueRobot"));
+//     game.addEntity(new Robot(gameEngine, AM.getAsset("./img/orange_Robot.png"), AM.getAsset("./img/orange_Robot.png"), 1800, 575, 60, 1, "orangeRobot"));
+//     game.addEntity(new Robot(gameEngine, AM.getAsset("./img/green_Robot.png"), AM.getAsset("./img/green_Robot.png"), 850, 476, 60, 1, "greenRobot"));
+//     game.addEntity(new Robot(gameEngine, AM.getAsset("./img/green_Robot.png"), AM.getAsset("./img/green_Robot.png"), 950, 476, 60, 1, "greenRobot"));
+//     game.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
+//      , AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
+//      , AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
+//      , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 800, 524, 200, 3));
+//     game.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
+//      , AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
+//      , AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
+//      , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 2000, 524, 200, 3));
+//     game.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
+//      , AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
+//      , AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
+//      , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 2300, 524, 200, 3));
+//     game.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
+//      , AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
+//      , AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
+//      , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 2400, 524, 200, 3));
+//     game.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
+//      , AM.getAsset("./img/flyingRobot_Forward.png"), 1000, 125, 60, 2));
+//     game.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
+//      , AM.getAsset("./img/flyingRobot_Forward.png"), 900, 75, 60, 2));
+//     game.addEntity(new GiantRobot(gameEngine, AM.getAsset("./img/giantRobotFiringFoward.png")
+//      , AM.getAsset("./img/giantRobotFoward.png"),2450,175, 10));
+//     game.addEntity(new GunTurrent(gameEngine, AM.getAsset("./img/firingGunTurrent.png")
+//      , AM.getAsset("./img/idleGunTurrent.png"),1950, 365, 5));
+//     game.addEntity(new GunTurrent(gameEngine, AM.getAsset("./img/firingGunTurrent.png")
+//      , AM.getAsset("./img/idleGunTurrent.png"),4150, 415, 5));
+//     game.addEntity(new GunTurrent(gameEngine, AM.getAsset("./img/firingGunTurrent.png")
+//      , AM.getAsset("./img/idleGunTurrent.png"),4675, 90, 5));
+//   }
+// }
 
 //------- Music --------
 
@@ -2689,6 +2979,7 @@ AM.queueDownload("./img/hero.png");
 AM.queueDownload("./img/gernade.png");
 AM.queueDownload("./img/bomb_sprite.png");
 AM.queueDownload("./img/singleGernade.png");
+AM.queueDownload("./img/LightningOrbs.png");
 //floor
 AM.queueDownload("./img/eFloor.png");
 AM.queueDownload("./img/midFloor.png");
@@ -2709,6 +3000,7 @@ AM.queueDownload("./img/smallGreenLights.png");
 AM.queueDownload("./img/smallRedLights.png");
 AM.queueDownload("./img/vent.png");
 //----
+AM.queueDownload("./img/lava.png");
 
 
 AM.downloadAll(function () {
@@ -2745,7 +3037,7 @@ AM.downloadAll(function () {
     , AM.getAsset("./img/FlameRunShootFD.png"), AM.getAsset("./img/FlameRunShootBD.png"), AM.getAsset("./img/FlameStandShootBD.png")
     , AM.getAsset("./img/FlameStandShootFD.png"), AM.getAsset("./img/flameCrouchF.png"), AM.getAsset("./img/flameCrouchB.png")
     , AM.getAsset("./img/flameStandShootUpF.png"), AM.getAsset("./img/flameStandShootUpB.png"), AM.getAsset("./img/flameStandShootDownF.png")
-    , AM.getAsset("./img/flameStandShootDownB.png")];
+    , AM.getAsset("./img/flameStandShootDownB.png"), AM.getAsset("./img/LightningOrbs.png")];
 
 
     gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/backgroundtrees.jpg")));
@@ -2837,7 +3129,7 @@ AM.downloadAll(function () {
         gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),1620,410, 1, 600));
         gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),2081,610, 1, 700));
 
-    } else if (map = map2) {
+    } else if (map == map2) {
 
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 300, 575, 60, 1, "redRobot"));
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 1200, 376, 60, 1, "blueRobot"));
@@ -2873,12 +3165,16 @@ AM.downloadAll(function () {
      gameEngine.addEntity(new GunTurrent(gameEngine, AM.getAsset("./img/firingGunTurrent.png")
      , AM.getAsset("./img/idleGunTurrent.png"),4675, 90, 5, 1000));
 
+  } else if (map == map3) {
+
+  } else if (map == map4) {
+
   }
     gameEngine.addEntity(new Cover(gameEngine, AM.getAsset("./img/cover.png")));
     gameEngine.addEntity(new HeroIcon(gameEngine, AM.getAsset("./img/hero.png")));
     var pg = new PlayGame(gameEngine, 370, 180);
     gameEngine.addEntity(pg);
-    playaudio(gameEngine, "./music/Top5Songs.mp3")
+    //playaudio(gameEngine, "./music/Top5Songs.mp3")
 
 
         console.log("All Done!");
