@@ -101,6 +101,9 @@ GameEngine.prototype.startInput = function () {
         else if (e.code === "ArrowDown") {
             that.aimDown = true;
         }
+        else if (e.code === "ArrowLeft") {
+            that.gernadeThrow = true;
+        }
         e.preventDefault();
        // console.log("Key down Event - Char " + e.code + " Code " + e.keyCode);
     }, false);
@@ -128,6 +131,9 @@ GameEngine.prototype.startInput = function () {
         }
         else if (e.code === "ArrowDown") {
             that.aimDown = false;
+        }
+        else if (e.code === "ArrowLeft") {
+            that.gernadeThrow = false;
         }
         //console.log("Key Up Event - Char " + e.code + " Code " + e.keyCode);
     }, false);
@@ -253,6 +259,7 @@ GameEngine.prototype.loop = function () {
     this.wheel = null;
     this.over = null;
     this.aimUp = null;
+    this.gernadeThrow = null;
     this.aimDown = null;
     this.s = null;
     this.w = null;
