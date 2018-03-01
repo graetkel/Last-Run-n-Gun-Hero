@@ -1105,7 +1105,7 @@ Hero.prototype.update = function () {
                         gameEngine.addEntity(new Lightning(gameEngine, this.x - cameraX +40, this.y - 50,
                                                              this.game.entities[i].x -cameraX, this.game.entities[i].y));
                         this.game.entities[i].removeFromWorld = true;
-                    } 
+                    }
                 }
             }
         }
@@ -1182,7 +1182,7 @@ Hero.prototype.update = function () {
 			this.standForward = false;
 			this.runFlag = true;
 		}
-        if (this.game.gernadeThrow) { 
+        if (this.game.gernadeThrow) {
             this.throwGernade = true;
         }
         else {
@@ -1260,6 +1260,7 @@ Hero.prototype.update = function () {
         }
 		var totalHeight = 200;
 		that = this;
+
 		if (this.immune && !this.powerUpFire) {
 			if (this.immuneCount > 0 ) {
 				this.immuneCount -= 1;
@@ -1284,8 +1285,12 @@ Hero.prototype.update = function () {
 		}
 
       //If Hero goes to far up or down this statement will kill the hero
-      if (this.y <= 15 || (this.y + 75) >= 675) {
+      if ((this.y + 75) >= 675) {
         this.game.reset();
+      }
+      if (this.y <= 20) {
+        this.jumping = false;
+        this.falling = true;
       }
 
 			if (this.jumping || this.falling) {
@@ -2343,7 +2348,7 @@ gernade.prototype.update = function () {
 
                 for (var i = 0; i < this.game.entities.length; i++) {
                     var ent = this.game.entities[i];
-                    
+
                     if (ent !== this && (Math.abs(this.x - ent.x) <= 200)) {
                         if (Math.abs(ent.y - this.y) <= 200 ) {
                             if (ent.hero && !ent.immune) {
@@ -2352,7 +2357,7 @@ gernade.prototype.update = function () {
                             else {
                                 ent.health -= 4;
                             }
-        
+
                         }
                     }
                 }
@@ -2360,7 +2365,7 @@ gernade.prototype.update = function () {
                 this.removeFromWorld = true;
             }
         }
-        
+
         if (this.jumping || this.falling) {
             this.gernadeThrow.elapsedTime = 0;
           }
@@ -2415,7 +2420,7 @@ gernade.prototype.update = function () {
         else {
             if (this.x > 60) this.x -= (this.game.clockTick * this.speed ) / 2;
         }
-    
+
     }
     else {
         if (this.gernadeLive.isDone()) {
