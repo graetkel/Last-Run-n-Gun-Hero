@@ -3547,6 +3547,7 @@ function NextLevel(game) {
       game.entities[i].removeFromWorld = true;
     }
     map = map2;
+    playaudio(gameEngine, "./music/Top5Songs.mp3")
 
     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
      , AM.getAsset("./img/flyingRobot_Forward.png"), 200, 125, 60, 2, 500, 100, 200));
@@ -3667,6 +3668,7 @@ function NextLevel(game) {
     for (var i = 4; i < game.entities.length; i++) {
       game.entities[i].removeFromWorld = true;
     }
+    playaudio(gameEngine, "./music/WhenTheBeatDrops.mp3")
     map = map3;
 
     gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),350,585, 1, 400));
@@ -3958,7 +3960,7 @@ AM.downloadAll(function () {
 
     //----------------
     if (map == map1) {
-
+        playaudio(gameEngine, "./music/Wave.mp3")
         gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/green_Robot.png"), AM.getAsset("./img/green_Robot.png"), 850, 575, 60, 1, "greenRobot", 5000, 100, 300));
 
         gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 900, 575, 30, 1, "blueRobot", 1200, 100, 300));
@@ -4035,6 +4037,7 @@ AM.downloadAll(function () {
         gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),2081,610, 1, 700));
 
     } else if (map == map2) {
+      playaudio(gameEngine, "./music/Top5Songs.mp3")
     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
      , AM.getAsset("./img/flyingRobot_Forward.png"), 200, 125, 60, 2, 500, 100, 200));
     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
@@ -4145,6 +4148,7 @@ AM.downloadAll(function () {
      , AM.getAsset("./img/idleGunTurrent.png"),4141, 415, 5, 1000, 400));
   } else if (map == map3) {
 
+    playaudio(gameEngine, "./music/WhenTheBeatDrops.mp3")
     gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),350,585, 1, 400));
     gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),425,560, 1, 400));
     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
@@ -4230,12 +4234,9 @@ AM.downloadAll(function () {
      , AM.getAsset("./img/flyingRobot_Forward.png"), 5500, 300, 60, 2, 700, 100, 200));
      gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
      , AM.getAsset("./img/flyingRobot_Forward.png"), 5700, 200, 60, 2, 700, 100, 200));
-     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
-     , AM.getAsset("./img/flyingRobot_Forward.png"), 5900, 100, 60, 2, 700, 100, 200));
-     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
-     , AM.getAsset("./img/flyingRobot_Forward.png"), 6150, 200, 60, 2, 700, 100, 200));
+
      gameEngine.addEntity(new FinalBoss(gameEngine, AM.getAsset("./img/finalBossShooting.png")
-     , AM.getAsset("./img/finalBoss.png"),4310,425, 10, 2500, 350));
+     , AM.getAsset("./img/finalBoss.png"),5600,75, 10, 2500, 350));
 
   } else if (map == map4) {
 
@@ -4244,7 +4245,7 @@ AM.downloadAll(function () {
     gameEngine.addEntity(new HeroIcon(gameEngine, AM.getAsset("./img/hero.png")));
     var pg = new PlayGame(gameEngine, 370, 180);
     gameEngine.addEntity(pg);
-    //playaudio(gameEngine, "./music/Top5Songs.mp3")
+
 
 
         console.log("All Done!");
