@@ -18,7 +18,7 @@ var map2 = new mapTwo();
 var map3 = new mapThree();
 var map4 = new mapFour();
 
-var map = map3;
+var map = map1;
 
 
 //In order to get the camera feature to work make sure every
@@ -1162,8 +1162,8 @@ function Hero(game, heroSprites,speed, ground, health, lives) {
 
 
     this.jumping = false;
-    // this.speed = speed;
-    this.speed = 1000;
+    this.speed = speed;
+    //this.speed = 1000;
 
     this.health = health;
     this.hero = true;
@@ -3144,9 +3144,20 @@ GiantRobot.prototype.update = function () {
         if(this.x - this.game.entities[2].x > 0) this.active = true;
         else this.active = false;
         if (this.enemyShoot && this.active) {
-            this.game.addEntity(new landMineFlash(this.game, AM.getAsset("./img/landMineFlash.png"),  this.x - 12, this.y + 60))
-            this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 180, this.forward
+            this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 80, this.forward
+
+                ,this.firingStance, false,false, this.unitType, 250, false, this.damage));
+
+            this.game.addEntity(new landMineFlash(this.game, AM.getAsset("./img/landMineFlash.png"),  this.x - 12, this.y + 60));
+
+            this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 80, this.forward
+
+                , 3, true,false, this.unitType, 300, false, this.damage));
+
+            this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 80, this.forward
+
                 , 1, true,false, this.unitType, 150, false, this.damage));
+
             this.enemyShoot = false;
             setTimeout(function(){
             enemyThat.enemyShoot = true;
@@ -3235,7 +3246,7 @@ FinalBoss.prototype.update = function () {
             this.enemyShoot = false;
             setTimeout(function(){
             enemyThat.enemyShoot = true;
-        }, 1300);
+        }, 1400);
 
         }
     }
@@ -3420,7 +3431,7 @@ Bullet.prototype.update = function () {
     var bulletGroundX = Math.round(this.x/25) + 1;
     var bulletGroundY = Math.floor((this.y )/25);
     if (this.y <= 70 || this.y >= 670) this.removeFromWorld = true;
-    if (this.x - cameraX > 750 ) this.removeFromWorld = true;
+   // if (this.x - cameraX > 750 ) this.removeFromWorld = true;
     if (map.layer[bulletGroundY - 1][bulletGroundX] == 'v'
                 || map.layer[bulletGroundY ][bulletGroundX] == 'a'
                 || map.layer[bulletGroundY ][bulletGroundX] == 'd'
@@ -3470,7 +3481,7 @@ Bullet.prototype.update = function () {
         || map.layer[bulletGroundY -2][bulletGroundX] == 'x') ) {
             this.firingStance = 2;
         }
-        if (this.x <= this.startX - 500 ) this.removeFromWorld = true
+        if (this.x <= this.startX - 1000 ) this.removeFromWorld = true
         else if (!this.standing) this.x -= this.game.clockTick * this.speed;
         else if (this.firingStance === 0) this.y += this.game.clockTick * this.speed;
         else if (this.firingStance === 4) this.y -= this.game.clockTick * this.speed;
