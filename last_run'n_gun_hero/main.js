@@ -99,7 +99,7 @@ PlayGame.prototype.draw = function (ctx) {
         if (this.game.mouse) { ctx.fillStyle = "pink"; }
         if (this.game.Hero.lives > 0) {
             ctx.fillText("HIT IT!", this.x , this.y);
-            //NextLevel();
+            console.log("this not it");
 
 	    }else {
 		    ctx.fillText("Game Over!", this.x-30, this.y);
@@ -3143,12 +3143,8 @@ GiantRobot.prototype.update = function () {
         if(this.x - this.game.entities[2].x > 0) this.active = true;
         else this.active = false;
         if (this.enemyShoot && this.active) {
-            this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 80, this.forward
-                ,this.firingStance, false,false, this.unitType, 250, false, this.damage));
-            this.game.addEntity(new landMineFlash(this.game, AM.getAsset("./img/landMineFlash.png"),  this.x - 12, this.y + 60));
-            this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 80, this.forward
-                , 3, true,false, this.unitType, 300, false, this.damage));
-            this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 80, this.forward
+            this.game.addEntity(new landMineFlash(this.game, AM.getAsset("./img/landMineFlash.png"),  this.x - 12, this.y + 60))
+            this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 180, this.forward
                 , 1, true,false, this.unitType, 150, false, this.damage));
             this.enemyShoot = false;
             setTimeout(function(){
