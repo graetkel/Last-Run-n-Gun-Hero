@@ -666,7 +666,7 @@ lightningPowerUp.prototype.reset = function () {
 
 lightningPowerUp.prototype.update = function () {
     var mainguy = this.game.entities[2];
-
+    playaudioFX(gameEngine, "./music/Shock.m4a")
     if (powerUpCollide(this, mainguy)) {
         gameEngine.removePowerUp(this);
 
