@@ -1199,6 +1199,7 @@ function Hero(game, heroSprites,speed, ground, health, lives) {
     this.immune = false;
     this.falling = false;
     this.spaceTime = 0;
+    this.tempCeiling = 0;
     this.standtemp = 2;
     this.lookingRight = true;
     this.powerUpFire = false;
@@ -1407,6 +1408,7 @@ Hero.prototype.update = function () {
 			this.jumping = true;
 			this.falling = false;
 			this.spaceTime = this.game.timer.gameTime + 0.5;
+      this.tempCeiling = this.y - 150;
 		  }
 		}
     //---------
@@ -1492,7 +1494,8 @@ Hero.prototype.update = function () {
 				this.jumping = false;
 				this.falling = true;
 			  } else {
-				if (this.game.timer.gameTime <= this.spaceTime) {
+				// if (this.game.timer.gameTime <= this.spaceTime) {
+        if (this.tempCeiling <= this.y) {
 				  this.y = this.y - 5;
 				  this.falling = false;
 				} else {
