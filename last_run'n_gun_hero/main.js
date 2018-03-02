@@ -1474,6 +1474,8 @@ Hero.prototype.update = function () {
       }
 
 			if (this.jumping || this.falling) {
+                this.firingStance = 2;
+                this.standingStance = 2;
 			  this.frontJump.elapsedTime = 0;
 			  this.backJump.elapsedTime = 0;
 			}
