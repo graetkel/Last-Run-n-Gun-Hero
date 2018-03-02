@@ -1065,8 +1065,10 @@ function collide(thisUnit, otherUnit) {
                 else {
                     if (thisUnit.unitType !== otherUnit.unitType) {
                         if (otherUnit.unitType !== "blueRobot") {
-
-                            if (!otherUnit.immune) otherUnit.health -= thisUnit.damage;
+                            if (!otherUnit.immune)  {
+                                if (!isNaN(thisUnit.damage)) otherUnit.health -= thisUnit.damage;
+                                else otherUnit.health--;
+                            }
                         }
                         if (otherUnit.hero && !otherUnit.immune) {
                             otherUnit.hurt = true;
@@ -1254,8 +1256,7 @@ Hero.prototype.reset = function () {			// THU add
 }
 
 Hero.prototype.update = function () {
-    console.log(this.x);
-    console.log(this.y);
+
     if (this.DoubleDamagePowerUp) {
         this.damage = 2;
     }
