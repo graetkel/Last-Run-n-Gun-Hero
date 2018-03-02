@@ -3471,7 +3471,7 @@ Bullet.prototype.update = function () {
         }
     }
     else {
-        if (this.unitType === "giantRobot" && (map.layer[bulletGroundY][bulletGroundX] == 'v'
+        if ((this.unitType === "giantRobot" || this.unitType === "finalBoss") && (map.layer[bulletGroundY][bulletGroundX] == 'v'
         || map.layer[bulletGroundY -2][bulletGroundX] == 'a'
         || map.layer[bulletGroundY -2][bulletGroundX] == 'd'
         || map.layer[bulletGroundY -2][bulletGroundX] == 'x') ) {
@@ -3494,7 +3494,14 @@ Bullet.prototype.update = function () {
 }
 
 Bullet.prototype.draw = function () {
-	if (!this.game.running) return;
+    if (!this.game.running) return;
+    if (this.unitType === "finalBoss") {
+        this.ctx.fillStyle = "rgb(0,255,0)";
+        this.ctx.beginPath();
+        this.ctx.arc(this.x - cameraX,this.y + cameraY ,40,0,16*Math.PI); //this might be wrong
+        this.ctx.closePath();
+        this.ctx.fill();
+    }
     if (this.unitType === "giantRobot") {
         this.ctx.fillStyle = "rgb(0,255,0)";
         this.ctx.beginPath();
