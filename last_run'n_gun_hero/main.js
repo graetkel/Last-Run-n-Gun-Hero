@@ -232,19 +232,24 @@ FirePowerUp.prototype.update = function () {
 
     if (powerUpCollide(this, mainguy)) {
         gameEngine.removePowerUp(this);
-        mainguy.powerUpFire = true;
-        mainguy.immune = true;
-        //console.log("fired up!");
 
-        //if powerup is already active, clear the old timer
-        //and start a new one.
-        clearTimeout(firePowerupTimer);
+        //only applies if he doesnt have a defense powerup active
+        if (mainguy.defensePowerUp == false) {
+            mainguy.powerUpFire = true;
+            mainguy.immune = true;
+            mainguy.defensePowerUp = true;
 
-        firePowerupTimer = setTimeout(function removeFire() {
-            mainguy.powerUpFire = false;
-            mainguy.immune = false;
-            //console.log("fired down");
-            }, 7000);
+            //if powerup is already active, clear the old timer
+            //and start a new one.
+            clearTimeout(firePowerupTimer);
+
+            firePowerupTimer = setTimeout(function removeFire() {
+                mainguy.powerUpFire = false;
+                mainguy.immune = false;
+                mainguy.defensePowerUp = false;
+                }, 7000);
+        }
+
     }
 
     var groundX = Math.round(this.x/25) +1;
@@ -418,7 +423,7 @@ RapidFirePowerUp.prototype.draw = function () {
 }
 
 /*
-* double damage Fire Powerup
+* double damage Powerup
 */
 function DoubleDamagePowerUp(game, spritesheet, xLocation, yLocation) {
     this.animation = new Animation(spritesheet, this.x, this.y, 200, 200, 1, 0.10, 1, true);
@@ -583,15 +588,22 @@ lightningPowerUp.prototype.update = function () {
 
     if (powerUpCollide(this, mainguy)) {
         gameEngine.removePowerUp(this);
-        mainguy.powerUpLightning = true;
 
-        //if powerup is already active, clear the old timer
-        //and start a new one.
-        clearTimeout(lightningPowerUpTimer);
+        if (mainguy.defensePowerUp == false) {
+            mainguy.powerUpLightning = true;
+            mainguy.defensePowerUp = true;
 
-        lightningPowerUpTimer = setTimeout(function removeLightningPowerup() {
-            mainguy.powerUpLightning = false;
-            }, 7000);
+            //if powerup is already active, clear the old timer
+            //and start a new one.
+            clearTimeout(lightningPowerUpTimer);
+
+            lightningPowerUpTimer = setTimeout(function removeLightningPowerup() {
+                mainguy.powerUpLightning = false;
+                mainguy.defensePowerUp = false;
+                }, 7000);
+        }
+
+
     }
 
     var groundX = Math.round(this.x/25) +1;
@@ -1107,6 +1119,9 @@ function Hero(game, heroSprites,speed, ground, health, lives) {
     this.wallCollide = false;
     this.shootTemp = 2;
     this.throwGernade = false;
+
+    this.defensePowerUp = false;
+    this.offensePowerUp = false;
 
     Entity.call(this, game, 100, 525);
 }
@@ -2184,7 +2199,7 @@ EnemySoldier.prototype.update = function () {
         //Change the '* 1' inside the Math.random//
         /// to '* 10' to make it a 1/10th chance //
         ///////////////////////////////////////////
-        var powerUpChance =  Math.floor(Math.random() * 8) +1 ; //Generates a random number between 1-10
+        var powerUpChance = Math.floor(Math.random() * 8) +1 ; //Generates a random number between 1-10
         if (powerUpChance === 1) {
             gameEngine.addPowerUp(new FirePowerUp(gameEngine,
                 AM.getAsset("./img/firepowerup.png"), this.x, this.y - 50));
@@ -2878,7 +2893,7 @@ GunTurrent.prototype.update = function () {
         if (this.enemyShoot && this.active) {
             this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x - 5, this.y + 25))
             this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 30, this.forward
-                ,this.firingStance, false, false, this.unitType, 300,false, this.damage));
+                ,this.firingStance, false, false, this.unitType, 300, false, this.damage));
             this.enemyShoot = false;
             setTimeout(function(){
             enemyThat.enemyShoot = true;
