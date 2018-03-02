@@ -1719,11 +1719,13 @@ Hero.prototype.update = function () {
 
 		if (this.firing) {
 
+
 			if (this.CanShoot) {
 				if (this.standForward) {
 					if (this.jumping) {
 						if (this.jumpForward) {
                             if (this.SpreadShotPowerUp) {
+
                                 this.game.addEntity(new bulletFlash(this.game, AM.getAsset("./img/bulletFlash.png"),  this.x + 95, this.y + 38))
 
                                 this.game.addEntity(new Bullet(this.game, this.x + 110, this.y + 42, this.jumpForward
@@ -3417,6 +3419,7 @@ Bullet.prototype.update = function () {
     this.isCollide = false;
     this.collideForward = false
 
+
     var bulletGroundX = Math.round(this.x/25) + 1;
     var bulletGroundY = Math.floor((this.y )/25);
     if (this.y <= 70 || this.y >= 670) this.removeFromWorld = true;
@@ -3769,6 +3772,17 @@ function playaudio(obj,audiofile) {
   if (obj.mp3) {
       if(obj.mp3.paused) obj.mp3.play();
       else obj.mp3.pause();
+  } else {
+      obj.mp3 = new Audio(audiofile);
+      obj.mp3.play();
+  }
+  obj.innerHTML = (obj.mp3.paused) ? "Play" : "Pause";
+}
+
+function playaudioFX(obj,audiofile) {
+  if (obj.mp3) {
+      if(obj.mp3.paused) obj.mp3.play();
+      //else obj.mp3.pause();
   } else {
       obj.mp3 = new Audio(audiofile);
       obj.mp3.play();

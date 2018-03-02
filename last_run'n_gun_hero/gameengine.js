@@ -69,13 +69,13 @@ GameEngine.prototype.startInput = function () {
 
         return { x: x, y: y };
     }
-	
+
 	this.ctx.canvas.addEventListener("click", function (e) {  // THU add
         that.click = getXandY(e);
     }, false);
-	
+
     this.ctx.canvas.addEventListener("keydown", function (e) {
-        
+
         if (e.code === "KeyD") {
             that.d = true;
 
@@ -85,7 +85,7 @@ GameEngine.prototype.startInput = function () {
 
         }
         else if (String.fromCharCode(e.which) === ' ') that.space = true;
-        
+
         else if (e.code === "KeyS") {
             that.s = true;
         }
@@ -93,6 +93,7 @@ GameEngine.prototype.startInput = function () {
             that.w = true;
         }
         else if (e.code === "ArrowRight") {
+            playaudioFX(gameEngine, "./music/Pewww.m4a")
             that.shooting = true;
         }
         else if (e.code === "ArrowUp") {
@@ -107,15 +108,26 @@ GameEngine.prototype.startInput = function () {
         e.preventDefault();
        // console.log("Key down Event - Char " + e.code + " Code " + e.keyCode);
     }, false);
+
+    this.ctx.canvas.addEventListener("keydown", function (e) {
+
+        if (e.code === "ArrowRight") {
+
+            playaudioFX(gameEngine, "./music/Pewww.m4a")
+        }
+        e.preventDefault();
+       // console.log("Key down Event - Char " + e.code + " Code " + e.keyCode);
+    }, false);
+
     this.ctx.canvas.addEventListener("keyup", function (e) {
-        
+
         if (e.code === "KeyD") {
             that.d = false;
 
         }
         else if (e.code === "KeyA") {
             that.a = false;
-        
+
         }
         else if (e.code === "KeyS") {
             that.s = false;
@@ -124,6 +136,7 @@ GameEngine.prototype.startInput = function () {
             that.w = false;
         }
         else if (e.code === "ArrowRight") {
+
             that.shooting = false;
         }
         else if (e.code === "ArrowUp") {
@@ -192,7 +205,7 @@ GameEngine.prototype.getEntity = function () {
 }
 
 /**
- * Modified this function to include the drawing of the 
+ * Modified this function to include the drawing of the
  * Powerups.
  */
 GameEngine.prototype.draw = function () {
