@@ -18,7 +18,7 @@ var map2 = new mapTwo();
 var map3 = new mapThree();
 var map4 = new mapFour();
 
-var map = map2;
+var map = map1;
 
 
 //In order to get the camera feature to work make sure every
@@ -255,7 +255,7 @@ FirePowerUp.prototype.update = function () {
     var groundX = Math.round(this.x/25) +1;
     var groundY = Math.round(this.y/25);
 
-    if (this.y <= 15 || (this.y + 75) >= 675) {
+    if (this.y <= 15 || (this.y + 35) >= 675) {
       gameEngine.removePowerUp(this);
     }
 
@@ -321,7 +321,7 @@ HeartPowerUp.prototype.update = function () {
     var groundX = Math.round(this.x/25) +1;
     var groundY = Math.round(this.y/25);
 
-    if (this.y <= 15 || (this.y + 75) >= 675) {
+    if (this.y <= 15 || (this.y + 35) >= 675) {
       gameEngine.removePowerUp(this);
     }
 
@@ -386,7 +386,7 @@ GrenadePowerUp.prototype.update = function () {
     var groundX = Math.round(this.x/25) +1;
     var groundY = Math.round(this.y/25);
 
-    if (this.y <= 15 || (this.y + 75) >= 675) {
+    if (this.y <= 15 || (this.y + 35) >= 675) {
       gameEngine.removePowerUp(this);
     }
 
@@ -461,7 +461,7 @@ RapidFirePowerUp.prototype.update = function () {
     var groundX = Math.round(this.x/25) +1;
     var groundY = Math.round(this.y/25);
 
-    if (this.y <= 15 || (this.y + 75) >= 675) {
+    if (this.y <= 15 || (this.y + 35) >= 675) {
       gameEngine.removePowerUp(this);
     }
 
@@ -537,7 +537,7 @@ DoubleDamagePowerUp.prototype.update = function () {
     var groundX = Math.round(this.x/25) +1;
     var groundY = Math.round(this.y/25);
 
-    if (this.y <= 15 || (this.y + 75) >= 675) {
+    if (this.y <= 15 || (this.y + 35) >= 675) {
       gameEngine.removePowerUp(this);
     }
 
@@ -612,7 +612,7 @@ SpreadShotPowerUp.prototype.update = function () {
     var groundX = Math.round(this.x/25) +1;
     var groundY = Math.round(this.y/25);
 
-    if (this.y <= 15 || (this.y + 75) >= 675) {
+    if (this.y <= 15 || (this.y + 35) >= 675) {
       gameEngine.removePowerUp(this);
     }
 
@@ -689,7 +689,7 @@ lightningPowerUp.prototype.update = function () {
     var groundX = Math.round(this.x/25) +1;
     var groundY = Math.round(this.y/25);
 
-    if (this.y <= 15 || (this.y + 75) >= 675) {
+    if (this.y <= 15 || (this.y + 35) >= 675) {
       gameEngine.removePowerUp(this);
     }
 
