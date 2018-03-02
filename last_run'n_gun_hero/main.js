@@ -2557,57 +2557,57 @@ Robot.prototype.update = function () {
         var ent = this.game.entities[i];
         var robotGroundX = Math.round(this.x/25) + 1;
         var robotGroundY = Math.round(this.y/25);
-        if (ent.hero && (Math.abs(ent.x - this.x) < 50) && this.unitType === "greenRobot" && !this.jumping ) {
-            this.jumping = true;
-        }
-        if (this.jumping || this.falling) {
-            //this.gernadeThrow.elapsedTime = 0;
-          }
-          //### Start ##############################################################
+        // if (ent.hero && (Math.abs(ent.x - this.x) < 50) && this.unitType === "greenRobot" && !this.jumping ) {
+        //     this.jumping = true;
+        // }
+        // if (this.jumping || this.falling) {
+        //     //this.gernadeThrow.elapsedTime = 0;
+        //   }
+        //   //### Start ##############################################################
 
-          //This makes the hero go up if he jumps and once he gets to the top he falls
-          if (this.jumping) {
-            if (map.layer[robotGroundY-1][robotGroundX] == 's'
-                || map.layer[robotGroundY-1][robotGroundX] == 'b'
-                || map.layer[robotGroundY-1][robotGroundX] == 'f') {
-              this.jumping = false;
-              this.falling = true;
-            } else {
-              if (this.game.timer.gameTime <= this.spaceTime) {
-                this.y = this.y - 7;
-                this.falling = false;
-              } else {
-                this.falling = true;
-                this.jumping = false;
-              }
-            }
-          }
+        //   //This makes the hero go up if he jumps and once he gets to the top he falls
+        //   if (this.jumping) {
+        //     if (map.layer[robotGroundY-1][robotGroundX] == 's'
+        //         || map.layer[robotGroundY-1][robotGroundX] == 'b'
+        //         || map.layer[robotGroundY-1][robotGroundX] == 'f') {
+        //       this.jumping = false;
+        //       this.falling = true;
+        //     } else {
+        //       if (this.game.timer.gameTime <= this.spaceTime) {
+        //         this.y = this.y - 7;
+        //         this.falling = false;
+        //       } else {
+        //         this.falling = true;
+        //         this.jumping = false;
+        //       }
+        //     }
+        //   }
 
-          //If there is no platform right below hero, start falling
-          if (!this.jumping && !(map.layer[robotGroundY +1][robotGroundX] == 'v'
-              || map.layer[robotGroundY +1][robotGroundX] == 'a'
-              || map.layer[robotGroundY +1][robotGroundX] == 'd')) {
-            this.falling = true;
-          }
+        //   //If there is no platform right below hero, start falling
+        //   if (!this.jumping && !(map.layer[robotGroundY +1][robotGroundX] == 'v'
+        //       || map.layer[robotGroundY +1][robotGroundX] == 'a'
+        //       || map.layer[robotGroundY +1][robotGroundX] == 'd')) {
+        //     this.falling = true;
+        //   }
 
-          //If hero is falling
-          if (this.falling) {
-            //If there is a floor below the hero make it that the hero is not falling or jumping
+        //   //If hero is falling
+        //   if (this.falling) {
+        //     //If there is a floor below the hero make it that the hero is not falling or jumping
 
-            if (map.layer[robotGroundY +1 ][robotGroundX] == 'v'
-                || map.layer[robotGroundY +1][robotGroundX] == 'a'
-                || map.layer[robotGroundY +1][robotGroundX] == 'd') {
-                 this.falling = false;
-                 this.jumping = false;
-                 //Since I'm rounding the hero always land 10 pixels to early so I added some hard code.
-                 this.y += 10 //this only happens once
-            } else {
-              //if there is do platform below hero fall down, sum amount of pixels
-              if (this.falling) {
-                this.y += 10;
-              }
-            }
-        }
+        //     if (map.layer[robotGroundY +1 ][robotGroundX] == 'v'
+        //         || map.layer[robotGroundY +1][robotGroundX] == 'a'
+        //         || map.layer[robotGroundY +1][robotGroundX] == 'd') {
+        //          this.falling = false;
+        //          this.jumping = false;
+        //          //Since I'm rounding the hero always land 10 pixels to early so I added some hard code.
+        //          this.y += 10 //this only happens once
+        //     } else {
+        //       //if there is do platform below hero fall down, sum amount of pixels
+        //       if (this.falling) {
+        //         this.y += 10;
+        //       }
+        //     }
+        // }
         if (ent !== this && collide(this, ent)) {
             if (!ent.isBullet) {
                 this.isCollide = true;
@@ -3334,22 +3334,21 @@ Bullet.prototype.update = function () {
 
     var bulletGroundX = Math.round(this.x/25) + 1;
     var bulletGroundY = Math.floor((this.y )/25);
-    if (this.y <= 70 || this.y >= 700) this.removeFromWorld = true;
+    if (this.y <= 70 || this.y >= 670) this.removeFromWorld = true;
     if (this.x - cameraX > 750 ) this.removeFromWorld = true;
-    if (map.layer[bulletGroundY -1][bulletGroundX] == 'v'
-                || map.layer[bulletGroundY -2][bulletGroundX] == 'a'
-                || map.layer[bulletGroundY -2][bulletGroundX] == 'd'
-                || map.layer[bulletGroundY -2][bulletGroundX] == 'x') {
+    if (map.layer[bulletGroundY - 1][bulletGroundX] == 'v'
+                || map.layer[bulletGroundY ][bulletGroundX] == 'a'
+                || map.layer[bulletGroundY ][bulletGroundX] == 'd'
+                || map.layer[bulletGroundY ][bulletGroundX] == 'x') {
                     if (this.y > 560) {
                         if (this.y > 700) {
-                            console.log("hello");
+    
                             this.removeFromWorld = true;
                         }
                     }
                     else this.removeFromWorld = true;
                 }
-    console.log(this.y);
-    console.log(this.x - cameraX );
+
     for (var i = 0; i < this.game.entities.length; i++) {
         var ent = this.game.entities[i];
         if ((ent.unitType !== "flash") && ent !== this && collide(this, ent)) {
@@ -3892,13 +3891,13 @@ AM.downloadAll(function () {
     gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),6267,635, 1, 400));
     gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),8400,388, 1, 400));
 
-    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 3500, 376, 60, 1, "blueRobot",1000, 100, 400));
-    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 3608, 310, 60, 1, "redRobot", 1000, 50, 400));
-    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 6030, 575, 60, 1, "blueRobot", 1000, 70, 400));
-    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 7680, 530, 60, 1, "blueRobot", 1000, 100, 400));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 3320, 575, 60, 1, "blueRobot",1000, 100, 400));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 3608, 351 , 60, 1, "redRobot", 1000, 50, 400));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 6030, 630, 60, 1, "blueRobot", 1000, 70, 400));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 7680, 575, 60, 1, "blueRobot", 1000, 100, 400));
     gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 950, 476, 60, 1, "blueRobot", 1000, 100, 400));
-    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 6601, 502, 60, 1, "redRobot", 1000, 75, 400));
-      
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 6601, 551, 60, 1, "redRobot", 1000, 75, 400));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/green_Robot.png"), AM.getAsset("./img/green_Robot.png"), 9100, 575, 60, 1, "greenRobot", 9000, 525, 400));
     gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
      , AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
      , AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
