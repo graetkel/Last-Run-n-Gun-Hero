@@ -1516,7 +1516,7 @@ Hero.prototype.update = function () {
 				   this.falling = false;
 				   this.jumping = false;
 				   //Since I'm rounding the hero always land 10 pixels to early so I added some hard code.
-				   this.y += 5 //this only happens once
+				   this.y += 10 //this only happens once
 			  } else {
 				//if there is do platform below hero fall down, sum amount of pixels
 				if (this.falling) {
