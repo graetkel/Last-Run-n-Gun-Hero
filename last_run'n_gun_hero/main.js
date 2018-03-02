@@ -351,6 +351,70 @@ HeartPowerUp.prototype.draw = function () {
     }
 }
 
+/**
+ * Grenade Powerup
+ */
+function GrenadePowerUp(game, spritesheet, xLocation, yLocation) {
+    this.animation = new Animation(spritesheet, this.x, this.y, 200, 200, 1, 0.10, 1, true);
+    this.height = 60;
+    this.width = 75;
+    this.speed = 0;
+    this.falling = false;
+    this.ctx = game.ctx;
+    PowerUp.call(this, game, xLocation, yLocation);
+}
+
+GrenadePowerUp.prototype = new PowerUp();
+GrenadePowerUp.prototype.constructor = GrenadePowerUp;
+GrenadePowerUp.prototype.reset = function () {
+	this.falling = false;
+}
+
+
+GrenadePowerUp.prototype.update = function () {
+    var mainguy = this.game.entities[2];
+
+    if (powerUpCollide(this, mainguy)) {
+        gameEngine.removePowerUp(this);
+
+        if (mainguy.gernadeCount < 3) {
+            mainguy.gernadeCount++;
+            console.log(mainguy.gernadeCount);
+        }
+    }
+
+    var groundX = Math.round(this.x/25) +1;
+    var groundY = Math.round(this.y/25);
+
+    if (this.y <= 15 || (this.y + 75) >= 675) {
+      gameEngine.removePowerUp(this);
+    }
+
+    //if in the air, fall
+    if (!(map.layer[groundY+1][groundX] == 'v'
+            || map.layer[groundY+1][groundX] == 'a'
+            || map.layer[groundY+1][groundX] == 'd')) {
+          this.falling = true;
+        }
+
+    if (this.falling) {
+          if (map.layer[groundY+1][groundX] == 'v'
+              || map.layer[groundY+1][groundX] == 'a'
+              || map.layer[groundY+1][groundX] == 'd') {
+               this.falling = false;
+          } else {
+            if (this.falling) {
+              this.y += 3;
+            }
+          }
+        }
+}
+
+GrenadePowerUp.prototype.draw = function () {
+    if (this.game.running) {
+        this.animation.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY, .27);
+    }
+}
 
 /*
 * Rapid Fire Powerup
@@ -507,7 +571,7 @@ DoubleDamagePowerUp.prototype.draw = function () {
 * spread shot Powerup
 */
 function SpreadShotPowerUp(game, spritesheet, xLocation, yLocation) {
-    this.animation = new Animation(spritesheet, this.x, this.y, 150, 60, 1, 0.10, 1, true);
+    this.animation = new Animation(spritesheet, this.x, this.y, 225, 225, 1, 0.10, 1, true);
     this.height = 25;
     this.width = 100;
     this.speed = 0;
@@ -574,7 +638,7 @@ SpreadShotPowerUp.prototype.update = function () {
 
 SpreadShotPowerUp.prototype.draw = function () {
     if (this.game.running) {
-        this.animation.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY, .3);
+        this.animation.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY, .2);
     }
 }
 
@@ -2267,7 +2331,11 @@ EnemySoldier.prototype.update = function () {
         }
         else if (powerUpChance === 6) {
             gameEngine.addPowerUp(new SpreadShotPowerUp(gameEngine,
-                AM.getAsset("./img/bananas.png"), this.x, this.y -50));
+                AM.getAsset("./img/triple.png"), this.x, this.y -50));
+        } 
+        else if (powerUpChance === 7) {
+            gameEngine.addPowerUp(new GrenadePowerUp(gameEngine,
+                AM.getAsset("./img/grenadeIcon.png"), this.x, this.y -50));
         }
     }
     for (var i = 0; i < this.game.entities.length; i++) {
@@ -2467,7 +2535,11 @@ Robot.prototype.update = function () {
             }
             else if (powerUpChance === 6) {
                 gameEngine.addPowerUp(new SpreadShotPowerUp(gameEngine,
-                    AM.getAsset("./img/bananas.png"), this.x, this.y -50));
+                    AM.getAsset("./img/triple.png"), this.x, this.y -50));
+            }
+            else if (powerUpChance === 7) {
+                gameEngine.addPowerUp(new GrenadePowerUp(gameEngine,
+                    AM.getAsset("./img/grenadeIcon.png"), this.x, this.y -50));
             }
         }
     }
@@ -2924,7 +2996,11 @@ GunTurrent.prototype.update = function () {
             }
             else if (powerUpChance === 6) {
                 gameEngine.addPowerUp(new SpreadShotPowerUp(gameEngine,
-                    AM.getAsset("./img/bananas.png"), this.x, this.y -50));
+                    AM.getAsset("./img/triple.png"), this.x, this.y -50));
+            }
+            else if (powerUpChance === 7) {
+                gameEngine.addPowerUp(new GrenadePowerUp(gameEngine,
+                    AM.getAsset("./img/grenadeIcon.png"), this.x, this.y -50));
             }
     }
     for (var i = 0; i < this.game.entities.length; i++) {
@@ -3116,7 +3192,11 @@ FlyingRobot.prototype.update = function () {
             }
             else if (powerUpChance === 6) {
                 gameEngine.addPowerUp(new SpreadShotPowerUp(gameEngine,
-                    AM.getAsset("./img/bananas.png"), this.x, this.y -50));
+                    AM.getAsset("./img/triple.png"), this.x, this.y -50));
+            }
+            else if (powerUpChance === 7) {
+                gameEngine.addPowerUp(new GrenadePowerUp(gameEngine,
+                    AM.getAsset("./img/grenadeIcon.png"), this.x, this.y -50));
             }
     }
     if ((Math.abs(this.game.entities[2].x - this.center) < 130)) this.heroInRange = true;
@@ -3563,6 +3643,8 @@ AM.queueDownload("./img/singleGernade.png");
 AM.queueDownload("./img/LightningOrbs.png");
 AM.queueDownload("./img/Chieftain_Pump_Shotgun_icon.png");
 AM.queueDownload("./img/bananas.png");
+AM.queueDownload("./img/grenadeIcon.png");
+AM.queueDownload("./img/triple.png");
 //floor
 AM.queueDownload("./img/eFloor.png");
 AM.queueDownload("./img/midFloor.png");
