@@ -18,7 +18,7 @@ var map2 = new mapTwo();
 var map3 = new mapThree();
 var map4 = new mapFour();
 
-var map = map1;
+var map = map2;
 
 
 //In order to get the camera feature to work make sure every
@@ -971,20 +971,25 @@ function collide(thisUnit, otherUnit) {
 
                 }
                 else {
-                    if (otherUnit.unitType !== "blueRobot") {
+                    if (thisUnit.unitType !== otherUnit.unitType) {
+                        if (otherUnit.unitType !== "blueRobot") {
 
-                        if (!otherUnit.immune) otherUnit.health -= thisUnit.damage;
+                            if (!otherUnit.immune) otherUnit.health -= thisUnit.damage;
+                        }
+                        if (otherUnit.hero && !otherUnit.immune) {
+                            otherUnit.hurt = true;
+                        }
+                        thisUnit.removeFromWorld = true;
                     }
-                    if (otherUnit.hero && !otherUnit.immune) {
-                        otherUnit.hurt = true;
-                    }
-                    thisUnit.removeFromWorld = true;
                 }
             }
             if (thisUnit.hero) {
-                if (otherUnit.landMine && !thisUnit.immune) {
-                    thisUnit.health -= 4;
-                    thisUnit.hurt = true;
+                if (otherUnit.landMine) {
+                    if (!thisUnit.immune) {
+                        thisUnit.health -= 4;
+                        thisUnit.hurt = true;
+                        
+                    }
                     otherUnit.health = 0;
                 }
                 else if (otherUnit.enemy && !thisUnit.immune){
@@ -1062,8 +1067,7 @@ function Hero(game, heroSprites,speed, ground, health, lives) {
 
 
     this.jumping = false;
-    // this.speed = speed;
-    this.speed = 500;
+    this.speed = speed;
 
     this.health = health;
     this.hero = true;
@@ -1155,6 +1159,8 @@ Hero.prototype.reset = function () {			// THU add
 }
 
 Hero.prototype.update = function () {
+    console.log(this.x);
+    console.log(this.y);
     if (this.DoubleDamagePowerUp) {
         this.damage = 2;
     }
@@ -1302,7 +1308,7 @@ Hero.prototype.update = function () {
 		  if (!this.falling && !this.jumping) {
 			this.jumping = true;
 			this.falling = false;
-			this.spaceTime = this.game.timer.gameTime + 0.5;
+			this.spaceTime = this.game.timer.gameTime + 0.7;
 		  }
 		}
     //---------
@@ -1387,7 +1393,7 @@ Hero.prototype.update = function () {
 				this.falling = true;
 			  } else {
 				if (this.game.timer.gameTime <= this.spaceTime) {
-				  this.y = this.y - 5;
+				  this.y = this.y - 10;
 				  this.falling = false;
 				} else {
 				  this.falling = true;
@@ -1417,7 +1423,7 @@ Hero.prototype.update = function () {
 			  } else {
 				//if there is do platform below hero fall down, sum amount of pixels
 				if (this.falling) {
-				  this.y += 5;
+				  this.y += 10;
 				}
 			  }
 			} // End of if falling statement
@@ -2335,6 +2341,7 @@ function Robot(game, backRunSprite, frontRunSprite, xCord, yCord, unitSpeed, hea
     this.enemy = true;
     this.ground = 500;
     this.jumping = false;
+    this.falling = false;
     this.height = 36;
     this.forward = true;
     this.center = xCord;
@@ -2411,26 +2418,58 @@ Robot.prototype.update = function () {
     }
     for (var i = 0; i < this.game.entities.length; i++) {
         var ent = this.game.entities[i];
+        var robotGroundX = Math.round(this.x/25) + 1;
+        var robotGroundY = Math.round(this.y/25);
         if (ent.hero && (Math.abs(ent.x - this.x) < 50) && this.unitType === "greenRobot" && !this.jumping ) {
             this.jumping = true;
         }
-        if (this.jumping) {
-            this.standingStance = 2;
-            if (this.robotBackRun.isDone() || this.robotFrontRun.isDone()) {
-                this.frontRunSprite.elapsedTime = 0;
-                this.backRunSprite.elapsedTime = 0;
-                this.jumping = false;
-                this.standForward = this.jumpForward;
-            }
-            var jumpDistance;
-            if (this.robotFrontRun.elapsedTime > 0) jumpDistance = this.robotFrontRun.elapsedTime / this.robotFrontRun.totalTime;
-            else jumpDistance = this.robotBackRun.elapsedTime / this.robotBackRun.totalTime;
-            var totalHeight = 200;
-            if (jumpDistance > 0.5)
-                jumpDistance = 1 - jumpDistance;
-                var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
+        if (this.jumping || this.falling) {
+            //this.gernadeThrow.elapsedTime = 0;
+          }
+          //### Start ##############################################################
 
-            this.y = this.ground - height;
+          //This makes the hero go up if he jumps and once he gets to the top he falls
+          if (this.jumping) {
+            if (map.layer[robotGroundY-1][robotGroundX] == 's'
+                || map.layer[robotGroundY-1][robotGroundX] == 'b'
+                || map.layer[robotGroundY-1][robotGroundX] == 'f') {
+              this.jumping = false;
+              this.falling = true;
+            } else {
+              if (this.game.timer.gameTime <= this.spaceTime) {
+                this.y = this.y - 7;
+                this.falling = false;
+              } else {
+                this.falling = true;
+                this.jumping = false;
+              }
+            }
+          }
+
+          //If there is no platform right below hero, start falling
+          if (!this.jumping && !(map.layer[robotGroundY +1][robotGroundX] == 'v'
+              || map.layer[robotGroundY +1][robotGroundX] == 'a'
+              || map.layer[robotGroundY +1][robotGroundX] == 'd')) {
+            this.falling = true;
+          }
+
+          //If hero is falling
+          if (this.falling) {
+            //If there is a floor below the hero make it that the hero is not falling or jumping
+
+            if (map.layer[robotGroundY +1 ][robotGroundX] == 'v'
+                || map.layer[robotGroundY +1][robotGroundX] == 'a'
+                || map.layer[robotGroundY +1][robotGroundX] == 'd') {
+                 this.falling = false;
+                 this.jumping = false;
+                 //Since I'm rounding the hero always land 10 pixels to early so I added some hard code.
+                 this.y += 10 //this only happens once
+            } else {
+              //if there is do platform below hero fall down, sum amount of pixels
+              if (this.falling) {
+                this.y += 10;
+              }
+            }
         }
         if (ent !== this && collide(this, ent)) {
             if (!ent.isBullet) {
@@ -2438,6 +2477,7 @@ Robot.prototype.update = function () {
                 if (this.x < ent.x) this.collideForward = true;
             }
         }
+    
 
     }
 
@@ -2529,7 +2569,7 @@ robotFlash.prototype.draw = function () {
 }
 
 function landMine(game, landMineSprite,  xCord, yCord, health, scores) {
-    this.landMineActive = new Animation(landMineSprite, this.x, this.y, 22.75, 20, 4, 0.1, 4, true);
+    this.landMineActive = new Animation(landMineSprite, this.x, this.y, 22.79, 20, 4, 0.1, 4, true);
     this.ctx = game.ctx;
     this.width = 22;
     this.health = health;
@@ -3146,6 +3186,25 @@ Bullet.prototype.reset = function () {
 Bullet.prototype.update = function () {
     this.isCollide = false;
     this.collideForward = false
+
+    var bulletGroundX = Math.round(this.x/25) + 1;
+    var bulletGroundY = Math.floor((this.y )/25);
+    if (this.y <= 70 || this.y >= 700) this.removeFromWorld = true;
+    if (this.x - cameraX > 750 ) this.removeFromWorld = true;
+    if (map.layer[bulletGroundY -1][bulletGroundX] == 'v'
+                || map.layer[bulletGroundY -2][bulletGroundX] == 'a'
+                || map.layer[bulletGroundY -2][bulletGroundX] == 'd'
+                || map.layer[bulletGroundY -2][bulletGroundX] == 'x') {
+                    if (this.y > 560) {
+                        if (this.y > 700) {
+                            console.log("hello");
+                            this.removeFromWorld = true;
+                        }
+                    }
+                    else this.removeFromWorld = true;
+                }
+    console.log(this.y);
+    console.log(this.x - cameraX );
     for (var i = 0; i < this.game.entities.length; i++) {
         var ent = this.game.entities[i];
         if ((ent.unitType !== "flash") && ent !== this && collide(this, ent)) {
@@ -3160,7 +3219,7 @@ Bullet.prototype.update = function () {
         this.y += this.game.clockTick * this.speed;
     }
     if (this.forward) {
-        if (this.x >= this.startX + 500 || this.y > this.gameGround) {
+        if (this.x >= this.startX + 500 ) {
             this.removeFromWorld = true;
         }
         else if (!this.standing) this.x += this.game.clockTick * this.speed;
@@ -3176,11 +3235,13 @@ Bullet.prototype.update = function () {
         }
     }
     else {
-        if (this.unitType === "giantRobot" && this.y > this.gameGround) this.firingStance = 2;
-        if (this.x <= this.startX - 500 ) this.removeFromWorld = true;
-        if ( this.y > this.gameGround && this.unitType !== "giantRobot") {
-             this.removeFromWorld = true;
+        if (this.unitType === "giantRobot" && (map.layer[bulletGroundY][bulletGroundX] == 'v'
+        || map.layer[bulletGroundY -2][bulletGroundX] == 'a'
+        || map.layer[bulletGroundY -2][bulletGroundX] == 'd'
+        || map.layer[bulletGroundY -2][bulletGroundX] == 'x') ) {
+            this.firingStance = 2;
         }
+        if (this.x <= this.startX - 500 ) this.removeFromWorld = true
         else if (!this.standing) this.x -= this.game.clockTick * this.speed;
         else if (this.firingStance === 4) this.y -= this.game.clockTick * this.speed;
         else if (this.firingStance === 2) this.x -= this.game.clockTick * this.speed;
@@ -3595,41 +3656,114 @@ AM.downloadAll(function () {
         // gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),2081,610, 1, 700));
 
     } else if (map == map2) {
+    gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
+     , AM.getAsset("./img/flyingRobot_Forward.png"), 200, 125, 60, 2, 500, 100, 200));
+    gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
+     , AM.getAsset("./img/flyingRobot_Forward.png"), 900, 125, 60, 2, 500, 100, 200));
+     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
+     , AM.getAsset("./img/flyingRobot_Forward.png"), 1950, 100, 60, 2, 500, 100, 200));
+     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
+     , AM.getAsset("./img/flyingRobot_Forward.png"), 2960, 100, 60, 2, 500, 100, 200));
+     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
+     , AM.getAsset("./img/flyingRobot_Forward.png"), 6000, 100, 60, 2, 500, 100, 200));
+     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
+     , AM.getAsset("./img/flyingRobot_Forward.png"), 9860, 100, 60, 2, 500, 100, 200));
+     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
+     , AM.getAsset("./img/flyingRobot_Forward.png"), 9700, 150, 60, 2, 500, 100, 200));
+     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
+     , AM.getAsset("./img/flyingRobot_Forward.png"), 9300, 100, 60, 2, 500, 100, 200));
+     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
+     , AM.getAsset("./img/flyingRobot_Forward.png"), 1350, 70, 60, 2, 500, 100, 200));
+     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
+     , AM.getAsset("./img/flyingRobot_Forward.png"), 3350, 70, 60, 2, 500, 100, 200));
+     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
+     , AM.getAsset("./img/flyingRobot_Forward.png"), 7234, 100, 60, 2, 500, 100, 200));
+     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
+     , AM.getAsset("./img/flyingRobot_Forward.png"), 8761, 150, 60, 2, 500, 100, 200));
+   
+    gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),600,610, 1, 400));
+    gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),1716,610, 1, 400));
+    gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),3600,539, 1, 400));
+    gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),3420,314, 1, 400));
+    gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),4110,660, 1, 400));
+    gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),6267,635, 1, 400));
+    gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),8400,388, 1, 400));
 
-    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 300, 575, 60, 1, "redRobot"));
-    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 1200, 376, 60, 1, "blueRobot"));
-    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 1800, 575, 60, 1, "blueRobot"));
-    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 850, 476, 60, 1, "redRobot"));
-    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 950, 476, 60, 1, "blueRobot"));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 3500, 376, 60, 1, "blueRobot",1000, 100, 400));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 3608, 310, 60, 1, "redRobot", 1000, 50, 400));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 6030, 575, 60, 1, "blueRobot", 1000, 70, 400));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 7680, 530, 60, 1, "blueRobot", 1000, 100, 400));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/blue_Robot.png"), AM.getAsset("./img/blue_Robot.png"), 950, 476, 60, 1, "blueRobot", 1000, 100, 400));
+    gameEngine.addEntity(new Robot(gameEngine, AM.getAsset("./img/red_Robot.png"), AM.getAsset("./img/red_Robot.png"), 6601, 502, 60, 1, "redRobot", 1000, 75, 400));
+      
     gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
      , AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
      , AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
-     , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 800, 524, 200, 3, 1000));
+     , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 750, 524, 200, 3, 1000, 100, 400));
+     gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
+     , AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
+     , AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
+     , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 4000, 75, 200, 3, 1000, 100, 400));
     gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
      , AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
      , AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
-     , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 2000, 524, 200, 3, 2000));
+     , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 1125, 325, 200, 3, 2000, 100, 400));
     gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
      , AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
      , AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
-     , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 2300, 524, 200, 3, 3000));
+     , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 2330, 524, 200, 3, 3000, 100, 400));
     gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
      , AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
      , AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
-     , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 2400, 524, 200, 3, 400));
-     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
-     , AM.getAsset("./img/flyingRobot_Forward.png"), 1000, 125, 60, 2, 500));
-     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
-     , AM.getAsset("./img/flyingRobot_Forward.png"), 900, 75, 60, 2, 600));
+     , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 3500, 524, 200, 3, 400, 100, 400));
+     gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
+     , AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
+     , AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
+     , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 3433, 380, 200, 3, 400, 50, 400));
+     gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
+     , AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
+     , AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
+     , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 5785, 575, 200, 3, 400, 50, 400));
+     gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
+     , AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
+     , AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
+     , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 4310, 225, 200, 3, 400, 50, 400));
+     gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
+     , AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
+     , AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
+     , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 3000, 524, 200, 3, 400, 50, 400));
+     gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
+     , AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
+     , AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
+     , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 5187, 580, 200, 3, 400, 50, 400));
+     gameEngine.addEntity(new EnemySoldier(gameEngine, AM.getAsset("./img/enemySoldier_Backward.png")
+     , AM.getAsset("./img/enemySoldier_Foward.png"), AM.getAsset("./img/enemySoldier_StandingBackward.png")
+     , AM.getAsset("./img/enemySoldier_StandingFoward.png"),AM.getAsset("./img/enemySoldier_CrouchFoward.png")
+     , AM.getAsset("./img/enemySoldier_CrouchBackward.png"), 8757, 525, 200, 3, 400, 50, 400));
+     
+     
      gameEngine.addEntity(new GiantRobot(gameEngine, AM.getAsset("./img/giantRobotFiringFoward.png")
-     , AM.getAsset("./img/giantRobotFoward.png"),2450,175, 8, 700));
+     , AM.getAsset("./img/giantRobotFoward.png"),2450,175, 8, 700, 400));
+     gameEngine.addEntity(new GiantRobot(gameEngine, AM.getAsset("./img/giantRobotFiringFoward.png")
+     , AM.getAsset("./img/giantRobotFoward.png"),7300,400, 8, 700, 400));
+     gameEngine.addEntity(new GiantRobot(gameEngine, AM.getAsset("./img/giantRobotFiringFoward.png")
+     , AM.getAsset("./img/giantRobotFoward.png"),10095,425, 8, 700, 400));
+     gameEngine.addEntity(new GiantRobot(gameEngine, AM.getAsset("./img/giantRobotFiringFoward.png")
+     , AM.getAsset("./img/giantRobotFoward.png"),9650,425, 8, 700, 400));
      gameEngine.addEntity(new GunTurrent(gameEngine, AM.getAsset("./img/firingGunTurrent.png")
-     , AM.getAsset("./img/idleGunTurrent.png"),1950, 365, 5, 800));
+     , AM.getAsset("./img/idleGunTurrent.png"),1240, 565, 5, 800, 400));
      gameEngine.addEntity(new GunTurrent(gameEngine, AM.getAsset("./img/firingGunTurrent.png")
-     , AM.getAsset("./img/idleGunTurrent.png"),4150, 415, 5, 900));
+     , AM.getAsset("./img/idleGunTurrent.png"),1680, 366, 5, 900, 400));
      gameEngine.addEntity(new GunTurrent(gameEngine, AM.getAsset("./img/firingGunTurrent.png")
-     , AM.getAsset("./img/idleGunTurrent.png"),4675, 90, 5, 1000));
-
+     , AM.getAsset("./img/idleGunTurrent.png"),2580, 565, 5, 1000, 400));
+     gameEngine.addEntity(new GunTurrent(gameEngine, AM.getAsset("./img/firingGunTurrent.png")
+     , AM.getAsset("./img/idleGunTurrent.png"),4680, 90, 5, 1000, 400));
+     gameEngine.addEntity(new GunTurrent(gameEngine, AM.getAsset("./img/firingGunTurrent.png")
+     , AM.getAsset("./img/idleGunTurrent.png"),4445, 615, 5, 1000, 400));
+     gameEngine.addEntity(new GunTurrent(gameEngine, AM.getAsset("./img/firingGunTurrent.png")
+     , AM.getAsset("./img/idleGunTurrent.png"),5000, 615, 5, 1000, 400));
+     gameEngine.addEntity(new GunTurrent(gameEngine, AM.getAsset("./img/firingGunTurrent.png")
+     , AM.getAsset("./img/idleGunTurrent.png"),4141, 415, 5, 1000, 400));
   } else if (map == map3) {
 
   } else if (map == map4) {
