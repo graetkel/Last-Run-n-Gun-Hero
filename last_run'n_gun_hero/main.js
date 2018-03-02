@@ -378,15 +378,20 @@ RapidFirePowerUp.prototype.update = function () {
 
     if (powerUpCollide(this, mainguy)) {
         gameEngine.removePowerUp(this);
-        mainguy.powerUpRapidFire = true;
 
-        //if powerup is already active, clear the old timer
-        //and start a new one.
-        clearTimeout(rapidFirePowerUpTimer);
+        if (mainguy.offensePowerUp == false) {
+            mainguy.powerUpRapidFire = true;
+            mainguy.offensePowerUp = true;
 
-        rapidFirePowerUpTimer = setTimeout(function removeRapidFire() {
-            mainguy.powerUpRapidFire = false;
-            }, 7000);
+            //if powerup is already active, clear the old timer
+            //and start a new one.
+            clearTimeout(rapidFirePowerUpTimer);
+
+            rapidFirePowerUpTimer = setTimeout(function removeRapidFire() {
+                mainguy.powerUpRapidFire = false;
+                mainguy.offensePowerUp = false;
+                }, 7000);
+        }
     }
 
     var groundX = Math.round(this.x/25) +1;
@@ -448,15 +453,21 @@ DoubleDamagePowerUp.prototype.update = function () {
 
     if (powerUpCollide(this, mainguy)) {
         gameEngine.removePowerUp(this);
-        mainguy.DoubleDamagePowerUp = true;
 
-        //if powerup is already active, clear the old timer
-        //and start a new one.
-        clearTimeout(DoubleDamagePowerUpTimer);
+        if (mainguy.offensePowerUp == false) {
 
-        DoubleDamagePowerUpTimer = setTimeout(function removeDoubleDamage() {
-            mainguy.DoubleDamagePowerUp = false;
-            }, 7000);
+            mainguy.DoubleDamagePowerUp = true;
+            mainguy.offensePowerUp = true;
+
+            //if powerup is already active, clear the old timer
+            //and start a new one.
+            clearTimeout(DoubleDamagePowerUpTimer);
+
+            DoubleDamagePowerUpTimer = setTimeout(function removeDoubleDamage() {
+                mainguy.DoubleDamagePowerUp = false;
+                mainguy.offensePowerUp = false;
+                }, 7000);
+        }
     }
 
     var groundX = Math.round(this.x/25) +1;
@@ -518,15 +529,20 @@ SpreadShotPowerUp.prototype.update = function () {
 
     if (powerUpCollide(this, mainguy)) {
         gameEngine.removePowerUp(this);
-        mainguy.SpreadShotPowerUp = true;
 
-        //if powerup is already active, clear the old timer
-        //and start a new one.
-        clearTimeout(SpreadShotPowerUpTimer);
+        if (mainguy.offensePowerUp == false) {
+            mainguy.SpreadShotPowerUp = true;
+            mainguy.offensePowerUp = true;
 
-        SpreadShotPowerUpTimer = setTimeout(function removeDoubleDamage() {
-            mainguy.SpreadShotPowerUp = false;
-            }, 7000);
+            //if powerup is already active, clear the old timer
+            //and start a new one.
+            clearTimeout(SpreadShotPowerUpTimer);
+
+            SpreadShotPowerUpTimer = setTimeout(function removeDoubleDamage() {
+                mainguy.SpreadShotPowerUp = false;
+                mainguy.offensePowerUp = false;
+                }, 7000);
+        }
     }
 
     var groundX = Math.round(this.x/25) +1;
