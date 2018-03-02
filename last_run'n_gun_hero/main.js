@@ -18,7 +18,7 @@ var map2 = new mapTwo();
 var map3 = new mapThree();
 var map4 = new mapFour();
 
-var map = map1;
+var map = map4;
 
 
 //In order to get the camera feature to work make sure every
@@ -1463,7 +1463,15 @@ Hero.prototype.update = function () {
 				if (map.layer[heroGroundY][heroGroundX+1] == 'a'
 					|| map.layer[heroGroundY][heroGroundX+1] == 'z'
 					|| map.layer[heroGroundY][heroGroundX+1] == 's') {
-					  if (!this.hurt) this.x -= this.game.clockTick * this.speed;
+                      if (!this.hurt) this.x -= this.game.clockTick * this.speed;
+
+                        //added in to keep background from moving when colliding with walls
+                        if (mainguy.wallCollide == false){
+                            mainguy.wallCollide = true;
+                            setTimeout(function stallWallColide() {
+                                mainguy.wallCollide = false;
+                                }, 400);
+                            }
 				}
 				//Right of hero's torso
 				if (map.layer[heroGroundY+1][heroGroundX+1] == 'a'
@@ -1471,13 +1479,13 @@ Hero.prototype.update = function () {
 					|| map.layer[heroGroundY+1][heroGroundX+1] == 's') {
 						if (!this.hurt) this.x -= this.game.clockTick * this.speed;
 
-					  //added in to keep background from moving when colliding with walls
-					  if (mainguy.wallCollide == false){
-						  mainguy.wallCollide = true;
-						setTimeout(function stallWallColide() {
-							mainguy.wallCollide = false;
-							}, 300);
-					  }
+                        //added in to keep background from moving when colliding with walls
+                        if (mainguy.wallCollide == false){
+                            mainguy.wallCollide = true;
+                            setTimeout(function stallWallColide() {
+                                mainguy.wallCollide = false;
+                                }, 400);
+                        }
 				}
 				//Right of hero's legs
 				if (map.layer[heroGroundY+2][heroGroundX+1] == 'a'
@@ -1486,12 +1494,12 @@ Hero.prototype.update = function () {
                         if (!this.hurt) this.x -= this.game.clockTick * this.speed;
 
                         //added in to keep background from moving when colliding with walls
-					  if (mainguy.wallCollide == false){
-                        mainguy.wallCollide = true;
-                      setTimeout(function stallWallColide() {
-                          mainguy.wallCollide = false;
-                          }, 300);
-                    }
+                        if (mainguy.wallCollide == false){
+                            mainguy.wallCollide = true;
+                            setTimeout(function stallWallColide() {
+                            mainguy.wallCollide = false;
+                            }, 400);
+                            }
 				}
 				//Right of the ground below hero (Need this for special cases)
 				if ((map.layer[heroGroundY+3][heroGroundX+1] == 'a'
@@ -1501,12 +1509,12 @@ Hero.prototype.update = function () {
                         if (!this.hurt) this.x -= this.game.clockTick * this.speed;
 
                         //added in to keep background from moving when colliding with walls
-					  if (mainguy.wallCollide == false){
-                        mainguy.wallCollide = true;
-                      setTimeout(function stallWallColide() {
-                          mainguy.wallCollide = false;
-                          }, 300);
-                    }
+                        if (mainguy.wallCollide == false){
+                            mainguy.wallCollide = true;
+                            setTimeout(function stallWallColide() {
+                            mainguy.wallCollide = false;
+                            }, 400);
+                            }
 				}
 			  }
 
@@ -1516,7 +1524,15 @@ Hero.prototype.update = function () {
 				if (map.layer[heroGroundY][heroGroundX-1] == 'd'
 					|| map.layer[heroGroundY][heroGroundX-1] == 'x'
 					|| map.layer[heroGroundY][heroGroundX-1] == 'f') {
-						if (!this.hurt) this.x += this.game.clockTick * this.speed;
+                        if (!this.hurt) this.x += this.game.clockTick * this.speed;
+                        
+                        //added in to keep background from moving when colliding with walls
+                        if (mainguy.wallCollide == false){
+                            mainguy.wallCollide = true;
+                            setTimeout(function stallWallColide() {
+                                mainguy.wallCollide = false;
+                                }, 400);
+                        }
 				}
 				//Left of hero's torso
 				if (map.layer[heroGroundY+1][heroGroundX-1] == 'd'
@@ -1527,23 +1543,39 @@ Hero.prototype.update = function () {
 					  //added in to keep background from moving when colliding with walls
 					  if (mainguy.wallCollide == false){
 						mainguy.wallCollide = true;
-					  setTimeout(function removeFire() {
+					    setTimeout(function removeFire() {
 						  mainguy.wallCollide = false;
-						  }, 300);
-					}
+						  }, 400);
+					    }
 				}
 				//Left of hero's legs
 				if (map.layer[heroGroundY+2][heroGroundX-1] == 'd'
 					|| map.layer[heroGroundY+2][heroGroundX-1] == 'x'
 					|| map.layer[heroGroundY+2][heroGroundX-1] == 'f') {
-						if (!this.hurt) this.x += this.game.clockTick * this.speed;
+                        if (!this.hurt) this.x += this.game.clockTick * this.speed;
+
+                        //added in to keep background from moving when colliding with walls
+                        if (mainguy.wallCollide == false){
+                            mainguy.wallCollide = true;
+                            setTimeout(function stallWallColide() {
+                              mainguy.wallCollide = false;
+                              }, 400);
+                        }
 				}
 				//left of the ground below hero (Need this for special cases)
 				if ((map.layer[heroGroundY+3][heroGroundX-1] == 'd'
 					|| map.layer[heroGroundY+3][heroGroundX-1] == 'x'
 					|| map.layer[heroGroundY+3][heroGroundX-1] == 'f')
 					&& this.falling) {
-						if (!this.hurt) this.x += this.game.clockTick * this.speed;
+                        if (!this.hurt) this.x += this.game.clockTick * this.speed;
+                        
+                        //added in to keep background from moving when colliding with walls
+                        if (mainguy.wallCollide == false){
+                            mainguy.wallCollide = true;
+                            setTimeout(function stallWallColide() {
+                              mainguy.wallCollide = false;
+                              }, 400);
+                        }
 				}
 			  }
 			}
