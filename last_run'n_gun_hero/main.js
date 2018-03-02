@@ -3170,6 +3170,96 @@ GiantRobot.prototype.draw = function () {
     Entity.prototype.draw.call(this);
 }
 
+function FinalBoss(game, firingGunSprite,idleGunSprite,  xCord, yCord, health, scores, sight) {
+    this.gunTurrentIdle = new Animation(idleGunSprite, this.x, this.y, 707, 550, 1, 0.1, 1, true);
+    this.gunTurrentFiring = new Animation(firingGunSprite, this.x, this.y, 727.5, 550, 2, 0.5, 2, true);
+    this.health = health;
+    this.ctx = game.ctx;
+    this.sight = sight;
+    this.damage = 3;
+    this.unitType = "finalBoss";
+    this.width = 200;
+    this.gunTurrent = true;
+    this.enemy = true;
+    this.isDead = false;
+    this.enemyShoot = true;
+    this.height = 200;
+    this.active = true;
+    this.center = xCord;
+	this.scores = scores;
+    Entity.call(this, game, xCord, yCord);
+}
+
+FinalBoss.prototype = new Entity();
+FinalBoss.prototype.constructor = FinalBoss;
+
+FinalBoss.prototype.reset = function () {
+	this.gunTurrent = true;
+    this.enemy = true;
+    this.isDead = false;
+    this.enemyShoot = true;
+    this.active = true;
+}
+
+
+FinalBoss.prototype.update = function () {
+    var enemyThat = this;
+    this.isCollide = false;
+    this.collideForward = false;
+    if (this.health <= 0) this.isDead = true;
+    if (this.isDead) {
+		this.game.entities[2].scores += this.scores;
+		this.game.scores.innerHTML = "Scores: " + this.game.entities[2].scores;
+        this.removeFromWorld = true;
+
+        //drops 3 lives when killed
+        gameEngine.addPowerUp(new HeartPowerUp(gameEngine,
+            AM.getAsset("./img/heart.png"), this.x, this.y));
+        gameEngine.addPowerUp(new HeartPowerUp(gameEngine,
+            AM.getAsset("./img/heart.png"), this.x - 60 , this.y));
+        gameEngine.addPowerUp(new HeartPowerUp(gameEngine,
+            AM.getAsset("./img/heart.png"), this.x + 60 , this.y));
+    }
+    for (var i = 0; i < this.game.entities.length; i++) {
+        var ent = this.game.entities[i];
+        if (ent !== this && collide(this, ent)) {
+            this.isCollide = true;
+            if (this.x < ent.x) this.collideForward = true;
+        }
+    }
+    if (Math.abs(this.x - this.game.entities[2].x) <= this.sight ) {
+        this.active = true;
+        if(this.x - this.game.entities[2].x > 0) this.active = true;
+        else this.active = false;
+        if (this.enemyShoot && this.active) {
+            this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 80, this.forward
+                ,this.firingStance, false,false, this.unitType, 250, false, this.damage));
+            this.game.addEntity(new landMineFlash(this.game, AM.getAsset("./img/landMineFlash.png"),  this.x - 12, this.y + 60));
+            this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 80, this.forward
+                , 3, true,false, this.unitType, 300, false, this.damage));
+            this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 80, this.forward
+                , 1, true,false, this.unitType, 150, false, this.damage));
+            this.enemyShoot = false;
+            setTimeout(function(){
+            enemyThat.enemyShoot = true;
+        }, 1300);
+
+        }
+    }
+    else this.active = false;
+
+    Entity.prototype.update.call(this);
+}
+
+FinalBoss.prototype.draw = function () {
+	if (!this.game.running) return;
+    if (this.active) this.gunTurrentFiring.drawFrame(this.game.clockTick, this.ctx
+        , this.x - cameraX, this.y + cameraY);
+    else this.gunTurrentIdle.drawFrame(this.game.clockTick, this.ctx, this.x - cameraX, this.y + cameraY);
+    Entity.prototype.draw.call(this);
+}
+
+
 function FlyingRobot(game, backRunSprite, frontRunSprite, xCord, yCord, unitSpeed, health, scores, radius, sight) {
     this.flyingRobotBackRun = new Animation(backRunSprite, this.x, this.y, 52, 50, 2, 0.1, 2, true);
     this.flyingRobotFrontRun = new Animation(frontRunSprite, this.x, this.y, 53, 50, 2, 0.1, 2, true);
@@ -3786,6 +3876,8 @@ AM.queueDownload("./img/Chieftain_Pump_Shotgun_icon.png");
 AM.queueDownload("./img/bananas.png");
 AM.queueDownload("./img/grenadeIcon.png");
 AM.queueDownload("./img/triple.png");
+AM.queueDownload("./img/finalBoss.png");
+AM.queueDownload("./img/finalBossShooting.png");
 //floor
 AM.queueDownload("./img/eFloor.png");
 AM.queueDownload("./img/midFloor.png");
@@ -4135,7 +4227,8 @@ AM.downloadAll(function () {
      , AM.getAsset("./img/flyingRobot_Forward.png"), 5900, 100, 60, 2, 700, 100, 200));
      gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
      , AM.getAsset("./img/flyingRobot_Forward.png"), 6150, 200, 60, 2, 700, 100, 200));
-
+     gameEngine.addEntity(new FinalBoss(gameEngine, AM.getAsset("./img/finalBossShooting.png")
+     , AM.getAsset("./img/finalBoss.png"),4310,425, 10, 2500, 350));
 
   } else if (map == map4) {
 
