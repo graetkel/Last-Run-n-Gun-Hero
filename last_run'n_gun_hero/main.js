@@ -102,6 +102,7 @@ PlayGame.prototype.draw = function (ctx) {
             console.log("this not it");
 
 	    }else {
+            console.log("over");
 		    ctx.fillText("Game Over!", this.x-30, this.y);
 		}
     }
@@ -3167,8 +3168,8 @@ GiantRobot.prototype.draw = function () {
 }
 
 function FinalBoss(game, firingGunSprite,idleGunSprite,  xCord, yCord, health, scores, sight) {
-    this.gunTurrentIdle = new Animation(idleGunSprite, this.x, this.y, 707, 550, 1, 0.1, 1, true);
-    this.gunTurrentFiring = new Animation(firingGunSprite, this.x, this.y, 727.5, 550, 2, 0.5, 2, true);
+    this.gunTurrentIdle = new Animation(idleGunSprite, this.x, this.y, 514, 400, 1, 0.1, 1, true);
+    this.gunTurrentFiring = new Animation(firingGunSprite, this.x, this.y, 529, 400, 2, 0.5, 2, true);
     this.health = health;
     this.ctx = game.ctx;
     this.sight = sight;
@@ -3228,13 +3229,9 @@ FinalBoss.prototype.update = function () {
         if(this.x - this.game.entities[2].x > 0) this.active = true;
         else this.active = false;
         if (this.enemyShoot && this.active) {
-            this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 80, this.forward
-                ,this.firingStance, false,false, this.unitType, 250, false, this.damage));
-            this.game.addEntity(new landMineFlash(this.game, AM.getAsset("./img/landMineFlash.png"),  this.x - 12, this.y + 60));
-            this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 80, this.forward
-                , 3, true,false, this.unitType, 300, false, this.damage));
-            this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 80, this.forward
-                , 1, true,false, this.unitType, 150, false, this.damage));
+            this.game.addEntity(new landMineFlash(this.game, AM.getAsset("./img/landMineFlash.png"),  this.x - 12, this.y + 170));
+            this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 190, this.forward
+                , 0, true,false, this.unitType, 150, false, this.damage));
             this.enemyShoot = false;
             setTimeout(function(){
             enemyThat.enemyShoot = true;
@@ -3475,6 +3472,7 @@ Bullet.prototype.update = function () {
         }
         if (this.x <= this.startX - 500 ) this.removeFromWorld = true
         else if (!this.standing) this.x -= this.game.clockTick * this.speed;
+        else if (this.firingStance === 0) this.y += this.game.clockTick * this.speed;
         else if (this.firingStance === 4) this.y -= this.game.clockTick * this.speed;
         else if (this.firingStance === 2) this.x -= this.game.clockTick * this.speed;
         else if (this.firingStance === 3 && this.standing) {
@@ -4232,7 +4230,7 @@ AM.downloadAll(function () {
     //  , AM.getAsset("./img/flyingRobot_Forward.png"), 5700, 200, 60, 2, 700, 100, 200));
 
      gameEngine.addEntity(new FinalBoss(gameEngine, AM.getAsset("./img/finalBossShooting.png")
-     , AM.getAsset("./img/finalBoss.png"),5600,75, 10, 2500, 350));
+     , AM.getAsset("./img/finalBoss.png"),5600,230, 10, 2500, 350));
 
   } else if (map == map4) {
 
