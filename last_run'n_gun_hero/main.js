@@ -18,7 +18,7 @@ var map2 = new mapTwo();
 var map3 = new mapThree();
 var map4 = new mapFour();
 
-var map = map4;
+var map = map1;
 
 
 //In order to get the camera feature to work make sure every
