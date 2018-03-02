@@ -674,7 +674,7 @@ Lightning.prototype = new Entity();
 Lightning.prototype.constructor = Lightning;
 
 Lightning.prototype.draw = function () {
-    this.color = "hsla(180, 80%, 80%, "+ this.fade +")";
+    this.color = "hsla(180, 100%, 60%, "+ this.fade +")";
     this.ctx.shadowColor = this.color;
     this.ctx.shadowBlur = 10;
     //this.ctx.globalCompositeOperation = "lighter";
