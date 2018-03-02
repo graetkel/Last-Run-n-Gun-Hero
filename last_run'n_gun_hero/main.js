@@ -3548,7 +3548,7 @@ function NextLevel(game) {
 
 
   if (map == map1) {
-    console.log("go to map 2");
+    //console.log("go to map 2");
     //this.game.running = false;
     game.entities[2].powerup = false;
     game.entities[2].x = 100;
@@ -3669,6 +3669,11 @@ function NextLevel(game) {
      gameEngine.addEntity(new GunTurrent(gameEngine, AM.getAsset("./img/firingGunTurrent.png")
      , AM.getAsset("./img/idleGunTurrent.png"),4141, 415, 5, 1000, 400));
 
+     //*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&
+     //Thu this is where you say something like "Level 2" or "Next Level"
+     //*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&
+
+
   } else if (map == map2) {
     //console.log("go to map 3");
     //this.game.running = false;
@@ -3771,10 +3776,19 @@ function NextLevel(game) {
      , AM.getAsset("./img/flyingRobot_Forward.png"), 5900, 100, 60, 2, 700, 100, 200));
      gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
      , AM.getAsset("./img/flyingRobot_Forward.png"), 6150, 200, 60, 2, 700, 100, 200));
+
+     //*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&
+     //Thu this is where you say something like "Level 3" or "Next Level"
+     //*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&
+
+
   } else if (map == map3) {
     //---------------
     // Level Complete
     //---------------
+    //*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&
+    //Thu this is where you show the Game complete screen :)
+    //*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&
 
   }
 
