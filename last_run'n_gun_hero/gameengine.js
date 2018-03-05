@@ -54,7 +54,8 @@ GameEngine.prototype.start = function () {
         requestAnimFrame(gameLoop, that.ctx.canvas);
     })();
 }
-
+// Pause Game
+var gamePaused = false;
 GameEngine.prototype.startInput = function () {
    // console.log('Starting input');
     var that = this;
@@ -69,7 +70,15 @@ GameEngine.prototype.startInput = function () {
 
         return { x: x, y: y };
     }
-
+	
+	var pauseGame = function() {
+	if (!gamePaused) {
+			gamePaused = true;
+		} else {
+			gamePaused = false;
+		}
+	}
+	
 	this.ctx.canvas.addEventListener("click", function (e) {  // THU add
         that.click = getXandY(e);
     }, false);
@@ -104,7 +113,10 @@ GameEngine.prototype.startInput = function () {
         }
         else if (e.code === "ArrowLeft") {
             that.gernadeThrow = true;
-        }
+        } else if (e.code === "KeyP") {
+			pauseGame();
+		}
+		
         e.preventDefault();
        // console.log("Key down Event - Char " + e.code + " Code " + e.keyCode);
     }, false);
@@ -264,18 +276,20 @@ GameEngine.prototype.update = function () {
 }
 
 GameEngine.prototype.loop = function () {
-    this.clockTick = this.timer.tick();
-    this.update();
-    this.draw();
-    this.space = null;
-	this.click = null;
-    this.wheel = null;
-    this.over = null;
-    this.aimUp = null;
-    this.gernadeThrow = null;
-    this.aimDown = null;
-    this.s = null;
-    this.w = null;
+	if (!gamePaused) {
+		this.clockTick = this.timer.tick();
+		this.update();
+		this.draw();
+		this.space = null;
+		this.click = null;
+		this.wheel = null;
+		this.over = null;
+		this.aimUp = null;
+		this.gernadeThrow = null;
+		this.aimDown = null;
+		this.s = null;
+		this.w = null;
+	}
 }
 
 GameEngine.prototype.reset = function () {

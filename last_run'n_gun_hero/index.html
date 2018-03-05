@@ -11,14 +11,20 @@
 </head>
 
 <body>
-    <div style="position: absolute; left: 300px; top: 50px; width: 400px; height: 30px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 24pt; color: olive; ">
+    <div id="name" style="position: absolute; left: 300px; top: 50px; width: 400px; height: 30px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 24pt; color: olive; ">
         Last Run 'n Gun Hero
+    </div>
+	<div id="level_num" style="position: absolute; left: 410px; top: 50px; width: 400px; height: 30px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 12pt; color: red; ">
     </div>
     <div id="lives" style="position: absolute; left: 700px; top: 10px; width: 100px; height: 30px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 24pt; color: silver; ">
         Lives: 3
     </div>
-	 <div id="gameState" style="position: absolute; left: 320px; top: 120px; width: 500px; height: 30px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 15pt; color: red; ">
+	 <div id="gameState" style="position: absolute; left: 320px; top: 120px; width: 500px; height: 30px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 15pt; color: lime; ">
     </div>
+	<div id="total_scores" style="position: absolute; left: 315px; top: 300px; width: 250px; height: 30px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 24pt; color: lime; ">      
+    </div>
+	<div id="grenades" style="position: absolute; left: 750px; top: 635px; width: 50px; height: 30px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 24pt; color: lime; ">   	
+	</div>
 	<div id="times" style="position: absolute; left: 375px; top: 10px; width: 150px; height: 30px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 24pt; color: silver; ">
         Time: 300
 	</div>
@@ -42,7 +48,7 @@
 
 	  <tr>
 		    <td>     'D' &nbsp &nbsp &nbsp MOVE RIGHT     </td> &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
-			<td>     'Left Arrow' &nbsp &nbsp &nbsp  &nbsp &nbsp SPECIAL     </td> &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
+			<td>     'Left Arrow' &nbsp &nbsp &nbsp  &nbsp &nbsp THROW GRENADE     </td>  &nbsp &nbsp &nbsp
 	  </tr>
 
 	  <tr>
@@ -60,44 +66,46 @@
 		<canvas id="gameWorld" tabindex="1" width="800" height="675" style="border: 1px solid brown; background: lightskyblue" style="z-index:1"></canvas>
 
 		<button id="reference" style="position: absolute; top:705px; left:735px;">Reference</button>
-		<p id="demo1" style="position: absolute; left: 850px; top: 10px; width: 500px; height: 10px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 10pt; color: black; "></p>
-		<p id="demo2" style="position: absolute; left: 850px; top: 50px; width: 500px; height: 10px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 10pt; color: black; "></p>
-		<p id="demo3" style="position: absolute; left: 850px; top: 90px; width: 500px; height: 10px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 10pt; color: black; "></p>
-		<p id="demo4" style="position: absolute; left: 850px; top: 130px; width: 500px; height: 10px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 10pt; color: black; "></p>
-		<p id="demo5" style="position: absolute; left: 850px; top: 170px; width: 500px; height: 10px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 10pt; color: black; "></p>
-		<p id="demo6" style="position: absolute; left: 850px; top: 210px; width: 500px; height: 10px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 10pt; color: black; "></p>
-		<p id="demo7" style="position: absolute; left: 850px; top: 250px; width: 500px; height: 10px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 10pt; color: black; "></p>
-		<p id="demo8" style="position: absolute; left: 850px; top: 290px; width: 500px; height: 10px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 10pt; color: black; "></p>
-		<p id="demo9" style="position: absolute; left: 850px; top: 330px; width: 500px; height: 10px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 10pt; color: black; "></p>
+		<p id="demo0" style="position: absolute; left: 950px; top: 0px; width: 400px; height: 30px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 18pt; color: olive; "></p>
+		<p id="demo1" style="position: absolute; left: 850px; top: 50px; width: 500px; height: 10px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 10pt; color: black; "></p>
+		<p id="demo2" style="position: absolute; left: 850px; top: 90px; width: 500px; height: 10px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 10pt; color: black; "></p>
+		<p id="demo3" style="position: absolute; left: 850px; top: 130px; width: 500px; height: 10px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 10pt; color: black; "></p>
+		<p id="demo4" style="position: absolute; left: 850px; top: 170px; width: 500px; height: 10px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 10pt; color: black; "></p>
+		<p id="demo5" style="position: absolute; left: 850px; top: 210px; width: 500px; height: 10px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 10pt; color: black; "></p>
+		<p id="demo6" style="position: absolute; left: 850px; top: 250px; width: 500px; height: 10px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 10pt; color: black; "></p>
+		<p id="demo7" style="position: absolute; left: 850px; top: 290px; width: 500px; height: 10px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 10pt; color: black; "></p>
+		<p id="demo8" style="position: absolute; left: 850px; top: 330px; width: 500px; height: 10px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 10pt; color: black; "></p>
+		<p id="demo9" style="position: absolute; left: 850px; top: 370px; width: 500px; height: 10px; background-color: rgba(0,0,0,0); font-family: Impact, Charcoal, sans-serif; font-size: 10pt; color: black; "></p>
 				 <script>
 						document.getElementById("reference").addEventListener("click", function(){
 								var reference = "";
-
+								reference = "Last Run 'n Gun Hero";
+								document.getElementById("demo0").innerHTML = reference;
 								reference = "Enemy soldier - shoots at hero on sight";
 								document.getElementById("demo1").innerHTML = reference;
 
-								reference = "Giant robot - shoots three giant bullet spread shot bottom bullet rolls on ground at hero";
+								reference = "Giant robot   - shoots three giant bullet spread shot bottom bullet rolls on ground at hero";
 								document.getElementById("demo2").innerHTML = reference;
 
-								reference = "Flying robot - follows hero and fires down at hero while hero in range of flight patrol";
+								reference = "Flying robot  - follows hero and fires down at hero while hero in range of flight patrol";
 								document.getElementById("demo3").innerHTML = reference;
 
-								reference = "Red robot - explodes upon death hurting everything around it in range of explosion ";
+								reference = "Red robot     - explodes upon death hurting everything around it in range of explosion ";
 								document.getElementById("demo4").innerHTML = reference;
 
-								reference = "Blue robot - immune to danger must be avoided ";
+								reference = "Blue robot    - immune to danger must be avoided ";
 								document.getElementById("demo5").innerHTML = reference;
 
-								reference = "Green robot - jumps up if hero tries to jump over";
+								reference = "Green robot   - jumps up if hero tries to jump over";
 								document.getElementById("demo6").innerHTML = reference;
 
-								reference = "Yellow robot - shoots electrical attack that removes hero’s upgrade";
+								reference = "Yellow robot  - shoots electrical attack that removes hero’s upgrade";
 								document.getElementById("demo7").innerHTML = reference;
 
-								reference = "Landmine - explodes when walked on";
+								reference = "Landmine      - explodes when walked on";
 								document.getElementById("demo8").innerHTML = reference;
 
-								reference = "Torrent- fires at hero when hero is in range in front";
+								reference = "Torrent       - fires at hero when hero is in range in front";
 								document.getElementById("demo9").innerHTML = reference;
 
 

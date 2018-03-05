@@ -98,12 +98,19 @@ PlayGame.prototype.draw = function (ctx) {
         ctx.fillStyle = "green";
         if (this.game.mouse) { ctx.fillStyle = "pink"; }
         if (this.game.Hero.lives > 0) {
+			
             ctx.fillText("HIT IT!", this.x , this.y);
-            console.log("this not it");
+            console.log("HIT IT: ");
+			console.log(this.x);
+			console.log(this.y);
 
-	    }else {
+	    }else if (this.game.Hero.lives > 0 && map == map4 && !this.game.running ) {
+			ctx.fillText("Congratulation!", this.x, this.y);
+		}
+		else {
             console.log("over");
-		    ctx.fillText("Game Over!", this.x-30, this.y);
+			 ctx.fillStyle = "red";
+		    ctx.fillText("GAME OVER!", this.x-30, this.y);
 		}
     }
 }
@@ -152,6 +159,28 @@ HeroIcon.prototype.draw = function () {
 };
 
 HeroIcon.prototype.update = function () {
+};
+
+function GrenadeIcon(game, spritesheet) {
+	this.x = 700;
+	this.y = 625;
+	this.spritesheet = spritesheet;
+	this.game = game;
+	this.ctx = game.ctx;
+}
+
+GrenadeIcon.prototype.reset = function() {
+	this.x = 700;
+	this.y = 625;
+}
+
+GrenadeIcon.prototype.draw = function() {
+	if (!this.game.running) return;
+    this.ctx.drawImage(this.spritesheet,
+                   this.x, this.y);
+};
+
+GrenadeIcon.prototype.update = function () {
 };
 
 /**
@@ -1194,7 +1223,7 @@ function Hero(game, heroSprites,speed, ground, health, lives) {
     this.jumpForward = true;
     this.standForward = true;
     this.crouch = false;
-    this.gernadeCount = 1;
+    this.grenadeCount = 1;
     this.runshooting = false;
     this.immune = false;
     this.falling = false;
@@ -1240,7 +1269,7 @@ Hero.prototype.reset = function () {			// THU add
     this.crouch = false;
     this.immune = false;
     this.falling = false;
-    this.gernadeCount = 1;
+    this.grenadeCount = 1;
     this.spaceTime = 0;
     this.lookingRight = true;
     this.powerUpFire = false;
@@ -1252,10 +1281,15 @@ Hero.prototype.reset = function () {			// THU add
     this.shootTemp = 2;
     this.standingStance = 2;
     this.firingStance = 2;
-    if (this.lives < 0) this.lives = 0;
-	if (this.times < 0) this.times = 0;
+    if (this.lives <= 0) { 
+		this.lives = 0;
+		this.game.total_scores.innerHTML = "Total Score: " + this.scores;
+	}
+	if (this.times <= 0) this.times = 0;
     this.game.lives.innerHTML = "Lives: " + this.lives;
 	this.game.times.innerHTML = "Time: " + this.times;
+	
+	
 }
 
 Hero.prototype.update = function () {
@@ -1312,6 +1346,7 @@ Hero.prototype.update = function () {
 				this.times = 0;
 				this.game.lives.innerHTML = "Lives: " + this.lives;
 				this.game.times.innerHTML = "Time: " + this.times;
+				this.game.total_scores.innerHTML = "Total Score: " + this.scores;
 				this.game.running = false;
 			}
 			//console.log(this.game.entities[1].x);
@@ -1336,6 +1371,7 @@ Hero.prototype.update = function () {
 			}
 			if (this.times <= 0) {
 				this.game.running = false;
+				this.game.grenades.innerHTML = "";
 			}
 		//console.log(this.game.entities[2].x);
 
@@ -2071,6 +2107,17 @@ Hero.prototype.update = function () {
 }
 
 Hero.prototype.draw = function () {
+	if (this.dead || !this.game.running) {
+		this.game.name.innerHTML = "Last Run 'n Gun Hero";
+		this.game.grenades.innerHTML = "";
+		this.game.level_num.innerHTML = "";
+		return;
+	}
+	else if (!this.dead || this.game.running) {
+		this.game.name.innerHTML = "";
+		this.game.grenades.innerHTML = this.grenadeCount;
+	}
+	
 	// THU add -- check if dead and draw health bar
 	if (this.dead || !this.game.running) return;
 
@@ -3557,8 +3604,11 @@ LevelPopUp.prototype.update = function() {
 
   if (gameEngine.timer.gameTime > this.myTime) {
     gameEngine.removeEntity(this);
-    var temp = "Level " + this.levelnum;
-    gameEngine.gameState.innerHTML = temp;
+	gameEngine.gameState.innerHTML = "";
+	if (gameEngine.running) {
+		var temp = "Level " + this.levelnum;
+		gameEngine.level_num.innerHTML = temp;
+	}
   } else {
     gameEngine.gameState.innerHTML = "Well Done! Level Complete!"
 
@@ -3828,7 +3878,12 @@ function NextLevel(game) {
     //*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&
     //Thu this is where you show the Game complete screen :)
     //*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&
-    gameEngine.addEntity(new LevelPopUp(this.game, ));
+    gameEngine.running = false;
+	//gameEngine.ctx.font = "24pt Impact";
+    //gameEngine.ctx.fillStyle = "green";
+	//gameEngine.ctx.fillText("Congratulation!", 370 , 180);
+	gameEngine.gameState.innerHTML = "WOOHOO! ALL LEVELS COMPLETE!";
+	
 
   }
 
@@ -3953,13 +4008,13 @@ AM.queueDownload("./img/heart.png");
 AM.queueDownload("./img/gattling.png");
 AM.queueDownload("./img/cover.png");
 AM.queueDownload("./img/hero.png");
+AM.queueDownload("./img/grenadeIcon.png");
 AM.queueDownload("./img/gernade.png");
 AM.queueDownload("./img/bomb_sprite.png");
 AM.queueDownload("./img/singleGernade.png");
 AM.queueDownload("./img/LightningOrbs.png");
 AM.queueDownload("./img/Chieftain_Pump_Shotgun_icon.png");
 AM.queueDownload("./img/bananas.png");
-AM.queueDownload("./img/grenadeIcon.png");
 AM.queueDownload("./img/triple.png");
 AM.queueDownload("./img/finalBoss.png");
 AM.queueDownload("./img/finalBossShooting.png");
@@ -3987,18 +4042,27 @@ AM.queueDownload("./img/lava.png");
 
 
 AM.downloadAll(function () {
+	
     var canvas = document.getElementById("gameWorld");
+	var name = document.getElementById('name');
 	var lives = document.getElementById('lives');  // THU add
 	var times = document.getElementById('times');
 	var scores = document.getElementById('scores');
-	var gamestatus = document.getElementById('gameState');
+	var level_num = document.getElementById('level_num');
+	var total_scores = document.getElementById('total_scores');
+	var grenades = document.getElementById('grenades');
+	var gameState = document.getElementById('gameState');
 
     var ctx = canvas.getContext("2d");
 
+	gameEngine.name = name;
 	gameEngine.lives = lives;			// Thu add
 	gameEngine.times = times;
 	gameEngine.scores = scores;
-	gameEngine.gameState = gamestatus;
+	gameEngine.level_num = level_num;
+	gameEngine.total_scores = total_scores;
+	gameEngine.grenades = grenades;
+	gameEngine.gameState = gameState;
 	gameEngine.running = false;			// THU add
 
     gameEngine.init(ctx);
@@ -4116,7 +4180,7 @@ AM.downloadAll(function () {
       playaudio(gameEngine, "./music/Top5Songs.mp3")
     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
      , AM.getAsset("./img/flyingRobot_Forward.png"), 200, 125, 60, 2, 500, 100, 200));
-    gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
+     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
      , AM.getAsset("./img/flyingRobot_Forward.png"), 900, 125, 60, 2, 500, 100, 200));
      gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
      , AM.getAsset("./img/flyingRobot_Forward.png"), 1950, 100, 60, 2, 500, 100, 200));
@@ -4319,6 +4383,7 @@ AM.downloadAll(function () {
   }
     gameEngine.addEntity(new Cover(gameEngine, AM.getAsset("./img/cover.png")));
     gameEngine.addEntity(new HeroIcon(gameEngine, AM.getAsset("./img/hero.png")));
+	gameEngine.addEntity(new GrenadeIcon(gameEngine, AM.getAsset("./img/grenadeIcon.png")));
     var pg = new PlayGame(gameEngine, 370, 180);
     gameEngine.addEntity(pg);
 
