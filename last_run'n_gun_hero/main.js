@@ -111,8 +111,13 @@ PlayGame.prototype.draw = function (ctx) {
 			ctx.fillText("Congratulation!", this.x, this.y);
 		} else if (this.game.Hero.lives <= 0) {
             console.log("over");
-			 ctx.fillStyle = "red";
-		    ctx.fillText("GAME OVER!", this.x-30, this.y);
+			ctx.fillStyle = "red";
+            ctx.fillText("GAME OVER!", this.x-30, this.y);
+            ctx.fillStyle = "green";
+            ctx.fillText("Click to Play Again!", this.x-70, this.y + 60);
+            if (this.game.click) {
+                this.game.Hero.lives = 3;
+            }
 		}
     }
 }
@@ -1284,7 +1289,8 @@ Hero.prototype.reset = function () {			// THU add
     this.standingStance = 2;
     this.firingStance = 2;
     if (this.lives <= 0) { 
-		this.lives = 0;
+        this.lives = 0;
+        if (!this.game.running)
 		this.game.total_scores.innerHTML = "Total Score: " + this.scores;
 	}
 	if (this.times <= 0) this.times = 0;
