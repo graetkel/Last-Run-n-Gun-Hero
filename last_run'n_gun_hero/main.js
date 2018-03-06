@@ -97,17 +97,19 @@ PlayGame.prototype.draw = function (ctx) {
         ctx.font = "24pt Impact";
         ctx.fillStyle = "green";
         if (this.game.mouse) { ctx.fillStyle = "pink"; }
-        if (this.game.Hero.lives > 0) {
+        if (this.game.Hero.lives == 3) {
 			
             ctx.fillText("HIT IT!", this.x , this.y);
             console.log("HIT IT: ");
 			console.log(this.x);
 			console.log(this.y);
 
-	    }else if (this.game.Hero.lives > 0 && map == map4 && !this.game.running ) {
+	    } if (this.game.Hero.lives < 3 && this.game.Hero.lives >= 1) {
+            ctx.fillStyle = "red";
+            ctx.fillText("TRY AGAIN!", this.x , this.y);
+        } else if (this.game.Hero.lives > 0 && map == map4 && !this.game.running ) {
 			ctx.fillText("Congratulation!", this.x, this.y);
-		}
-		else {
+		} else if (this.game.Hero.lives <= 0) {
             console.log("over");
 			 ctx.fillStyle = "red";
 		    ctx.fillText("GAME OVER!", this.x-30, this.y);
