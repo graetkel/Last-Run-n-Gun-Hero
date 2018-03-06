@@ -424,9 +424,9 @@ GrenadePowerUp.prototype.update = function () {
     if (powerUpCollide(this, mainguy)) {
         gameEngine.removePowerUp(this);
 
-        if (mainguy.gernadeCount < 3) {
-            mainguy.gernadeCount++;
-            console.log(mainguy.gernadeCount);
+        if (mainguy.grenadeCount < 3) {
+            mainguy.grenadeCount++;
+            console.log(mainguy.grenadeCount);
         }
     }
 
