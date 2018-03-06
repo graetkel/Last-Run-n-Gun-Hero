@@ -113,8 +113,15 @@ PlayGame.prototype.draw = function (ctx) {
             console.log("over");
 			ctx.fillStyle = "red";
             ctx.fillText("GAME OVER!", this.x-30, this.y);
-            ctx.fillStyle = "green";
-            ctx.fillText("Click to Play Again!", this.x-70, this.y + 60);
+        
+            ctx.fillStyle = "aqua"; 
+            ctx.font = "20pt Impact";
+            var scoresDisplay = "Total Score: " + this.game.Hero.scores;
+            ctx.fillText(scoresDisplay, this.x-60, this.y + 100);
+            ctx.fillStyle = "lime"; 
+            ctx.font = "15pt Impact";
+            ctx.fillText("Click to Play Again!", this.x-40, this.y + 200);
+           
             if (this.game.click) {
                 this.game.Hero.lives = 3;
                 this.game.Hero.scores = 0;
@@ -2410,7 +2417,7 @@ EnemySoldier.prototype.update = function () {
         }
         else if (powerUpChance === 7) {
             gameEngine.addPowerUp(new GrenadePowerUp(gameEngine,
-                AM.getAsset("./img/grenadeIcon.png"), this.x, this.y -50));
+                AM.getAsset("./img/grenade.png"), this.x, this.y -50));
         }
     }
     for (var i = 0; i < this.game.entities.length; i++) {
@@ -2615,7 +2622,7 @@ Robot.prototype.update = function () {
             }
             else if (powerUpChance === 7) {
                 gameEngine.addPowerUp(new GrenadePowerUp(gameEngine,
-                    AM.getAsset("./img/grenadeIcon.png"), this.x, this.y -50));
+                    AM.getAsset("./img/grenade.png"), this.x, this.y -50));
             }
         }
     }
@@ -3109,7 +3116,7 @@ GunTurrent.prototype.update = function () {
             }
             else if (powerUpChance === 7) {
                 gameEngine.addPowerUp(new GrenadePowerUp(gameEngine,
-                    AM.getAsset("./img/grenadeIcon.png"), this.x, this.y -50));
+                    AM.getAsset("./img/grenade.png"), this.x, this.y -50));
             }
     }
     for (var i = 0; i < this.game.entities.length; i++) {
@@ -3398,7 +3405,7 @@ FlyingRobot.prototype.update = function () {
             }
             else if (powerUpChance === 7) {
                 gameEngine.addPowerUp(new GrenadePowerUp(gameEngine,
-                    AM.getAsset("./img/grenadeIcon.png"), this.x, this.y -50));
+                    AM.getAsset("./img/grenade.png"), this.x, this.y -50));
             }
     }
     if ((Math.abs(this.game.entities[2].x - this.center) < 130)) this.heroInRange = true;
@@ -4020,6 +4027,7 @@ AM.queueDownload("./img/gattling.png");
 AM.queueDownload("./img/cover.png");
 AM.queueDownload("./img/hero.png");
 AM.queueDownload("./img/grenadeIcon.png");
+AM.queueDownload("./img/grenade.png");
 AM.queueDownload("./img/gernade.png");
 AM.queueDownload("./img/bomb_sprite.png");
 AM.queueDownload("./img/singleGernade.png");
