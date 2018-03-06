@@ -1311,7 +1311,7 @@ Hero.prototype.reset = function () {			// THU add
 }
 
 Hero.prototype.update = function () {
-
+    console.log("hello");
     if (this.DoubleDamagePowerUp) {
         this.damage = 2;
     }
@@ -1384,9 +1384,9 @@ Hero.prototype.update = function () {
 			// 	this.game.running = false;
       //   // NextLevel(this.game);
 			// }
-			if (this.lives <= 0) {
-				this.removeFromWorld = true;
-			}
+			// if (this.lives <= 0) {
+			// 	//this.removeFromWorld = true;
+			// }
 			if (this.times <= 0) {
 				this.game.running = false;
 				this.game.grenades.innerHTML = "";
@@ -3656,19 +3656,17 @@ function NextLevel(game) {
   if (map == map1) {
     //console.log("go to map 2");
     //this.game.running = false;
-    game.entities[2].powerup = false;
     game.entities[2].x = 100;
     game.entities[2].y = 525;
 
     for (var i = 4; i < game.entities.length; i++) {
-      game.entities[i].removeFromWorld = true;
+        if (game.entities[i].enemy || game.entities[i].isBullet) game.entities[i].removeFromWorld = true;
     }
     map = map2;
     playaudio(gameEngine, "./music/Top5Songs.mp3")
-
     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
      , AM.getAsset("./img/flyingRobot_Forward.png"), 200, 125, 60, 2, 500, 100, 200));
-    gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
+     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
      , AM.getAsset("./img/flyingRobot_Forward.png"), 900, 125, 60, 2, 500, 100, 200));
      gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
      , AM.getAsset("./img/flyingRobot_Forward.png"), 1950, 100, 60, 2, 500, 100, 200));
