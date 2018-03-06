@@ -3787,7 +3787,7 @@ function NextLevel(game) {
     game.entities[2].y = 525;
 
     for (var i = 4; i < game.entities.length; i++) {
-      game.entities[i].removeFromWorld = true;
+        if (game.entities[i].enemy || game.entities[i].isBullet) game.entities[i].removeFromWorld = true;
     }
     playaudio(gameEngine, "./music/WhenTheBeatDrops.mp3")
     map = map3;
