@@ -1713,7 +1713,7 @@ Hero.prototype.update = function () {
             if (this.grenadeCount > 0) {
                 if (this.lookingRight) this.game.addEntity(new gernade(this.game, AM.getAsset("./img/gernade.png"), AM.getAsset("./img/singleGernade.png"),  this.x + 100, this.y - 50, this.lookingRight));
                 else this.game.addEntity(new gernade(this.game, AM.getAsset("./img/gernade.png"), AM.getAsset("./img/singleGernade.png"),  this.x, this.y - 50, this.lookingRight));
-                this.gernadeCount--;
+                this.grenadeCount--;
             }
         }
 
