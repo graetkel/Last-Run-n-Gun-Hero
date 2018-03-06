@@ -117,6 +117,8 @@ PlayGame.prototype.draw = function (ctx) {
             ctx.fillText("Click to Play Again!", this.x-70, this.y + 60);
             if (this.game.click) {
                 this.game.Hero.lives = 3;
+                this.game.Hero.scores = 0;
+                this.game.scores.innerHTML = "Scores: " + this.game.Hero.scores;
                 this.game.lives.innerHTML = "Lives: " + this.game.Hero.lives;
             }
 		}
