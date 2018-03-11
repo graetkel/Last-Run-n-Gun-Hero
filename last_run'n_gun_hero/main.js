@@ -2391,6 +2391,7 @@ EnemySoldier.prototype.update = function () {
     this.collideForward = false;
     if (this.health <= 0) this.isDead = true;
     if (this.isDead) {
+        playDeathSoldier(this.game, "./music/deathSoldier.wav");
 		this.game.entities[2].scores += this.scores;				 // Thu added
 		this.game.scores.innerHTML = "Scores: " + this.game.entities[2].scores;
         gameEngine.removeEntity(this);
@@ -2598,6 +2599,7 @@ Robot.prototype.update = function () {
         this.game.addEntity(new robotFlash(this.game, AM.getAsset("./img/robotFlash.png"),  this.x - 180, this.y - 180));
         }
         if (this.unitType !== "blueRobot") {
+            playDeathRobot(this.game, "./music/dyingRobot.wav");
             gameEngine.removeEntity(this);
 
             ///////////////////////////////////////////
@@ -3099,6 +3101,7 @@ GunTurrent.prototype.update = function () {
     this.collideForward = false;
     if (this.health <= 0) this.isDead = true;
     if (this.isDead) {
+        playDeathRobot(this.game, "./music/dyingRobot.wav");
 		this.game.entities[2].scores += this.scores;
 		this.game.scores.innerHTML = "Scores: " + this.game.entities[2].scores;
         this.removeFromWorld = true;
@@ -3208,6 +3211,7 @@ GiantRobot.prototype.update = function () {
     this.collideForward = false;
     if (this.health <= 0) this.isDead = true;
     if (this.isDead) {
+        playDeathGiantRobot(gameEngine, "./music/giantRobotDying.mp3");
 		this.game.entities[2].scores += this.scores;
 		this.game.scores.innerHTML = "Scores: " + this.game.entities[2].scores;
         this.removeFromWorld = true;
@@ -3281,6 +3285,7 @@ function FinalBoss(game, firingGunSprite,idleGunSprite,  xCord, yCord, health, s
     this.enemyShoot = true;
     this.height = 200;
     this.active = true;
+    this.first = true;
     this.center = xCord;
 	this.scores = scores;
     Entity.call(this, game, xCord, yCord);
@@ -3304,6 +3309,7 @@ FinalBoss.prototype.update = function () {
     this.collideForward = false;
     if (this.health <= 0) this.isDead = true;
     if (this.isDead) {
+        playDeathFinalRobot(this.game, "./music/finalBossDeath.flac");
 		this.game.entities[2].scores += this.scores;
 		this.game.scores.innerHTML = "Scores: " + this.game.entities[2].scores;
         this.removeFromWorld = true;
@@ -3328,6 +3334,8 @@ FinalBoss.prototype.update = function () {
         if(this.x - this.game.entities[2].x > 0) this.active = true;
         else this.active = false;
         if (this.enemyShoot && this.active) {
+            if (this.first) playseeFinalRobot(this.game, "./music/seeFinalBoss.wav");
+            this.first = false;
             this.game.addEntity(new landMineFlash(this.game, AM.getAsset("./img/landMineFlash.png"),  this.x - 12, this.y + 170));
             this.game.addEntity(new Bullet(this.game, this.x - 10, this.y + 190, this.forward
                 , 0, true,false, this.unitType, 150, false, this.damage));
@@ -3389,6 +3397,7 @@ FlyingRobot.prototype.update = function () {
         this.isDead = true;
     }
     if (this.isDead) {
+        playDeathRobot(this.game, "./music/dyingRobot.wav");
 		this.game.entities[2].scores += this.scores
 		this.game.scores.innerHTML = "Scores: " + this.game.entities[2].scores;
         this.removeFromWorld = true;
@@ -3952,6 +3961,31 @@ function playBullets(obj,audiofile) {
     playPower = new Audio(audiofile);
     playPower.loop = false;
     playPower.play();
+  }
+  function playDeathSoldier(obj,audiofile) {
+    playDeadSoldier = new Audio(audiofile);
+    playDeadSoldier.loop = false;
+    playDeadSoldier.play();
+  }
+  function playDeathRobot(obj,audiofile) {
+    playDeadRobot = new Audio(audiofile);
+    playDeadRobot.loop = false;
+    playDeadRobot.play();
+  }
+  function playDeathGiantRobot(obj,audiofile) {
+    playDeadGiantRobot = new Audio(audiofile);
+    playDeadGiantRobot.loop = false;
+    playDeadGiantRobot.play();
+  }
+  function playDeathFinalRobot(obj,audiofile) {
+    playDeadFinalRobot = new Audio(audiofile);
+    playDeadFinalRobot.loop = false;
+    playDeadFinalRobot.play();
+  }
+  function playseeFinalRobot(obj,audiofile) {
+    playSeeFinalRobot = new Audio(audiofile);
+    playSeeFinalRobot.loop = false;
+    playSeeFinalRobot.play();
   }
 
 //----- End of Music ----
