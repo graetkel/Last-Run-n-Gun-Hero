@@ -1454,11 +1454,12 @@ Hero.prototype.update = function () {
 	//---------
 		if (this.game.space) {
 		  if (!this.falling && !this.jumping) {
+            playJumping(gameEngine, "./music/jumping.flac")
 			this.jumping = true;
 			this.falling = false;
 			this.spaceTime = this.game.timer.gameTime + 0.5;
-      this.tempCeiling = this.y - 150;
-		  }
+            this.tempCeiling = this.y - 150;
+          }
 		}
     //---------
 
@@ -1706,7 +1707,8 @@ Hero.prototype.update = function () {
                         }
 				}
 			  }
-			}
+            }
+            
 		if (this.immune) {
 			if (this.isCollide) {
 				if (this.collideForward) this.x -= 5;
@@ -3932,12 +3934,15 @@ function playBullets(obj,audiofile) {
     playBullet.play();
   }
   function playExplosions(obj,audiofile) {
-    console.log("play");
     playExplosion = new Audio(audiofile);
     playExplosion.loop = false;
     playExplosion.play();
   }
-
+  function playJumping(obj,audiofile) {
+    playJump = new Audio(audiofile);
+    playJump.loop = false;
+    playJump.play();
+  }
 function playaudioFX(obj,audiofile) {
   if (obj.mp3) {
       if(obj.mp3.paused) obj.mp3.play();
