@@ -3674,7 +3674,7 @@ function NextLevel(game) {
   //Thu put that here
 
   //*****************
-
+ 
 
   if (map == map1) {
     game.entities[2].x = 100;
@@ -3684,7 +3684,8 @@ function NextLevel(game) {
         if (game.entities[i].enemy || game.entities[i].isBullet) game.entities[i].removeFromWorld = true;
     }
     map = map2;
-    playaudio(gameEngine, "./music/Top5Songs.mp3")
+    playMusic.setAttribute('src',"./music/Top5Songs.mp3"); //change the source
+    playMusic.load()
     gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
      , AM.getAsset("./img/flyingRobot_Forward.png"), 200, 125, 60, 2, 500, 100, 200));
      gameEngine.addEntity(new FlyingRobot(gameEngine, AM.getAsset("./img/flyingRobot_Backward.png")
@@ -3808,7 +3809,9 @@ function NextLevel(game) {
     for (var i = 4; i < game.entities.length; i++) {
         if (game.entities[i].enemy || game.entities[i].isBullet) game.entities[i].removeFromWorld = true;
     }
-    playaudio(gameEngine, "./music/WhenTheBeatDrops.mp3")
+    playMusic.setAttribute('src',"./music/WhenTheBeatDrops.mp3"); //change the source
+    playMusic.load();
+  
     map = map3;
 
     gameEngine.addEntity(new landMine(gameEngine, AM.getAsset("./img/landMines.png"),350,585, 1, 400));
