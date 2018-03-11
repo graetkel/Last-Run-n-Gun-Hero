@@ -17,7 +17,7 @@ var map1 = new mapOne();
 var map2 = new mapTwo();
 var map3 = new mapThree();
 var map4 = new mapFour();
-
+var playMusic;
 var map = map1;
 
 
@@ -1314,7 +1314,12 @@ Hero.prototype.reset = function () {			// THU add
 }
 
 Hero.prototype.update = function () {
-
+    if(this.game.running) {
+        playMusic.play();
+    }
+    else {
+        playMusic.pause();
+    }
     if (this.DoubleDamagePowerUp) {
         this.damage = 2;
     }
@@ -3923,15 +3928,7 @@ function NextLevel(game) {
 //------- Music --------
 
 function playaudio(obj,audiofile) {
-  if (obj.mp3) {
-      if(obj.mp3.paused) obj.mp3.play();
-      else obj.mp3.pause();
-  } else {
-      obj.mp3 = new Audio(audiofile);
-      obj.mp3.play();
-      
-  }
-  obj.innerHTML = (obj.mp3.paused) ? "Play" : "Pause";
+    playMusic = new Audio(audiofile);
 }
 
 function playBullets(obj,audiofile) {
@@ -3955,6 +3952,8 @@ function playBullets(obj,audiofile) {
     playPower.play();
   }
 function playaudioFX(obj,audiofile) {
+
+    if (this.game.running) {
   if (obj.mp3) {
       if(obj.mp3.paused) obj.mp3.play();
       //else obj.mp3.pause();
@@ -3963,6 +3962,10 @@ function playaudioFX(obj,audiofile) {
       obj.mp3.play();
   }
   obj.innerHTML = (obj.mp3.paused) ? "Play" : "Pause";
+}
+else {
+    obj.mp3.pause();
+}
 }
 
 //----- End of Music ----
