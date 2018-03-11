@@ -3525,7 +3525,7 @@ Bullet.prototype.reset = function () {
 Bullet.prototype.update = function () {
 
     if (this.firstShot) {
-        playBullets(this.game,"./music/Pewww.m4a");
+        if (this.game.running) playBullets(this.game,"./music/Pewww.m4a");
     }
     this.firstShot = false;
     this.isCollide = false;
