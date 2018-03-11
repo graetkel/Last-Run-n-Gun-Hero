@@ -714,7 +714,6 @@ lightningPowerUp.prototype.reset = function () {
 
 lightningPowerUp.prototype.update = function () {
     var mainguy = this.game.entities[2];
-    playaudio(gameEngine, "./music/Shock.m4a")
     if (powerUpCollide(this, mainguy)) {
         playPowerUp(this.game, "./music/powerUp.wav");
         gameEngine.removePowerUp(this);
@@ -3951,22 +3950,6 @@ function playBullets(obj,audiofile) {
     playPower.loop = false;
     playPower.play();
   }
-function playaudioFX(obj,audiofile) {
-
-    if (this.game.running) {
-  if (obj.mp3) {
-      if(obj.mp3.paused) obj.mp3.play();
-      //else obj.mp3.pause();
-  } else {
-      obj.mp3 = new Audio(audiofile);
-      obj.mp3.play();
-  }
-  obj.innerHTML = (obj.mp3.paused) ? "Play" : "Pause";
-}
-else {
-    obj.mp3.pause();
-}
-}
 
 //----- End of Music ----
 
