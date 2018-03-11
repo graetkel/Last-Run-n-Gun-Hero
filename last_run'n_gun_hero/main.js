@@ -2581,7 +2581,8 @@ Robot.prototype.update = function () {
                     }
                 }
             }
-
+        playExplosions(this.game,"./music/explosion.m4a");
+        console.log("bomb");
         this.game.addEntity(new robotFlash(this.game, AM.getAsset("./img/robotFlash.png"),  this.x - 180, this.y - 180));
         }
         if (this.unitType !== "blueRobot") {
@@ -2805,6 +2806,8 @@ landMine.prototype.update = function () {
     if (this.isDead) {
 		this.game.entities[2].scores += this.scores;
         this.game.scores.innerHTML = "Scores: " + this.game.entities[2].scores;
+        playExplosions(this.game,"./music/explosion.m4a");
+        console.log("bomb");
         this.removeFromWorld = true;
         this.game.addEntity(new landMineFlash(this.game, AM.getAsset("./img/landMineFlash.png"),  this.x - 5, this.y - 10));
     }
@@ -2842,6 +2845,7 @@ function gernade(game, gernadeSprite, gernadeSprite1,  xCord, yCord, forward) {
     this.forward = forward;
     this.spaceTime = game.timer.gameTime + 0.3;
     this.time = 10;
+    this.firstShot = true;
     this.height = 15;
     this.center = xCord;
     Entity.call(this, game, xCord, yCord);
@@ -2857,6 +2861,7 @@ gernade.prototype.reset = function () {
 
 
 gernade.prototype.update = function () {
+    
     var enemyThat = this;
     this.isCollide = false;
 
@@ -2867,6 +2872,7 @@ gernade.prototype.update = function () {
     }
 
     if (!this.active) {
+        
         for (var i = 0; i < this.game.entities.length; i++) {
             var ent = this.game.entities[i];
             if (ent !== this && collide(this, ent)) {
@@ -2886,7 +2892,10 @@ gernade.prototype.update = function () {
                         }
                     }
                 }
+                
                 this.game.addEntity(new robotFlash(this.game, AM.getAsset("./img/robotFlash.png"),  this.x - 180, this.y - 180));
+                
+
                 this.removeFromWorld = true;
             }
         }
@@ -2963,6 +2972,8 @@ gernade.prototype.update = function () {
                     }
                 }
             }
+            playExplosions(this.game,"./music/explosion.m4a");
+            console.log("bomb");
             this.game.addEntity(new robotFlash(this.game, AM.getAsset("./img/robotFlash.png"),  this.x - 180, this.y - 180));
             this.removeFromWorld = true;
         }
@@ -3492,7 +3503,9 @@ Bullet.prototype.reset = function () {
 
 Bullet.prototype.update = function () {
 
-    if (this.firstShot) playBullets(this.game,"./music/Pewww.m4a");
+    if (this.firstShot) {
+        playBullets(this.game,"./music/Pewww.m4a");
+    }
     this.firstShot = false;
     this.isCollide = false;
     this.collideForward = false
@@ -3915,8 +3928,14 @@ function playaudio(obj,audiofile) {
 
 function playBullets(obj,audiofile) {
     playBullet = new Audio(audiofile);
-    playBullet.loop = false
+    playBullet.loop = false;
     playBullet.play();
+  }
+  function playExplosions(obj,audiofile) {
+    console.log("play");
+    playExplosion = new Audio(audiofile);
+    playExplosion.loop = false;
+    playExplosion.play();
   }
 
 function playaudioFX(obj,audiofile) {
