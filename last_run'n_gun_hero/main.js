@@ -276,7 +276,7 @@ FirePowerUp.prototype.update = function () {
 
     if (powerUpCollide(this, mainguy)) {
         gameEngine.removePowerUp(this);
-
+        playPowerUp(this.game, "./music/powerUp.wav");
         //only applies if he doesnt have a defense powerup active
         if (mainguy.defensePowerUp == false) {
             mainguy.powerUpFire = true;
@@ -354,6 +354,7 @@ HeartPowerUp.prototype.update = function () {
     var mainguy = this.game.entities[2];
 
     if (powerUpCollide(this, mainguy)) {
+        playPowerUp(this.game, "./music/powerUp.wav");
         gameEngine.removePowerUp(this);
 
 
@@ -419,6 +420,7 @@ GrenadePowerUp.prototype.update = function () {
     var mainguy = this.game.entities[2];
 
     if (powerUpCollide(this, mainguy)) {
+        playPowerUp(this.game, "./music/powerUp.wav");
         gameEngine.removePowerUp(this);
 
         if (mainguy.grenadeCount < 3) {
@@ -485,6 +487,7 @@ RapidFirePowerUp.prototype.update = function () {
     var mainguy = this.game.entities[2];
 
     if (powerUpCollide(this, mainguy)) {
+        playPowerUp(this.game, "./music/powerUp.wav");
         gameEngine.removePowerUp(this);
 
         if (mainguy.offensePowerUp == false) {
@@ -560,6 +563,7 @@ DoubleDamagePowerUp.prototype.update = function () {
     var mainguy = this.game.entities[2];
 
     if (powerUpCollide(this, mainguy)) {
+        playPowerUp(this.game, "./music/powerUp.wav");
         gameEngine.removePowerUp(this);
 
         if (mainguy.offensePowerUp == false) {
@@ -636,6 +640,7 @@ SpreadShotPowerUp.prototype.update = function () {
     var mainguy = this.game.entities[2];
 
     if (powerUpCollide(this, mainguy)) {
+        playPowerUp(this.game, "./music/powerUp.wav");
         gameEngine.removePowerUp(this);
 
         if (mainguy.offensePowerUp == false) {
@@ -711,6 +716,7 @@ lightningPowerUp.prototype.update = function () {
     var mainguy = this.game.entities[2];
     playaudio(gameEngine, "./music/Shock.m4a")
     if (powerUpCollide(this, mainguy)) {
+        playPowerUp(this.game, "./music/powerUp.wav");
         gameEngine.removePowerUp(this);
 
         if (mainguy.defensePowerUp == false) {
@@ -3942,6 +3948,11 @@ function playBullets(obj,audiofile) {
     playJump = new Audio(audiofile);
     playJump.loop = false;
     playJump.play();
+  }
+  function playPowerUp(obj,audiofile) {
+    playPower = new Audio(audiofile);
+    playPower.loop = false;
+    playPower.play();
   }
 function playaudioFX(obj,audiofile) {
   if (obj.mp3) {
