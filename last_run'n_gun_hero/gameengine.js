@@ -99,7 +99,6 @@ GameEngine.prototype.startInput = function () {
             that.w = true;
         }
         else if (e.code === "ArrowRight") {
-            playaudioFX(gameEngine, "./music/Pewww.m4a")
             that.shooting = true;
         }
         else if (e.code === "ArrowUp") {
@@ -120,8 +119,6 @@ GameEngine.prototype.startInput = function () {
     this.ctx.canvas.addEventListener("keydown", function (e) {
 
         if (e.code === "ArrowRight") {
-
-            playaudioFX(gameEngine, "./music/Pewww.m4a")
         }
         e.preventDefault();
     }, false);

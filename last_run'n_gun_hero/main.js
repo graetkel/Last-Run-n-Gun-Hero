@@ -2581,7 +2581,7 @@ Robot.prototype.update = function () {
                     }
                 }
             }
-        playExplosions(this.game,"./music/explosion.m4a");
+        playExplosions(this.game,"./music/explosion.mp3");
         console.log("bomb");
         this.game.addEntity(new robotFlash(this.game, AM.getAsset("./img/robotFlash.png"),  this.x - 180, this.y - 180));
         }
@@ -2806,7 +2806,7 @@ landMine.prototype.update = function () {
     if (this.isDead) {
 		this.game.entities[2].scores += this.scores;
         this.game.scores.innerHTML = "Scores: " + this.game.entities[2].scores;
-        playExplosions(this.game,"./music/explosion.m4a");
+        playExplosions(this.game,"./music/explosion.mp3");
         console.log("bomb");
         this.removeFromWorld = true;
         this.game.addEntity(new landMineFlash(this.game, AM.getAsset("./img/landMineFlash.png"),  this.x - 5, this.y - 10));
@@ -2972,7 +2972,7 @@ gernade.prototype.update = function () {
                     }
                 }
             }
-            playExplosions(this.game,"./music/explosion.m4a");
+            playExplosions(this.game,"./music/explosion.mp3");
             console.log("bomb");
             this.game.addEntity(new robotFlash(this.game, AM.getAsset("./img/robotFlash.png"),  this.x - 180, this.y - 180));
             this.removeFromWorld = true;
