@@ -100,9 +100,6 @@ PlayGame.prototype.draw = function (ctx) {
         if (this.game.Hero.lives == 3) {
 			
             ctx.fillText("HIT IT!", this.x , this.y);
-            console.log("HIT IT: ");
-			console.log(this.x);
-			console.log(this.y);
 
 	    } if (this.game.Hero.lives < 3 && this.game.Hero.lives >= 1) {
             ctx.fillStyle = "red";
@@ -110,7 +107,7 @@ PlayGame.prototype.draw = function (ctx) {
         } else if (this.game.Hero.lives > 0 && map == map4 && !this.game.running ) {
 			ctx.fillText("Congratulation!", this.x, this.y);
 		} else if (this.game.Hero.lives <= 0) {
-            console.log("over");
+
 			ctx.fillStyle = "red";
             ctx.fillText("GAME OVER!", this.x-30, this.y);
         
@@ -358,7 +355,7 @@ HeartPowerUp.prototype.update = function () {
 
     if (powerUpCollide(this, mainguy)) {
         gameEngine.removePowerUp(this);
-        //console.log("health picked up");
+
 
         if (mainguy.health < 10) {
             mainguy.health++;
@@ -426,7 +423,7 @@ GrenadePowerUp.prototype.update = function () {
 
         if (mainguy.grenadeCount < 3) {
             mainguy.grenadeCount++;
-            console.log(mainguy.grenadeCount);
+   
         }
     }
 
@@ -712,7 +709,7 @@ lightningPowerUp.prototype.reset = function () {
 
 lightningPowerUp.prototype.update = function () {
     var mainguy = this.game.entities[2];
-    playaudioFX(gameEngine, "./music/Shock.m4a")
+    playaudio(gameEngine, "./music/Shock.m4a")
     if (powerUpCollide(this, mainguy)) {
         gameEngine.removePowerUp(this);
 
@@ -803,7 +800,7 @@ Lightning.prototype.draw = function () {
 
 Lightning.prototype.update = function () {
     this.fade -= 0.03;
-    //console.log(this.fade);
+
     if (this.fade <= 0.0) {
         this.game.removeEntity(this);
     }
@@ -1311,7 +1308,7 @@ Hero.prototype.reset = function () {			// THU add
 }
 
 Hero.prototype.update = function () {
-    console.log("hello");
+
     if (this.DoubleDamagePowerUp) {
         this.damage = 2;
     }
@@ -1342,8 +1339,6 @@ Hero.prototype.update = function () {
             }
         }
 
-
-		//console.log(this.x);
 		//---- Next level --------
 		if (this.x >= ((map.cols * 25) - 100)) {
 		   NextLevel(this.game);
@@ -3480,6 +3475,7 @@ function Bullet(game, startX, startY, direction, firingStance, standing, unitFly
     this.standing = standing;
     this.startX = startX;
     this.forward = direction;
+    this.firstShot = true;
     //if hero shot bullet, changes this next variable
     //to true, else is false
     this.heroShotIt = heroShot;
@@ -3495,6 +3491,9 @@ Bullet.prototype.reset = function () {
 
 
 Bullet.prototype.update = function () {
+
+    if (this.firstShot) playBullets(this.game,"./music/Pewww.m4a");
+    this.firstShot = false;
     this.isCollide = false;
     this.collideForward = false
 
@@ -3639,7 +3638,6 @@ LevelPopUp.prototype.draw = function() {
   //this.game.drawImage(AM.getAsset("./img/nFloor.png"), 100, 100, sqFt, sqFt);
   //gameEngine.gameState.innerHTML = "Level Complete!"
   //gameEngine
-  console.log("next level");
 }
 
 
@@ -3654,8 +3652,6 @@ function NextLevel(game) {
 
 
   if (map == map1) {
-    //console.log("go to map 2");
-    //this.game.running = false;
     game.entities[2].x = 100;
     game.entities[2].y = 525;
 
@@ -3780,8 +3776,6 @@ function NextLevel(game) {
 
 
   } else if (map == map2) {
-    //console.log("go to map 3");
-    //this.game.running = false;
     game.entities[2].powerup = false;
     game.entities[2].x = 100;
     game.entities[2].y = 525;
@@ -3914,9 +3908,16 @@ function playaudio(obj,audiofile) {
   } else {
       obj.mp3 = new Audio(audiofile);
       obj.mp3.play();
+      
   }
   obj.innerHTML = (obj.mp3.paused) ? "Play" : "Pause";
 }
+
+function playBullets(obj,audiofile) {
+    playBullet = new Audio(audiofile);
+    playBullet.loop = false
+    playBullet.play();
+  }
 
 function playaudioFX(obj,audiofile) {
   if (obj.mp3) {
